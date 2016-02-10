@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="dataSourceStorage">
+  <data-source name="MySQL - plaid@127.0.0.1" uuid="d42b3d9d-8df7-4337-a57b-0f69e66aa8de">
+    <database-info product="" version="" jdbc-version="" driver-name="" driver-version=""/>
+  </data-source>
+  <data-source name="MySQL - @localhost" uuid="0a5bb082-87fc-469f-b819-7f90d4c11674">
+    <database-info product="" version="" jdbc-version="" driver-name="" driver-version=""/>
+  </data-source>
+</component>
