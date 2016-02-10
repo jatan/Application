@@ -84,19 +84,40 @@
                 <h1>SIGN UP</h1>
             </div>
             <div class="modal-body text-right">
-                <form>
+                {!! Form::open(['url'=>"/register"]) !!}
+
+                    {!! Form::label('email',"Email:") !!}
+                    {!! Form::text('email',null, ['id' => "email"]) !!}
+
+                    {!! Form::label('password',"Password:") !!}
+                    {!! Form::password('password',['id' => "password"]) !!}
+
+                    {!! Form::label('password_confirmation',"Re-Enter:") !!}
+                    {!! Form::password('password_confirmation',['id' => "password_confirmation"]) !!}
+
+                <div class="text-center">
+                    {!! Form::submit('Submit',['class' => 'btn btn-primary']) !!}
+                </div>
+                {!! Form::close() !!}
+                @if($errors->any())
+                    <ul class="alert alert-danger">
+                        @foreach($errors -> all() as $error)
+                            <li class="alert-danger">{!! $error !!}</li>
+                        @endforeach
+                    </ul>
+                @endif
+                {{--<form>
                     <label>Email ID: </label>
                     <input id ='email' type="email" placeholder="Valid email required" name="email"><br><br>
                     <label>Password: </label>
                     <input id='password' type="password" maxlength='8' placeholder="8 characters max" name="password"><br><br>
                     <label>Re-Enter: </label>
                     <input id='repassword' type="password" maxlength='8' placeholder="Enter password again" name="rePassword"><br><br>
-                    <div class="text-center">
-                        <input type='submit' class="btn btn-success " value='DONE'/>
-                    </div>
-                </form>
+
+                </form>--}}
             </div>
         </div>
+    </div>
     </div>
 </div>
 <!-- Javascript -->
