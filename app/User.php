@@ -20,7 +20,7 @@ class User extends Authenticatable
      */
     public function setPasswordAttribute($value)
     {
-        $salt = 'whatever';
+        //$salt = 'whatever';
         $this->attributes['password'] = Hash::make($value);
     }
     /**

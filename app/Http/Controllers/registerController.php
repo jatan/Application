@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+
 use App\Http\Requests\registerUserRequest;
 use Request;
 use App\User;
 use Mail;
 class registerController extends Controller
 {
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function register()
     {
         return view('register');
@@ -68,7 +71,7 @@ class registerController extends Controller
         $user->confirmation_code = null;
         $user->save();
 
-        Flash::message('You have successfully verified your account.');
+        //Flash::message('You have successfully verified your account.');
 
         return Redirect::route('login');
     }

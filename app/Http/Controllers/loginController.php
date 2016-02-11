@@ -18,7 +18,9 @@ class loginController extends Controller
    }
 
     /**
-     * @param Requests\loginUserRequest $
+     * @param loginUserRequest $request
+     * @return string
+     * @internal param $ Requests\loginUserRequest $
      */
     public function loginProcess(loginUserRequest $request){
         $credentials = [
