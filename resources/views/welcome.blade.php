@@ -86,17 +86,17 @@
             <div class="modal-body text-right">
                 {!! Form::open(['url'=>"/register"]) !!}
 
-                    {!! Form::label('email',"Email:") !!}
-                    {!! Form::text('email',null, ['id' => "email"]) !!}
+                    {!! Form::label('email',"Email ID: ") !!}
+                    {!! Form::email('email',null, ['id' => "email", 'placeholder' => "Valid email required"]) !!}<br><br>
 
                     {!! Form::label('password',"Password:") !!}
-                    {!! Form::password('password',['id' => "password"]) !!}
+                    {!! Form::password('password',['id' => "password", 'placeholder' => "8 character minimum"]) !!}<br><br>
 
                     {!! Form::label('password_confirmation',"Re-Enter:") !!}
-                    {!! Form::password('password_confirmation',['id' => "password_confirmation"]) !!}
+                    {!! Form::password('password_confirmation',['id' => "password_confirmation", 'placeholder' => "Enter password again"]) !!}<br><br>
 
                 <div class="text-center">
-                    {!! Form::submit('Submit',['class' => 'btn btn-primary']) !!}
+                    {!! Form::submit('Done',['class' => 'btn btn-success']) !!}
                 </div>
                 {!! Form::close() !!}
                 @if($errors->any())
@@ -106,7 +106,7 @@
                         @endforeach
                     </ul>
                 @endif
-                {{--<form>
+                {{--<form action="/register">
                     <label>Email ID: </label>
                     <input id ='email' type="email" placeholder="Valid email required" name="email"><br><br>
                     <label>Password: </label>

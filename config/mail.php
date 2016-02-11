@@ -54,7 +54,7 @@ return [
     |
     */
 
-    'from' => ['address' => 'jatan.bhatt@gmail.com', 'name' => "Jatan"],
+    'from' => ['address' => 'kxbhatt@gmail.com', 'name' => "MT"],
 
     /*
     |--------------------------------------------------------------------------
@@ -80,7 +80,7 @@ return [
     |
     */
 
-    'username' => 'jatan.bhatt@gmail.com',
+    'username' => env('MAIL_USERNAME', 'null'),
 
     /*
     |--------------------------------------------------------------------------
@@ -93,7 +93,7 @@ return [
     |
     */
 
-    'password' => 'musicislife',
+    'password' => env('MAIL_PASSWORD', 'null'),
 
     /*
     |--------------------------------------------------------------------------
