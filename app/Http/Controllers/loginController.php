@@ -4,10 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\loginUserRequest;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Redirect;
 
@@ -38,6 +37,6 @@ class loginController extends Controller
                     'credentials' => 'We were unable to sign you in.'
                 ]);
         }
-        return ("Logged In");
+        return Redirect()->intended('user/dashboard');
     }
 }

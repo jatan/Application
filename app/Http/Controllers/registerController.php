@@ -43,7 +43,7 @@ class registerController extends Controller
         });
 
         //Flash::message('Thanks for signing up! Please check your email.');
-        return view('login',['from_register'=>'1']);
+        return redirect()->intended('login');
     }
 
 
