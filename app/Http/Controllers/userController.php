@@ -60,8 +60,8 @@ class userController extends Controller
             $uri = 'https://tartan.plaid.com/connect';
             $parameters = [
                 'json' => [
-                    'client_id' => env('SAMPLE_PLAID_CLIENT_ID'),
-                    'secret' => env('SAMPLE_PLAID_SECRET'),
+                    'client_id' => env('PLAID_CLIENT_ID'),
+                    'secret' => env('PLAID_SECRET'),
                     'username' => env('SAMPLE_PLAID_USERNAME'),
                     'password' => env('SAMPLE_PLAID_PASSWORD'),
                     'type' => $input['bank'],
@@ -73,7 +73,7 @@ class userController extends Controller
         $client = new Client();
         $response = $client->post($uri, $parameters);
         $array = json_decode($response->getBody(), true);
-        //return ($array);
+        //return ($response);
         if(isset($array['type'] )) {
             if ($array['type'] == "questions") {
                 $mfa = $array['mfa'][0];

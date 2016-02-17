@@ -1,0 +1,14 @@
+.maindiv{
+	height:8000px;
+	background-color: #393939;
+	color: white;
+}
+
+.affix {
+      top: 0;
+      width: 100%;
+  }
+
+.affix + .container-fluid {
+      padding-top: 70px;
+  }

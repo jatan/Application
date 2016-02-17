@@ -1,0 +1,21 @@
+@media (min-width: 768px) {
+	.modal-sm{
+		width: 400px;
+	}
+}
+
+.border{
+	border-style: solid;
+	border-width: 1px;
+	border-color: #0088d8;
+	text-align: center;
+	min-height:130px;
+	border-radius: 3px;
+}
+.row{
+	margin-bottom: 2px;
+}
+
+.top-content{
+	padding-top:80px;
+}
