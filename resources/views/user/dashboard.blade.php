@@ -40,30 +40,16 @@
         <h1 class="my-h1">Accounts</h1>
         <div class="accounts-list">
             @foreach(Auth::user()->accounts as $account)
-            <div class="well">{{$account->bank_name}}</div>
-            <div class="h4 float__left">{{$account->name}}</div>
-            <?php $color = "Fontred";?>
-            @if($account->current_balance >= 0)
-                <?php $color = "Fontgreen"; ?>
+                <div class="well">{{$account->bank_name}}</div>
+                <div class="h4 float__left">{{$account->name}}</div>
+                <?php $color = "Fontred";?>
+                @if($account->current_balance >= 0)
+                    <?php $color = "Fontgreen"; ?>
                 @endif
 
-            <div class="h4 float__right {{$color}}">{{$account->current_balance}}</div>
-            <div class="float__clear"></div>
+                <div class="h4 float__right {{$color}}">{{$account->current_balance}}</div>
+                <div class="float__clear"></div>
             @endforeach
-            {{--<div class="h4 float__left">Savings Account</div>
-            <div class="h4 float__right Fontgreen">$ 20</div>
-            <div class="float__clear"></div>
-            <div class="h4 float__left">Credit Card</div>
-            <div class="h4 float__right Fontred">$ -3200</div>
-            <div class="float__clear"></div>
-            <div class="well">Chase</div>
-            <div class="h4 float__left">Checking Account</div>
-            <div class="h4 float__right Fontgreen">$ 700</div>
-            <div class="float__clear"></div>
-            <div class="well">Wells Fargo</div>
-            <div class="h4 float__left">Auto Loan</div>
-            <div class="h4 float__right Fontred">$ -5000</div>
-            <div class="float__clear"></div>--}}
         </div>
     </div>
     <div class="transactions-main">
@@ -89,19 +75,17 @@
                 </tr>
                 </thead>
                 <tbody>
-
                 @foreach(Auth::user()->accounts as $account)
                     @foreach($account->transaction as $transaction)
-                <tr>
-                    <td>{{$transaction -> date}}</td>
-                    <td>{{$transaction->name}}</td>
-                    <td>{{$transaction -> amount}}</td>
-                    <td>{{$transaction -> category_id}}</td>
-                    <td>{{$account->name}}</td>
-                </tr>
+                        <tr>
+                            <td>{{$transaction -> date}}</td>
+                            <td>{{$transaction->name}}</td>
+                            <td>{{$transaction -> amount}}</td>
+                            <td>{{$transaction -> category_id}}</td>
+                            <td>{{$account->name}}</td>
+                        </tr>
                     @endforeach
                 @endforeach
-
                 </tbody>
             </table>
             <div id="bottom_anchor"></div>
@@ -117,23 +101,3 @@
 
 </html>
 
-
-
-{{--
-
-    <a href="addAccount">Add Account</a><br><br>
-
-    @foreach(Auth::user()->accounts as $account)
-        <h1>{{$account->bank_name}}</h1>
-        <h2>{{$account->account_type}}</h2>
-        <h2>{{$account->current_balance}}</h2>
-        <h2>{{$account->name}}</h2>
-
-        <h2>{{$account->id}}</h2>
-        @foreach($account->transaction as $transaction)
-            <label>{{$transaction->name}}</label>:<label>{{$transaction -> amount}}</label><br>
-            {{dump($transaction->toArray())}}
-
-        @endforeach
-    @endforeach
---}}
