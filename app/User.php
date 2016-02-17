@@ -31,4 +31,11 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token','confirmation_code'
     ];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function accounts(){
+        return $this->hasMany('App\bank_accounts');
+    }
 }

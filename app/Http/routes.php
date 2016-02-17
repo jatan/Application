@@ -51,6 +51,11 @@ Route::group(['middleware' => ['web']], function () {
             'middleware' => 'auth',
             'uses' => 'usercontroller@addAccount'
         ]);
+    Route::get('user/addAccountStep',
+        [
+            'middleware' => 'auth',
+            'uses' => 'usercontroller@addAccountStep'
+        ]);
     Route::post('user/addAccount','userController@addAccountProcess');
 
     Route::post('/register','registerController@registerProcess');
