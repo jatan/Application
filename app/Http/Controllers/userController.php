@@ -19,6 +19,7 @@ class userController extends Controller
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function dashboard(){
+        //return (Auth::user()->visible_accounts());
         return (view('user.dashboard'));
     }
 
@@ -102,8 +103,8 @@ class userController extends Controller
             $bank_account['available_balance'] = $account_value['balance']['available'];
             $bank_account['bank_name'] = $account_value['institution_type'];
 
-            if(isset($account_value['meta']['limit']))
-                $bank_account['limit'] = $account_value['meta']['limit'];
+            if(isset($account_value['meta']['acc_limit']))
+                $bank_account['acc_limit'] = $account_value['meta']['acc_limit'];
 
             if(isset($account_value['subtype']))
             $bank_account['account_subtype'] = $account_value['subtype'];
@@ -138,7 +139,7 @@ class userController extends Controller
             $transaction->save();
         }
         //return $transaction;
-        return(view('user.dashboard'));
+        return(redirect::to('user/dashboard'));
     }
 
     /**
@@ -147,5 +148,33 @@ class userController extends Controller
     public function logout(){
         auth::logout();
         return(Redirect()->intended('login'));
+    }
+
+    public function delete($id){
+        $account = bank_accounts::find($id);
+        $token = $account->access_token;
+        $uri = 'https://tartan.plaid.com/connect';
+        $parameters = [
+            'json' => [
+                'client_id' => env('PLAID_CLIENT_ID'),
+                'secret' => env('PLAID_SECRET'),
+                'access_token' => $token
+            ]
+        ];
+        $client = new Client();
+        $response = $client->delete($uri, $parameters);
+        $array = json_decode($response->getBody(), true);
+        bank_accounts::where('access_token',$token)->delete();
+        return($array) ;
+    }
+
+    public function hide($id){
+        bank_accounts::find($id)->update(['hidden_flag'=> 1]);
+        return(redirect::to('user/dashboard'));
+    }
+
+    public function unhide($id){
+        bank_accounts::find($id)->update(['hidden_flag'=> 0]);
+        return(redirect::to('user/dashboard'));
     }
 }

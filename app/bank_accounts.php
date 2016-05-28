@@ -8,6 +8,7 @@ class bank_accounts extends Model
 {
     //this line allows Primary Key(id) to be string
     protected $casts = ['id'=>'string'];
+    protected $fillable = ['hidden_flag'];
 
     /**
      * @return mixed

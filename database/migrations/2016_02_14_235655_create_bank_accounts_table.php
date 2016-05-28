@@ -21,14 +21,20 @@ class CreateBankAccountsTable extends Migration
             $table->string('account_subtype');
             $table->string('current_balance');
             $table->string('available_balance');
-            $table->string('limit');
+            $table->string('acc_limit');
             $table->string('name');
             $table->string('number');
             $table->string('access_token');
+            $table->boolean('hidden_flag')->default('0');
             $table->timestamps();
             $table->text('plaid_core');
 
             $table->primary('id');
+
+            /*$table->foreign('user_id')
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade');*/
 
 
         });

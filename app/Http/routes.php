@@ -29,6 +29,9 @@ Route::get('/', function () {
 Route::group(['middleware' => ['web']], function () {
     Route::get('/','welcomeController@welcome');
     Route::get('/login','loginController@login');
+    Route::get('/user/{id}/delete','usercontroller@delete');
+    Route::get('/user/{id}/hide','usercontroller@hide');
+    Route::get('/user/{id}/unhide','usercontroller@unhide');
 
     Route::get('/register','registerController@register');
         Route::get('register/verify/{confirmationCode}',

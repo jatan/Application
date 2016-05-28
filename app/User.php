@@ -38,4 +38,7 @@ class User extends Authenticatable
     public function accounts(){
         return $this->hasMany('App\bank_accounts');
     }
+    public function visible_accounts(){
+        return $this ->accounts()->get()->where('hidden_flag',0);
+    }
 }

@@ -30,6 +30,11 @@ class CreateTransactionsTable extends Migration
             $table->string('score');
             $table->text('plaid_core');
             $table->timestamps();
+
+            $table->foreign('bank_accounts_id')
+                ->references('id')
+                ->on('bank_accounts')
+                ->onDelete('cascade');
         });
     }
 

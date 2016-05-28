@@ -39,7 +39,7 @@
 
         <h1 class="my-h1">Accounts</h1>
         <div class="accounts-list">
-            @foreach(Auth::user()->accounts as $account)
+            @foreach(Auth::user()->visible_accounts() as $account)
                 <div class="well">{{$account->bank_name}}</div>
                 <div class="h4 float__left">{{$account->name}}</div>
                 <?php $color = "Fontred";?>
@@ -55,7 +55,7 @@
     <div class="transactions-main">
         <h1 class="my-h1">TRANSACTIONS</h1>
         <div class="utility-buttons">
-            <a style="float:left; margin-left:10px;" class="btn-floating btn-large waves-effect waves-light teal"><i class="material-icons">add</i></a>
+            <a href="addAccount" style="float:left; margin-left:10px;" class="btn-floating btn-large waves-effect waves-light teal"><i class="material-icons">add</i></a>
 
             <input type="text" id="search" placeholder="SEARCH..">
 
@@ -75,7 +75,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach(Auth::user()->accounts as $account)
+                @foreach(Auth::user()->visible_accounts() as $account)
                     @foreach($account->transaction as $transaction)
                         <tr>
                             <td>{{$transaction -> date}}</td>
