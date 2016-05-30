@@ -35,14 +35,15 @@ class userController extends Controller
      */
     public function addAccountProcess(){
         $input = Request::all();
+        var_dump($input);
         //return($input);
         if(isset($input['radio'] )){
             $uri = 'https://tartan.plaid.com/connect/step';
             $options = '{"send_method":{"mask":"'.$input["radio"].'"}}';
             $parameters = [
                 'json' => [
-                    'client_id' => env('SAMPLE_PLAID_CLIENT_ID'),
-                    'secret' => env('SAMPLE_PLAID_SECRET'),
+                    'client_id' => env('PLAID_CLIENT_ID'),
+                    'secret' => env('PLAID_SECRET'),
                     'access_token' => $input['access_token'],
                     'options' => $options
                 ]
@@ -51,8 +52,8 @@ class userController extends Controller
             $uri = 'https://tartan.plaid.com/connect/step';
             $parameters = [
                 'json' => [
-                    'client_id' => env('SAMPLE_PLAID_CLIENT_ID'),
-                    'secret' => env('SAMPLE_PLAID_SECRET'),
+                    'client_id' => env('PLAID_CLIENT_ID'),
+                    'secret' => env('PLAID_SECRET'),
                     'access_token' => $input['access_token'],
                     'mfa' => $input['ans']
                 ]
@@ -63,8 +64,8 @@ class userController extends Controller
                 'json' => [
                     'client_id' => env('PLAID_CLIENT_ID'),
                     'secret' => env('PLAID_SECRET'),
-                    'username' => env('SAMPLE_PLAID_USERNAME'),
-                    'password' => env('SAMPLE_PLAID_PASSWORD'),
+                    'username' => $input['username'],
+                    'password' => $input['password'],
                     'type' => $input['bank'],
                     'options' => '{"list":true}'
                 ]

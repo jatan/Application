@@ -24,7 +24,7 @@
 {!! Form::text('username',null) !!}
 
 {!! Form::label('password',"Pin: ") !!}
-{!! Form::password('passworrd',null) !!}
+{!! Form::password('password',null) !!}
 
 {!! Form::submit('FetchMeSomeData',['class' => 'btn btn-primary']) !!}
 {!! Form::close() !!}
