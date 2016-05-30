@@ -64,6 +64,6 @@ Route::group(['middleware' => ['web']], function () {
     Route::post('/register','registerController@registerProcess');
     Route::post('/login','loginController@loginProcess');
 
-    Route::get('/categories','welcomeController@pullCategories');
+    Route::get('/categories','categoryController@pullCategories');
 
 });
