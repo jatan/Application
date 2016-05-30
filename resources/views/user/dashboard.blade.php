@@ -57,7 +57,6 @@
         <div class="utility-buttons">
             <a href="addAccount" style="float:left; margin-left:10px;" class="btn-floating btn-large waves-effect waves-light teal"><i class="material-icons">add</i></a>
 
-            <input type="text" id="search" placeholder="SEARCH..">
 
             <a style="float:right; margin-right:10px;" class="btn-floating btn-large waves-effect waves-light teal"><i class="material-icons">import_export</i></a>
         </div>
