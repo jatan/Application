@@ -41,13 +41,13 @@
         <div class="accounts-list">
             @foreach(Auth::user()->visible_accounts() as $account)
                 <div class="well">{{$account->bank_name}}</div>
-                <div class="h4 float__left">{{$account->name}}</div>
+                <a href="{{$account->id}}/account"><div class="h4 float__left">{{$account->name}}</div>
                 <?php $color = "Fontred";?>
                 @if($account->current_balance >= 0)
                     <?php $color = "Fontgreen"; ?>
                 @endif
 
-                <div class="h4 float__right {{$color}}">{{$account->current_balance}}</div>
+                <div class="h4 float__right {{$color}}">{{$account->current_balance}}</div></a>
                 <div class="float__clear"></div>
             @endforeach
         </div>

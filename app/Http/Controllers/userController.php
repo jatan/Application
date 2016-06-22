@@ -30,6 +30,26 @@ class userController extends Controller
         return(view('user.addAccount'));
     }
 
+    public function getAccountDetails($id){
+        $account = bank_accounts::find($id);
+        $i = 0;
+        foreach ($account->transaction as $transactions) {
+            $toDisplay[$i]['name'] = $transactions->name;
+            $toDisplay[$i]['amount'] = $transactions->amount;
+            $toDisplay[$i]['location'] = $transactions->location_city.",".$transactions->location_state;
+            $toDisplay[$i]['date'] = $transactions->date;
+            $i++;
+        }
+        // var_dump($account ->transaction);
+        //var_dump($toDisplay);
+        //die;
+        return view('user.getAccountDetails',['display'=>$toDisplay,'id'=>$id]);
+    }
+
+    public function sync(){
+        echo "Coming Soon";
+    }
+
     /**
      * @return bank_accounts
      */
