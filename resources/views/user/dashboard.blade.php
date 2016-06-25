@@ -24,7 +24,7 @@
         <li class="flex__item"><a href="">MT</a></li>
         <li class="flex__item"><a href="">DashBoard</a></li>
         <li class="flex__item"><a href="">Transactions</a></li>
-        <li class="flex__item"><a href="">Budgets</a></li>
+        <li class="flex__item"><a href="budget">Budgets</a></li>
         <li class="flex__item"><a href="">Reports</a></li>
         <li class="flex__item"><a href="">Bills</a></li>
         <li class="flex__item"><a href="">Goal</a></li>

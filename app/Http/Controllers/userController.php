@@ -198,4 +198,8 @@ class userController extends Controller
         bank_accounts::find($id)->update(['hidden_flag'=> 0]);
         return(redirect::to('user/dashboard'));
     }
+
+    public function budget(){
+        return (view('user.budget'));
+    }
 }

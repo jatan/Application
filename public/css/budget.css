@@ -1,0 +1,92 @@
+.wrapper{
+    margin-top: 80px;
+    background-color: transparent;
+    border:1px solid red;
+    padding-bottom: 20px;
+}
+
+.months{
+    background-color: #8bc34a;
+    width: 70%;
+    margin: auto;
+    height:50px;
+}
+
+.row{
+    margin: 0px;
+}
+.custom {
+    color: #ffffff;
+    padding: 0;
+    background-color: #4aa6c3;
+    line-height: 50px;
+    text-align: center;
+    border-color: rgba(0, 0, 0, .25);
+    border-style: solid;
+    border-width: 0.5px;
+    border-radius: 3px 3px 0 0;
+}
+.custom a{
+    color: #fff;;
+}
+.progress-container{
+    width: 70%;
+    margin: auto;
+}
+
+.panel{
+    width:70%;
+    margin:auto;
+}
+
+.test{
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+.card{
+    background-color: rgba(210, 222, 228, 0.44) !important;
+}
+
+.card-action a{
+    color: black !important;
+}
+
+.animated-bar div {
+    line-height: 20px;
+    width:0%;
+    border-radius: 5px;
+    animation:loadbar 2s;
+    -webkit-animation:loadbar 2s;
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+}
+
+@-webkit-keyframes loadbar {
+
+    0% {
+        width: 0%;
+    }
+
+    100% {
+        width: 75%;
+    }
+}
+@keyframes loadbar {
+
+    0% {
+        width: 0%;
+    }
+
+    100% {
+        width: 75%;
+    }
+
+}
+
+.item-border{
+    border-bottom:0.0312em solid gray;
+}
+
+.reset-fontsize{
+    font-size:14px;
+}

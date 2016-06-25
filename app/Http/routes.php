@@ -44,6 +44,11 @@ Route::group(['middleware' => ['web']], function () {
             'middleware' => 'auth',
             'uses' => 'usercontroller@dashboard'
         ]);
+    Route::get('user/budget',
+        [
+            'middleware' => 'auth',
+            'uses' => 'usercontroller@budget'
+        ]);
     Route::get('user/logout',
         [
             'middleware' => 'auth',
