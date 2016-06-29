@@ -46,8 +46,52 @@ class userController extends Controller
         return view('user.getAccountDetails',['display'=>$toDisplay,'id'=>$id]);
     }
 
-    public function sync(){
-        echo "Coming Soon";
+    public function sync($id){
+
+        $account = bank_accounts::find($id);
+        $token = $account ->access_token;
+        var_dump($token);
+        $uri = 'https://tartan.plaid.com/connect/get';
+            $parameters = [
+                'json' => [
+                    'client_id' => env('PLAID_CLIENT_ID'),
+                    'secret' => env('PLAID_SECRET'),
+                    'access_token' => $token
+                ]
+            ];
+        $client = new Client();
+        $response = $client->post($uri, $parameters);
+        $array = json_decode($response->getBody(), true);
+        // var_dump($array);
+        $transactions = $array['transactions'];
+        //return $transactions;
+        foreach($transactions as $transaction_key => $transaction_value){
+            $transaction = transaction::find($transaction_value['_id']);
+            if(!$transaction){
+                $transaction = new transaction();
+                $transaction['id'] = $transaction_value['_id'];
+
+                $transaction['bank_accounts_id'] = $transaction_value['_account'];
+                $transaction['amount'] = $transaction_value['amount'];
+                $transaction['date'] = $transaction_value['date'];
+                $transaction['name'] = $transaction_value['name'];
+                if(isset($transaction_value['meta']['location']['city']))
+                    $transaction['location_city'] = $transaction_value['meta']['location']['city'];
+                if(isset($transaction_value['meta']['location']['state']))
+                    $transaction['location_state'] = $transaction_value['meta']['location']['state'];
+                $transaction['pending'] = $transaction_value['pending'];
+                $transaction['type_primary'] = $transaction_value['type']['primary'];
+                if(isset($transaction_value['category']))
+                    $transaction['category'] = serialize($transaction_value['category']);
+                if(isset($transaction_value['category_id']))
+                $transaction['category_id'] = $transaction_value['category_id'];
+                $transaction['score'] = serialize($transaction_value['score']);
+                $transaction['plaid_core'] = serialize($transaction_value);
+                var_dump($transaction);
+                $transaction->save();
+            }
+        }
+        return(redirect::to('user/'.$id.'/account'));
     }
 
     /**
@@ -59,7 +103,7 @@ class userController extends Controller
         //return($input);
         if(isset($input['radio'] )){
             $uri = 'https://tartan.plaid.com/connect/step';
-            $options = '{"send_method":{"mask":"'.$input["radio"].'"}}';
+            $access_token = '{"send_method":{"mask":"'.$input["radio"].'"}}';
             $parameters = [
                 'json' => [
                     'client_id' => env('PLAID_CLIENT_ID'),
@@ -200,6 +244,7 @@ class userController extends Controller
     }
 
     public function budget(){
+
         return (view('user.budget'));
     }
 }
