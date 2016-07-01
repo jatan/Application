@@ -21,9 +21,9 @@
 <body>
 <div class="nav-container">
     <ul class="flex__container">
-        <li class="flex__item"><a href="dashboard">MT</a></li>
-        <li class="flex__item"><a href="dashboard">DashBoard</a></li>
-        <li class="flex__item"><a href="account">Transactions</a></li>
+        <li class="flex__item"><a href="../dashboard">MT</a></li>
+        <li class="flex__item"><a href="../dashboard">DashBoard</a></li>
+        <li class="flex__item"><a href="../account">Transactions</a></li>
         <li class="flex__item"><a href="">Budgets</a></li>
         <li class="flex__item"><a href="">Reports</a></li>
         <li class="flex__item"><a href="">Bills</a></li>
@@ -55,7 +55,9 @@
             </thead>
             <tbody>
                 @foreach($display as $transaction)
-                    <tr>
+                    @if($transaction ['pending'] == 1)
+                        <tr class="white">
+                    @endif
                         <td>{{$transaction['name']}}</td>
                         <td>{{$transaction['amount']}}</td>
                         <td>{{$transaction['location']}}</td>

@@ -19,6 +19,10 @@ class userController extends Controller
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function dashboard(){
+        // $account = new bank_accounts();
+        // $accDisplay = $account -> getAllAccounts();
+        // var_dump($accDisplay);
+        // die;
         //return (Auth::user()->visible_accounts());
         return (view('user.dashboard'));
     }
@@ -33,11 +37,12 @@ class userController extends Controller
     public function getAccountDetails($id){
         $account = bank_accounts::find($id);
         $i = 0;
-        foreach ($account->transaction as $transactions) {
+        foreach ($account->transaction()->orderBy('date','desc')->get() as $transactions) {
             $toDisplay[$i]['name'] = $transactions->name;
             $toDisplay[$i]['amount'] = $transactions->amount;
             $toDisplay[$i]['location'] = $transactions->location_city.",".$transactions->location_state;
             $toDisplay[$i]['date'] = $transactions->date;
+            $toDisplay[$i]['pending'] = $transactions->pending;
             $i++;
         }
         // var_dump($account ->transaction);
@@ -56,13 +61,46 @@ class userController extends Controller
                 'json' => [
                     'client_id' => env('PLAID_CLIENT_ID'),
                     'secret' => env('PLAID_SECRET'),
-                    'access_token' => $token
+                    'access_token' => $token,
+                    'options' => '{"pending":"true"}'
                 ]
             ];
         $client = new Client();
         $response = $client->post($uri, $parameters);
         $array = json_decode($response->getBody(), true);
         // var_dump($array);
+
+        $accounts = $array['accounts'];
+        //return (dump($accounts));
+        foreach($accounts as $account_key => $account_value ){
+
+            $bank_account = bank_accounts::find($account_value['_id']);
+            if($bank_account){
+                $bank_account ->delete();
+            }
+            $bank_account= new bank_accounts();
+            $bank_account['id']=$account_value['_id'];
+            $bank_account['user_id']=Auth::user()->id;
+            $bank_account['access_token'] = $array['access_token'];
+            //if(isset($account_value['balance']['current']))
+            $bank_account['current_balance'] = $account_value['balance']['current'];
+            //if(isset($account_value['balance']['available']))
+            $bank_account['available_balance'] = $account_value['balance']['available'];
+            $bank_account['bank_name'] = $account_value['institution_type'];
+
+            if(isset($account_value['meta']['acc_limit']))
+                $bank_account['acc_limit'] = $account_value['meta']['acc_limit'];
+
+            if(isset($account_value['subtype']))
+            $bank_account['account_subtype'] = $account_value['subtype'];
+
+            $bank_account['name'] = $account_value['meta']['name'];
+            $bank_account['number'] = $account_value['meta']['number'];
+            $bank_account['account_type'] = $account_value['type'];
+            $bank_account['plaid_core'] = serialize($account_value);
+            $bank_account->save();
+            
+        }
         $transactions = $array['transactions'];
         //return $transactions;
         foreach($transactions as $transaction_key => $transaction_value){
