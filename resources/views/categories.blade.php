@@ -17,7 +17,7 @@
 
 </head>
 <body>
-    <h1>"List of categories"</h1>
+    <h1>List of categories</h1>
 
     <input type="text" id="search" placeholder="SEARCH..">
 

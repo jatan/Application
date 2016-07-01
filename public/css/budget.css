@@ -1,15 +1,15 @@
 .wrapper{
     margin-top: 80px;
     background-color: transparent;
-    border:1px solid red;
+/*    border:1px solid red;     */
     padding-bottom: 20px;
 }
 
 .months{
-    background-color: #8bc34a;
-    width: 70%;
+    /* background-color: #8bc34a; */
+    width: 80%;
     margin: auto;
-    height:50px;
+    height: 50px;
 }
 
 .row{
@@ -30,12 +30,12 @@
     color: #fff;;
 }
 .progress-container{
-    width: 70%;
+    width: 80%;
     margin: auto;
 }
 
 .panel{
-    width:70%;
+    width: 80%;
     margin:auto;
 }
 
@@ -45,12 +45,43 @@
 
 .card{
     background-color: rgba(210, 222, 228, 0.44) !important;
+    position: relative;
+    margin: 0.5rem 0 1rem 0;
+    background-color: #fff;
+    transition: box-shadow .25s;
+    border-radius: 2px;
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12);
+}
+
+.card .card-content {
+    padding: 10px 15px;
+    border-radius: 0 0 2px 2px;
+}
+
+.card .card-content .card-title {
+    line-height: 48px;
+    font-size: 24px;
+    font-weight: 300;
+}
+
+.card .card-action {
+    position: relative;
+    background-color: inherit;
+    border-top: 1px solid rgba(160,160,160,0.2);
+    padding: 10px 20px;
+    z-index: 2;
 }
 
 .card-action a{
     color: black !important;
+    margin-right: 20px;
+    transition: color .3s ease;
+    text-transform: uppercase;
 }
 
+.right{
+    float: right !important;
+}
 .animated-bar div {
     line-height: 20px;
     width:0%;
@@ -78,7 +109,7 @@
     }
 
     100% {
-        width: 75%;
+        width: 99.8%;
     }
 
 }

@@ -6,42 +6,31 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
-        <!--CSS-->
-        <!--Import Google Icon Font-->
-        <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
-        <!-- Compiled and minified CSS -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css">
 
         <link rel="stylesheet" href="../css/bootstrap.css">
         <link rel="stylesheet" href="../css/budget.css">
     </head>
     <body>
     <div class="nav-container">
-        <nav class="navbar navbar-fixed-top navbar-no-bg brown lighten-1" role="navigation">
+        <nav class="navbar" role="navigation">
             <div class="container">
-
-                <div class="collapse navbar-collapse" id="top-navbar-1">
-                    <ul class="nav navbar-nav navbar-right">
-
-                        <li><a class="scroll-link reset-fontsize" href="dashboard">Home</a></li>
-
-                        <li><a class="scroll-link reset-fontsize" href="dashboard">DashBoard</a></li>
-                        <li><a class="scroll-link reset-fontsize" href="transactions">Transactions</a></li>
-                        <li><a class="scroll-link reset-fontsize" href="budget">Budgets</a></li>
-                        <li><a class="scroll-link reset-fontsize" href="reports">Reports</a></li>
-                        <li><a class="scroll-link reset-fontsize" href="bills">Bills</a></li>
-                        <li><a class="scroll-link reset-fontsize" href="goal">Goal</a></li>
-                        <li><a class="scroll-link reset-fontsize" href="user">User</a></li>
-                        <li><a class="scroll-link reset-fontsize" href="logout">Logout</a></li>
-                    </ul>
-                </div>
+                <ul class="nav navbar-nav">
+                    <li><a class="scroll-link reset-fontsize" href="dashboard">Home</a></li>
+                    <li><a class="scroll-link reset-fontsize" href="dashboard">DashBoard</a></li>
+                    <li><a class="scroll-link reset-fontsize" href="transactions">Transactions</a></li>
+                    <li><a class="scroll-link reset-fontsize" href="budget">Budgets</a></li>
+                    <li><a class="scroll-link reset-fontsize" href="reports">Reports</a></li>
+                    <li><a class="scroll-link reset-fontsize" href="bills">Bills</a></li>
+                    <li><a class="scroll-link reset-fontsize" href="goal">Goal</a></li>
+                    <li><a class="scroll-link reset-fontsize" href="user">User</a></li>
+                    <li><a class="scroll-link reset-fontsize" href="logout">Logout</a></li>
+                </ul>
             </div>
         </nav>
     </div>
 
     <div class="wrapper">
-        This is main wrapper class.
+        <!--This is main wrapper class.-->
         <div class="months">
             <div class="row">
                 <div class="col-md-1 col-sm-1 custom"><a data-toggle="tab" href="#jan" aria-expanded="true">JAN</a></div>
@@ -65,58 +54,154 @@
                 </div>
                 <div class="panel-body">
                     <div class="progress-container">
-                        <div class="item-border">
-                            <div class="card">
-                                <div class="card-content black-text">
-                                    <span class="card-title">Home Rent</span>
-                                    <div class="progress test">
-                                        <div class="progress-bar progress-bar-danger" style="width:90%;">
-                                            90%
+                        <div class="card">
+                            <div class="card-content black-text">
+                                <span class="card-title">Home Rent</span>
+                                <div class="progress test">
+                                    <div class="progress-bar progress-bar-danger" style="width:{{$budgetUsed['Home Rent']['percentage']}}%;">
+                                        {{$budgetUsed['Home Rent']['percentage']}}%
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-action">
+                                <button class="btn" data-toggle="modal" data-target="#edithomerent">EDIT</button>
+                                <button class="btn right" data-toggle="modal" data-target="#deletehomerent">DELETE</button>
+                            </div>
+                            <div id="edithomerent" class="modal fade" role="dialog">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <div class="modal-title">
+                                                <button type="button" class="btn close" data-dismiss="modal">×</button>
+                                                <h3>Edit your Budget</h3>
+                                            </div>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form class="form-inline">
+                                                <div class="form-group">
+                                                    <label for="cat">Category</label>
+                                                    <select id="cat" class="form-control">
+                                                        <option>Home Rent</option>
+                                                        <option>Entertainment</option>
+                                                        <option>Travel</option>
+                                                        <option>Food and Drinks</option>
+                                                        <option>Auto Payment</option>
+                                                    </select>
+                                                </div>
+                                                <br>
+                                                <br>
+                                                <div class="form-group">
+                                                    <label for="amount">Amount</label>
+                                                    <input type="text" class="form-control" id="amount" value="{{$budgetLimits['Home Rent']['set']}}">
+                                                </div>
+                                                <br>
+                                                <br>
+                                                <div class="form-group">
+                                                    <label for="fr">Occurs</label>
+                                                    <select id="fr" class="form-control">
+                                                        <option>Every week</option>
+                                                        <option>Every month</option>
+                                                        <option>Every few months</option>
+                                                        <option>Every Year</option>
+                                                        <option>Custom</option>
+                                                    </select>
+                                                </div>
+                                            </form>
+
+                                        </div>
+                                        <div class="modal-footer text-center">
+                                            <button type="button" class="btn btn-success" data-dismiss="modal">SAVE</button>
+                                            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="card-action">
-                                    <a href="#">EDIT</a>
-                                    <a class="right" href="#">DELETE</a>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-content black-text">
+                                <span class="card-title">Entertainment</span>
+                                <div class="progress test animated-bar">
+                                    <div class="progress-bar progress-bar-warning" style="width:99.8%;">
+                                        75%
+                                    </div>
                                 </div>
                             </div>
+                            <div class="card-action">
+                                <a href="#">EDIT</a>
+                                <a class="right" href="#">DELETE</a>
+                            </div>
                         </div>
-                        <div class="item-border">
-                            <h3>Entertainment</h3>
-                            <div class="progress animated-bar">
-                                <div class="determinate white-text center" style="width:75%;">
-                                    75%
+                        <div class="card">
+                            <div class="card-content black-text">
+                                <span class="card-title">Travel</span>
+                                <div class="progress test">
+                                    <div class="progress-bar progress-bar-info" style="width:40%;">
+                                        40%
+                                    </div>
+                                    <div class="progress-bar progress-bar-primary" style="width:20%;">
+                                        20%
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <h4>Travel</h4>
-                        <div class="progress test">
-                            <div class="progress-bar progress-bar-info" style="width:60%;">
-                                60%
+                            <div class="card-action">
+                                <a href="#">EDIT</a>
+                                <a class="right" href="#">DELETE</a>
                             </div>
                         </div>
-                        <h4>Utilities</h4>
-                        <div class="progress test">
-                            <div class="progress-bar progress-bar-success" style="width:40%;">
-                                40%
+                        <div class="card">
+                            <div class="card-content black-text">
+                                <span class="card-title">Utilities</span>
+                                <div class="progress test">
+                                    <div class="progress-bar progress-bar-success" style="width:40%;">
+                                        40%
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-action">
+                                <a href="#">EDIT</a>
+                                <a class="right" href="#">DELETE</a>
                             </div>
                         </div>
-                        <h4>Auto Premium</h4>
-                        <div class="progress test">
-                            <div class="progress-bar progress-bar-success" style="width:45%;">
-                                45%
+                        <div class="card">
+                            <div class="card-content black-text">
+                                <span class="card-title">Auto Premium</span>
+                                <div class="progress test">
+                                    <div class="progress-bar progress-bar-success" style="width:45%;">
+                                        45%
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-action">
+                                <a href="#">EDIT</a>
+                                <a class="right" href="#">DELETE</a>
                             </div>
                         </div>
-                        <h4>Gas and Fuel</h4>
-                        <div class="progress test">
-                            <div class="progress-bar progress-bar-success" style="width:35%;">
-                                35%
+                        <div class="card">
+                            <div class="card-content black-text">
+                                <span class="card-title">Gas and Fuel</span>
+                                <div class="progress test">
+                                    <div class="progress-bar progress-bar-success" style="width:35%;">
+                                        35%
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-action">
+                                <a href="#">EDIT</a>
+                                <a class="right" href="#">DELETE</a>
                             </div>
                         </div>
-                        <h4>Shopping</h4>
-                        <div class="progress test">
-                            <div class="progress-bar progress-bar-success" style="width:10%;">
-                                10%
+                        <div class="card">
+                            <div class="card-content black-text">
+                                <span class="card-title">Shopping</span>
+                                <div class="progress test">
+                                    <div class="progress-bar progress-bar-success" style="width:10%;">
+                                        10%
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-action">
+                                <a href="#">EDIT</a>
+                                <a class="right" href="#">DELETE</a>
                             </div>
                         </div>
                     </div>
