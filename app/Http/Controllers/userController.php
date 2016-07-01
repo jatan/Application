@@ -244,7 +244,19 @@ class userController extends Controller
     }
 
     public function budget(){
+    //Sample data
 
-        return (view('user.budget'));
+
+        $budgetLimits = [
+            'Home Rent' => ['set'=>1100, 'used'=>900],
+            'Entertainment' => ['set'=>55, 'used'=>14],
+            'Travel' => ['set'=>300, 'used'=>110]
+        ];
+
+        $budgetUsed = [
+            'Home Rent' => ['percentage'=>round(100-(($budgetLimits['Home Rent']['set']-$budgetLimits['Home Rent']['used'])*100/$budgetLimits['Home Rent']['set']),1)]
+        ];
+        return (view('user.budget',['budgetLimits'=>$budgetLimits, 'budgetUsed'=>$budgetUsed]));
+
     }
 }
