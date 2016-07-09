@@ -11,10 +11,10 @@
     <!--Import Google Icon Font-->
     <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!--Import materialize.css-->
-    <link type="text/css" rel="stylesheet" href="/Application/public/materialize/css/materialize.css"  media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="/css/materialize.css"  media="screen,projection"/>
 
-    <link rel="stylesheet" href="/Application/public/css/bootstrap.css">
-    <link rel="stylesheet" href="/Application/public/css/trans.css">
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    <link rel="stylesheet" href="/css/trans.css">
 
 </head>
 
@@ -72,9 +72,9 @@
 </div>
 
 <!--Javascript-->
-<script src="../js/jquery-1.12.0.js"></script>
-<script src="../js/bootstrap.js"></script>
-<script src="../css/stopscroll.js"></script>
+<script src="/js/jquery-1.12.0.js"></script>
+<script src="/js/bootstrap.js"></script>
+<script src="/css/stopscroll.js"></script>
 </body>
 
 </html>

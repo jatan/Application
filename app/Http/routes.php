@@ -49,6 +49,11 @@ Route::group(['middleware' => ['web']], function () {
             'middleware' => 'auth',
             'uses' => 'usercontroller@budget'
         ]);
+    Route::get('user/newBudget',
+        [
+            'middleware' => 'auth',
+            'uses' => 'usercontroller@Processbudget'
+        ]);
     Route::get('user/logout',
         [
             'middleware' => 'auth',
@@ -83,5 +88,4 @@ Route::group(['middleware' => ['web']], function () {
     Route::post('/login','loginController@loginProcess');
 
     Route::get('/categories','categoryController@pullCategories');
-
 });

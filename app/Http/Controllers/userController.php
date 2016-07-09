@@ -282,19 +282,30 @@ class userController extends Controller
     }
 
     public function budget(){
-    //Sample data
 
+        //1. Fetch budget status form database table
+        //2. Return to view page as variables
 
-        $budgetLimits = [
-            'Home Rent' => ['set'=>1100, 'used'=>900],
-            'Entertainment' => ['set'=>55, 'used'=>14],
-            'Travel' => ['set'=>300, 'used'=>110]
-        ];
+        //Sample data
+    $budgetLimits = [
+        'Home Rent' => ['set'=>1100, 'used'=>900],
+        'Entertainment' => ['set'=>55, 'used'=>14],
+        'Travel' => ['set'=>300, 'used'=>110]
+    ];
+    $budgetUsed = [
+        'Home Rent' => ['percentage'=>round(100-(($budgetLimits['Home Rent']['set']-$budgetLimits['Home Rent']['used'])*100/$budgetLimits['Home Rent']['set']),1)]
+    ];
+        
+    return (view('user.budget',['budgetLimits'=>$budgetLimits, 'budgetUsed'=>$budgetUsed]));
 
-        $budgetUsed = [
-            'Home Rent' => ['percentage'=>round(100-(($budgetLimits['Home Rent']['set']-$budgetLimits['Home Rent']['used'])*100/$budgetLimits['Home Rent']['set']),1)]
-        ];
-        return (view('user.budget',['budgetLimits'=>$budgetLimits, 'budgetUsed'=>$budgetUsed]));
+    }
 
+    public function Processbudget(){
+
+        var_dump($_GET);
+        echo 'User has created a new budget of '.$_GET['Setamount'].' for '.$_GET['category'].' category for frequency of '.$_GET['frequency'];
+        //1. Save this budget details in database
+        //2. Redirect to Budgets page
+        //3. This should display newly created budget
     }
 }

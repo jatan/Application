@@ -35,7 +35,7 @@
             <div class="row">
                 <div class="col-md-1 col-sm-1 custom"><a data-toggle="tab" href="#jan" aria-expanded="true">JAN</a></div>
                 <div class="col-md-1 col-sm-1 custom"><a data-toggle="tab" href="#feb" aria-expanded="false">FEB</a></div>
-                <div class="col-md-1 col-sm-1 custom">MAR</div>
+{{--            <div class="col-md-1 col-sm-1 custom">MAR</div>
                 <div class="col-md-1 col-sm-1 custom">APR</div>
                 <div class="col-md-1 col-sm-1 custom">MAY</div>
                 <div class="col-md-1 col-sm-1 custom">JUN</div>
@@ -44,225 +44,111 @@
                 <div class="col-md-1 col-sm-1 custom">SEP</div>
                 <div class="col-md-1 col-sm-1 custom">OCT</div>
                 <div class="col-md-1 col-sm-1 custom">NOV</div>
-                <div class="col-md-1 col-sm-1 custom">DEC</div>
+                <div class="col-md-1 col-sm-1 custom">DEC</div>--}}
             </div>
         </div>
         <div class="tab-content">
-            <div id="jan" class="panel panel-default tab-pane fade active in">
+            <div id="jan" class="panel panel-info tab-pane fade active in">
                 <div class="panel-heading">
                     <div class="panel-title">January month's Budget</div>
                 </div>
+
                 <div class="panel-body">
-                    <div class="progress-container">
-                        <div class="card">
-                            <div class="card-content black-text">
-                                <span class="card-title">Home Rent</span>
-                                <div class="progress test">
-                                    <div class="progress-bar progress-bar-danger" style="width:{{$budgetUsed['Home Rent']['percentage']}}%;">
-                                        {{$budgetUsed['Home Rent']['percentage']}}%
+                    <div style="float: left;">
+                        <button class="btn btn-success" data-toggle="modal" data-target="#newBudgetForm">New Budget</button>
+                    </div>
+                    <div class="right">
+                        <label>sort by</label>
+                        <select>
+                            <option>Status</option>
+                            <option>Category</option>
+                            <option>Amount: High to Low</option>
+                            <option>Amount: Low to High</option>
+                        </select>
+                    </div>
+                    <div id="newBudgetForm" class="modal fade" role="dialog" style="display: none;">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <div class="modal-title">
+                                        <button type="button" class="btn close" data-dismiss="modal">×</button>
+                                        <h4>Create New Budget</h4>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="card-action">
-                                <button class="btn" data-toggle="modal" data-target="#edithomerent">EDIT</button>
-                                <button class="btn right" data-toggle="modal" data-target="#deletehomerent">DELETE</button>
-                            </div>
-                            <div id="edithomerent" class="modal fade" role="dialog">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <div class="modal-title">
-                                                <button type="button" class="btn close" data-dismiss="modal">×</button>
-                                                <h3>Edit your Budget</h3>
+                                <div class="modal-body">
+                                    <form class="form-inline" action="newBudget" method="get">
+                                        <div class="form-group">
+                                            <label for="cat">Category</label>
+                                            <select id="cat" class="form-control" name="category">
+                                                <option>Bank Fees</option>
+                                                <option>Cash Advance</option>
+                                                <option>Community</option>
+                                                <option>Food and Drink</option>
+                                                <option>Healthcare</option>
+                                                <option>Interest</option>
+                                                <option>Payment</option>
+                                                <option>Recreation</option>
+                                                <option>Service</option>
+                                                <option>Shops</option>
+                                                <option>Tax</option>
+                                                <option>Transfer</option>
+                                                <option>Travel</option>
+                                            </select>
+                                        </div>
+                                        <br>
+                                        <br>
+                                        <div class="form-group">
+                                            <h4>When will this happen?</h4>
+                                            <div class="radio">
+                                                <label>
+                                                    <input type="radio" name="frequency" id="option1" value="everyMonth" checked>
+                                                    Every Month
+                                                </label>
+                                            </div>
+                                            <div class="radio">
+                                                <label>
+                                                    <input type="radio" name="frequency" id="option2" value="everyFewMonth">
+                                                    Every Few Months
+                                                </label>
+                                            </div>
+                                            <div class="radio">
+                                                <label>
+                                                    <input type="radio" name="frequency" id="option3" value="once">
+                                                    Once
+                                                </label>
                                             </div>
                                         </div>
-                                        <div class="modal-body">
-                                            <form class="form-inline">
-                                                <div class="form-group">
-                                                    <label for="cat">Category</label>
-                                                    <select id="cat" class="form-control">
-                                                        <option>Home Rent</option>
-                                                        <option>Entertainment</option>
-                                                        <option>Travel</option>
-                                                        <option>Food and Drinks</option>
-                                                        <option>Auto Payment</option>
-                                                    </select>
-                                                </div>
-                                                <br>
-                                                <br>
-                                                <div class="form-group">
-                                                    <label for="amount">Amount</label>
-                                                    <input type="text" class="form-control" id="amount" value="{{$budgetLimits['Home Rent']['set']}}">
-                                                </div>
-                                                <br>
-                                                <br>
-                                                <div class="form-group">
-                                                    <label for="fr">Occurs</label>
-                                                    <select id="fr" class="form-control">
-                                                        <option>Every week</option>
-                                                        <option>Every month</option>
-                                                        <option>Every few months</option>
-                                                        <option>Every Year</option>
-                                                        <option>Custom</option>
-                                                    </select>
-                                                </div>
-                                            </form>
+                                        <br>
+                                        <br>
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" name="rollOverFlag">Start each new month with the previous month's leftover amount
+                                            </label>
+                                        </div>
+                                        <br>
+                                        <br>
+                                        <div class="form-group">
+                                            <label for="amount">Amount</label>
+                                            <input type="number" class="form-control" id="amount" name="Setamount" value="">
+                                        </div>
+                                        <br>
+                                        <br>
+                                        <button type="submit" class="btn btn-success left">SAVE</button>
+                                        <button type="button" class="btn btn-danger right" data-dismiss="modal">CANCEL</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-status-display text-center" style="margin-top: 50px;">
+                        <h3>You have not set up any budgets yet</h3>
+                    </div>
+                </div>
 
-                                        </div>
-                                        <div class="modal-footer text-center">
-                                            <button type="button" class="btn btn-success" data-dismiss="modal">SAVE</button>
-                                            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-content black-text">
-                                <span class="card-title">Entertainment</span>
-                                <div class="progress test animated-bar">
-                                    <div class="progress-bar progress-bar-warning" style="width:99.8%;">
-                                        75%
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-action">
-                                <a href="#">EDIT</a>
-                                <a class="right" href="#">DELETE</a>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-content black-text">
-                                <span class="card-title">Travel</span>
-                                <div class="progress test">
-                                    <div class="progress-bar progress-bar-info" style="width:40%;">
-                                        40%
-                                    </div>
-                                    <div class="progress-bar progress-bar-primary" style="width:20%;">
-                                        20%
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-action">
-                                <a href="#">EDIT</a>
-                                <a class="right" href="#">DELETE</a>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-content black-text">
-                                <span class="card-title">Utilities</span>
-                                <div class="progress test">
-                                    <div class="progress-bar progress-bar-success" style="width:40%;">
-                                        40%
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-action">
-                                <a href="#">EDIT</a>
-                                <a class="right" href="#">DELETE</a>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-content black-text">
-                                <span class="card-title">Auto Premium</span>
-                                <div class="progress test">
-                                    <div class="progress-bar progress-bar-success" style="width:45%;">
-                                        45%
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-action">
-                                <a href="#">EDIT</a>
-                                <a class="right" href="#">DELETE</a>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-content black-text">
-                                <span class="card-title">Gas and Fuel</span>
-                                <div class="progress test">
-                                    <div class="progress-bar progress-bar-success" style="width:35%;">
-                                        35%
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-action">
-                                <a href="#">EDIT</a>
-                                <a class="right" href="#">DELETE</a>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-content black-text">
-                                <span class="card-title">Shopping</span>
-                                <div class="progress test">
-                                    <div class="progress-bar progress-bar-success" style="width:10%;">
-                                        10%
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-action">
-                                <a href="#">EDIT</a>
-                                <a class="right" href="#">DELETE</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id="feb" class="panel panel-default tab-pane fade">
-                <div class="panel-heading">
-                    <div class="panel-title">February month's Budget</div>
-                </div>
-                <div class="panel-body">
-                    <div class="progress-container">
-                        <h4>Food and Dining</h4>
-                        <div class="progress">
-                            <div class="progress-bar progress-bar-default" style="width:60%;">
-                                60%
-                            </div>
-                        </div>
-                        <h4>Entertainment</h4>
-                        <div class="progress">
-                            <div class="progress-bar progress-bar-warning" style="width:85%;">
-                                85%
-                            </div>
-                        </div>
-                        <h4>Travel</h4>
-                        <div class="progress">
-                            <div class="progress-bar progress-bar-success" style="width:40%;">
-                                40%
-                            </div>
-                        </div>
-                        <h4>Utilities</h4>
-                        <div class="progress">
-                            <div class="progress-bar progress-bar-success" style="width:33%;">
-                                33%
-                            </div>
-                        </div>
-                        <h4>Auto Premium</h4>
-                        <div class="progress">
-                            <div class="progress-bar progress-bar-warning" style="width:40%;">
-                                40%
-                            </div>
-                        </div>
-                        <h4>Gas and Fuel</h4>
-                        <div class="progress">
-                            <div class="progress-bar progress-bar-warning" style="width:55%;">
-                                55%
-                            </div>
-                        </div>
-                        <h4>Shopping</h4>
-                        <div class="progress">
-                            <div class="progress-bar progress-bar-warning" style="width:68%;">
-                                68%
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
             </div>
         </div>
-
     </div>
-    <!-- Compiled and minified JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js"></script>
 
     <!--Javascript-->
     <script src="../js/jquery-1.12.0.js"></script>
