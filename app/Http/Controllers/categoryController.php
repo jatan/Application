@@ -18,31 +18,29 @@ class categoryController extends Controller
 
         $client = new Client();
         $response = $client->get($uri);
-        $array = json_decode($response->getBody(), true);
-        //var_dump($array['66']);
+        $categories = json_decode($response->getBody(), true);
+        // var_dump($categories);
 
 
 
-		foreach ($array as $record){
-			$category = new Categories();
-			foreach($record as $key=>$value){
-				if($key == 'id'){
-					if(Categories::where('Cat_ID','=',$value) -> exists())
-						break;
-					$category['Cat_ID'] = $value;
-				}
-				//echo "I should not be here";
-				if($key == 'type')
-					$category['Type'] = $value;
-				if($key == 'hierarchy') {
-					$category['c1'] = $value['0'];
-					isset($value['1'])? $category['c2'] = $value['1'] : $category['c2'] = null;
-					isset($value['2'])? $category['c3'] = $value['2'] : $category['c3'] = null;
-				}
-				$category->save();
-			}
+		foreach ($categories as $category_key => $category_value){
+			$category = Categories::find($category_value['id']);
+            if(!$category){
+                $category = new Categories();
+                $category['id'] = $category_value['id'];
+
+                $category['type'] = $category_value['type'];
+                isset($category_value['hierarchy'][0]) ? $category['c1'] = $category_value['hierarchy'][0] : $category['c1'] = null;
+                isset($category_value['hierarchy'][1]) ? $category['c2'] = $category_value['hierarchy'][1] : $category['c2'] = null;
+                isset($category_value['hierarchy'][2]) ? $category['c3'] = $category_value['hierarchy'][2] : $category['c3'] = null;
+                // if(isset($category_value['meta']['location']['city']))
+                //     $category['location_city'] = $category_value['meta']['location']['city'];
+                
+                var_dump($category);
+                $category->save();
+                // die;
+            }
 		}
-
-		return (view('categories')->with('data', $array));
+		return (view('categories')->with('data', $category));
     }
 }
