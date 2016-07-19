@@ -19,11 +19,6 @@ class userController extends Controller
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function dashboard(){
-        // $account = new bank_accounts();
-        // $accDisplay = $account -> getAllAccounts();
-        // var_dump($accDisplay);
-        // die;
-        //return (Auth::user()->visible_accounts());
         return (view('user.dashboard'));
     }
 
@@ -57,14 +52,14 @@ class userController extends Controller
         $token = $account ->access_token;
         var_dump($token);
         $uri = 'https://tartan.plaid.com/connect/get';
-            $parameters = [
-                'json' => [
-                    'client_id' => env('PLAID_CLIENT_ID'),
-                    'secret' => env('PLAID_SECRET'),
-                    'access_token' => $token,
-                    'options' => '{"pending":"true"}'
-                ]
-            ];
+        $parameters = [
+            'json' => [
+                'client_id' => env('PLAID_CLIENT_ID'),
+                'secret' => env('PLAID_SECRET'),
+                'access_token' => $token,
+                'options' => '{"pending":"true"}'
+            ]
+        ];
         $client = new Client();
         $response = $client->post($uri, $parameters);
         $array = json_decode($response->getBody(), true);

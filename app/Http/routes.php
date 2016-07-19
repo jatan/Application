@@ -49,10 +49,10 @@ Route::group(['middleware' => ['web']], function () {
             'middleware' => 'auth',
             'uses' => 'usercontroller@budget'
         ]);
-    Route::get('user/newBudget',
+    Route::get('budget/createBudget',
         [
             'middleware' => 'auth',
-            'uses' => 'usercontroller@Processbudget'
+            'uses' => 'budgetController@store'
         ]);
     Route::get('user/logout',
         [
