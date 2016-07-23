@@ -25,9 +25,9 @@ class userController extends Controller
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function addAccount(){
-        return(view('user.addAccount'));
-    }
+//    public function addAccount(){
+//        return(view('user.addAccount'));
+//    }
 
     public function getAccountDetails($id){
         $account = bank_accounts::find($id);
@@ -97,7 +97,7 @@ class userController extends Controller
             
         }
         $transactions = $array['transactions'];
-        //return $transactions;
+
         foreach($transactions as $transaction_key => $transaction_value){
             $transaction = transaction::find($transaction_value['_id']);
             if(!$transaction){
@@ -238,14 +238,6 @@ class userController extends Controller
         }
         //return $transaction;
         return(redirect::to('user/dashboard'));
-    }
-
-    /**
-     *
-     */
-    public function logout(){
-        auth::logout();
-        return(Redirect()->intended('login'));
     }
 
     public function delete($id){

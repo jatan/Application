@@ -6,43 +6,33 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 
-class budgetController extends Controller
+class profileController extends Controller
 {
-
     public function index(){
-        return (view('budget.bu_index'));
+        return (view('profile.pr_index'));
     }
 
-    public function createBudget(){
-
-//        $input = [
-//            'category' => $_GET['category'],
-//            'frequency' => $_GET['frequency'],
-//            'rollOverFlag' => $_GET['rollOverFlag'],
-//            'Setamount' => $_GET['Setamount'],
-//        ];
-//        return json_encode($input);
-
+    public function createProfile(){
         $data = '<h3>Create Operation Successful</h3>';
         return ($data);
     }
 
-    public function getBudget_byId($id){
+    public function getProfile_byId($id){
         $data = '<h3>Read Operation Successful for ID: '.$id.'</h3>';
         return ($data);
     }
 
-    public function getBudgets(){
+    public function getProfiles(){
         $data = '<h3>Read All Operation Successful</h3>';
         return ($data);
     }
 
-    public function updateBudget_byId($id){
+    public function updateProfile_byId($id){
         $data = '<h3>Update Operation Successful for ID: '.$id.'</h3>';
         return ($data);
     }
 
-    public function deleteBudget_byId($id){
+    public function deleteProfile_byId($id){
         $data = '<h3>Delete Operation Successful for ID: '.$id.'</h3>';
         return ($data);
     }

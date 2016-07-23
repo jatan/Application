@@ -10,10 +10,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Redirect;
 
-class loginController extends Controller
-{
+class loginController extends Controller{
+
    public function login(){
-       return view('login');
+       return view('common.login');
    }
 
     /**
@@ -28,9 +28,7 @@ class loginController extends Controller
             'confirmed' => 1
         ];
 
-        /** @var TYPE_NAME $credentials */
-        if ( ! Auth::attempt($credentials))
-        {
+        if ( ! Auth::attempt($credentials)) {
             return Redirect::back()
                 ->withInput()
                 ->withErrors([
@@ -38,5 +36,13 @@ class loginController extends Controller
                 ]);
         }
         return Redirect()->intended('user/dashboard');
+    }
+
+    /**
+     *
+     */
+    public function logout(){
+        auth::logout();
+        return(Redirect()->intended('login'));
     }
 }

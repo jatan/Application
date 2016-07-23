@@ -1,0 +1,27 @@
+/* Navigation Bar start */
+.navbar-nav_floatNone{
+    float: none;
+}
+.flex__container{
+    height: 100%;
+    display: flex;
+    flex-direction:row;
+    align-items:center;
+    justify-content:space-around;
+}
+.flex__container li{
+    font-size: 20px;
+}
+/* Navigation Bar end */
+
+/* All Content wrapper */
+.wrapper {
+    padding-top: 50px;
+    text-align: center;
+}
+
+
+.title {
+    font-weight: 100;
+    font-size: 96px;
+}
