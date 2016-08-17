@@ -44,6 +44,7 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('user/account/delete/{id}',['middleware' => 'auth', 'uses' => 'accountController@deleteAccount_byId']);
 
     //Bills
+
     Route::get('user/bill',['middleware' => 'auth', 'uses' => 'billController@index']);
     Route::get('user/bill/getAll',['middleware' => 'auth', 'uses' => 'billController@getBills']);
     Route::get('user/bill/getbyId/{id}',['middleware' => 'auth', 'uses' => 'billController@getBill_byId']);

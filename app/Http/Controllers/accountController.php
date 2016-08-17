@@ -156,8 +156,8 @@ class accountController extends Controller
     private function setTransaction($transactions){
         foreach($transactions as $transaction_key => $transaction_value){
             $transaction = new transaction();
+            $transaction['id'] = $transaction_value['_id'];
             $transaction['bank_accounts_id'] = $transaction_value['_account'];
-            Log::info('Bank Account ID: '.$transaction_value['_account']);
             $transaction['amount'] = $transaction_value['amount'];
             $transaction['date'] = $transaction_value['date'];
             $transaction['name'] = $transaction_value['name'];

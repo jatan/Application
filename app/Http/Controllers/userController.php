@@ -47,7 +47,7 @@ class userController extends Controller
     }
 
     public function sync($id){
-
+        ;
         $account = bank_accounts::find($id);
         $token = $account ->access_token;
         var_dump($token);
