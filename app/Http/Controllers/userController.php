@@ -94,7 +94,7 @@ class userController extends Controller
             $bank_account['account_type'] = $account_value['type'];
             $bank_account['plaid_core'] = serialize($account_value);
             $bank_account->save();
-            
+
         }
         $transactions = $array['transactions'];
 
@@ -274,16 +274,16 @@ class userController extends Controller
         //2. Return to view page as variables
 
         //Sample data
-    $budgetLimits = [
-        'Home Rent' => ['set'=>1100, 'used'=>900],
-        'Entertainment' => ['set'=>55, 'used'=>14],
-        'Travel' => ['set'=>300, 'used'=>110]
-    ];
-    $budgetUsed = [
-        'Home Rent' => ['percentage'=>round(100-(($budgetLimits['Home Rent']['set']-$budgetLimits['Home Rent']['used'])*100/$budgetLimits['Home Rent']['set']),1)]
-    ];
-        
-    return (view('user.budget',['budgetLimits'=>$budgetLimits, 'budgetUsed'=>$budgetUsed]));
+      $budgetLimits = [
+          'Home Rent' => ['set'=>1100, 'used'=>900],
+          'Entertainment' => ['set'=>55, 'used'=>14],
+          'Travel' => ['set'=>300, 'used'=>110]
+      ];
+      $budgetUsed = [
+          'Home Rent' => ['percentage'=>round(100-(($budgetLimits['Home Rent']['set']-$budgetLimits['Home Rent']['used'])*100/$budgetLimits['Home Rent']['set']),1)]
+      ];
+
+      return (view('user.budget',['budgetLimits'=>$budgetLimits, 'budgetUsed'=>$budgetUsed]));
 
     }
 

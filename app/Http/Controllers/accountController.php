@@ -34,13 +34,13 @@ class accountController extends Controller
             if (isset($input['radio'])) {
                 Log::info("step1");
                 $uri = 'https://tartan.plaid.com/connect/step';
-                $access_token = '{"send_method":{"mask":"' . $input["radio"] . '"}}';
+                $options = '{"send_method":{"mask":"' . $input["radio"] . '"}}';
                 $parameters = [
                     'json' => [
                         'client_id' => env('PLAID_CLIENT_ID'),
                         'secret' => env('PLAID_SECRET'),
                         'access_token' => $input['access_token'],
-                        'options' => $options
+	                    'options' => $options
                     ]
                 ];
             } else if (isset($input['access_token'])) {
@@ -99,20 +99,23 @@ class accountController extends Controller
 
             //Save all the transactions from each account of the given Bank.
             $transactions = $array['transactions'];
-            $this->setTransaction($transactions);
+            $this->setTransaction($transactions, $accessToken);
 
             return (redirect::to('user/dashboard'));
         }
     }
 
     public function getAccount_byId($id){
-        $data = '<h3>Read Operation Successful for ID: '.$id.'</h3>';
+        $account = bank_accounts::find($id);
+        $data = '<h3>Read Operation Successful for ID: '.$id.' and its Current balance is: '.$account['current_balance'].'</h3>';
         return ($data);
     }
 
     public function getAccounts(){
-        $data = '<h3>Read All Operation Successful</h3>';
-        return ($data);
+        $accounts = bank_accounts::all()->groupBy('access_token');
+	    
+        $resp = view('account.ac_getAll')->with('accounts', $accounts);
+        return ($resp);
     }
 
     public function updateAccount_byId($id){
@@ -129,7 +132,7 @@ class accountController extends Controller
     private function setAccount($accounts, $accessToken){
         foreach($accounts as $account_key => $account_value ){
             $bank_account= new bank_accounts();
-            $bank_account['id']=$account_value['_id'];
+            $bank_account['id']=$accessToken.$account_value['_id'];
             $bank_account['user_id']=Auth::user()->id;
             $bank_account['access_token'] = $accessToken;
             //if(isset($account_value['balance']['current']))
@@ -153,11 +156,11 @@ class accountController extends Controller
     }
 
     //Stores given array of transactions to DB
-    private function setTransaction($transactions){
+    private function setTransaction($transactions, $accessToken){
         foreach($transactions as $transaction_key => $transaction_value){
             $transaction = new transaction();
-            $transaction['id'] = $transaction_value['_id'];
-            $transaction['bank_accounts_id'] = $transaction_value['_account'];
+            $transaction['id'] = $accessToken.$transaction_value['_id'];
+            $transaction['bank_accounts_id'] = $accessToken.$transaction_value['_account'];
             $transaction['amount'] = $transaction_value['amount'];
             $transaction['date'] = $transaction_value['date'];
             $transaction['name'] = $transaction_value['name'];

@@ -1,0 +1,11 @@
+bank - bofa
+username - plaid_test
+password - plaid_good
+
+#This gives mfa response as questions
+
+bank - chase
+username - plaid_test
+password - plaid_good
+
+#This gives mfa response as text or email

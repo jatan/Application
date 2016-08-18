@@ -7,7 +7,8 @@ $(document).ready(function() {
             {
                 'X-CSRF-Token': $('input[name="_token"]').val()
             }
-        });
+        }
+    );
 
     $('.testing a').click(function (event) {
         event.preventDefault();
@@ -18,7 +19,6 @@ $(document).ready(function() {
                 format: 'json'
             },
             success: function (data) {
-                console.log(data);
                 $('.response').html(data);
             },
             error: function (data) {
@@ -29,7 +29,7 @@ $(document).ready(function() {
         });
     });
 
-
+    // Create account STEP-1
     $('.response').on('submit','#register' ,function (event) {
         event.preventDefault();
         var formData = $("#register").serializeArray();
@@ -46,12 +46,12 @@ $(document).ready(function() {
             },
             error: function (data) {
                 console.log(data);
-                $('.response').text(data);
+                $('body').html(data.responseText);    // This  will print error stack message on body
             },
-            type: 'POST'          // not working with type: POST
+            type: 'POST'
         });
     });
-
+    // Create account STEP-2
     $('.response').on('submit','#registerStep' ,function (event) {
         event.preventDefault();
         var formData = $("#registerStep").serializeArray();
@@ -67,11 +67,27 @@ $(document).ready(function() {
                 $('.response').html(data);
             },
             error: function (data) {
-                console.log(data);
-                $('.response').text(data);
+              console.log(data);
+              $('body').html(data.responseText);    // This  will print error stack message on body
             },
-            type: 'POST'          // not working with type: POST
+            type: 'POST'
         });
     });
 
+    $('.response').on('click', '.getAccountDetails a', function (event){
+        event.preventDefault();
+        console.log($(this).attr('href'));
+        $.ajax({
+          url: $(this).attr('href'),
+          success: function (data) {
+              console.log(data);
+              $('.response').html(data);
+          },
+          error: function (data) {
+            console.log(data);
+            $('body').html(data.responseText);    // This  will print error stack message on body
+          },
+          type: 'POST'
+        });
+    });
 });
