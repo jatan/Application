@@ -41,7 +41,7 @@ Route::group(['middleware' => ['web']], function () {
     Route::get ('user/account/create',['middleware' => 'auth', 'uses' => 'accountController@createAccount']);
     Route::post('user/account/create',['middleware' => 'auth', 'uses' => 'accountController@createAccount_process']);
     Route::get('user/account/update/{id}',['middleware' => 'auth', 'uses' => 'accountController@updateAccount_byId']);
-    Route::get('user/account/delete/{id}',['middleware' => 'auth', 'uses' => 'accountController@deleteAccount_byId']);
+    Route::get('user/account/delete/{token}',['middleware' => 'auth', 'uses' => 'accountController@deleteAccount']);
 
     //Bills
 
@@ -64,24 +64,26 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('/categories_reload','categoryController@reloadCategories');
     Route::get('/categories','categoryController@viewCategories');
 
-/*
-    Route::get('/user/{id}/delete','usercontroller@delete');
-    Route::get('/user/{id}/hide','usercontroller@hide');
-    Route::get('/user/{id}/unhide','usercontroller@unhide');
-    Route::post('user/addAccount','userController@addAccountProcess');
+    Route::get('/longtail', 'accountController@longtail');
 
-    Route::get('user/addAccount',['middleware' => 'auth',
-            'uses' => 'usercontroller@addAccount'
-        ]);
-    Route::get('user/addAccountStep',['middleware' => 'auth',
-            'uses' => 'usercontroller@addAccountStep'
-        ]);
-    Route::get('user/{id}/account',['middleware' => 'auth',
-            'uses' => 'usercontroller@getAccountDetails'
-        ]);
-    Route::get('user/{id}/sync',['middleware' => 'auth',
-            'uses' => 'usercontroller@sync'
-        ]);
-*/
+    /*
+		Route::get('/user/{id}/delete','usercontroller@delete');
+		Route::get('/user/{id}/hide','usercontroller@hide');
+		Route::get('/user/{id}/unhide','usercontroller@unhide');
+		Route::post('user/addAccount','userController@addAccountProcess');
+
+		Route::get('user/addAccount',['middleware' => 'auth',
+				'uses' => 'usercontroller@addAccount'
+			]);
+		Route::get('user/addAccountStep',['middleware' => 'auth',
+				'uses' => 'usercontroller@addAccountStep'
+			]);
+		Route::get('user/{id}/account',['middleware' => 'auth',
+				'uses' => 'usercontroller@getAccountDetails'
+			]);
+		Route::get('user/{id}/sync',['middleware' => 'auth',
+				'uses' => 'usercontroller@sync'
+			]);
+	*/
 
 });
