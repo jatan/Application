@@ -1,5 +1,6 @@
 <?php
 
+
 Route::group(['middleware' => ['web']], function () {
 
     //Landing Page
@@ -42,7 +43,8 @@ Route::group(['middleware' => ['web']], function () {
     Route::post('user/account/create',['middleware' => 'auth', 'uses' => 'accountController@createAccount_process']);
     Route::get('user/account/update/{id}',['middleware' => 'auth', 'uses' => 'accountController@updateAccount_byId']);
     Route::get('user/account/delete/{token}',['middleware' => 'auth', 'uses' => 'accountController@deleteAccount']);
-
+	Route::post('user/account/hide_toggle/{id}',['middleware' => 'auth', 'uses' => 'accountController@hideToggle']);
+	Route::post('user/account/sync/{id}',['middleware' => 'auth', 'uses' => 'accountController@syncAccount']);
     //Bills
 
     Route::get('user/bill',['middleware' => 'auth', 'uses' => 'billController@index']);
@@ -65,25 +67,5 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('/categories','categoryController@viewCategories');
 
     Route::get('/longtail', 'accountController@longtail');
-
-    /*
-		Route::get('/user/{id}/delete','usercontroller@delete');
-		Route::get('/user/{id}/hide','usercontroller@hide');
-		Route::get('/user/{id}/unhide','usercontroller@unhide');
-		Route::post('user/addAccount','userController@addAccountProcess');
-
-		Route::get('user/addAccount',['middleware' => 'auth',
-				'uses' => 'usercontroller@addAccount'
-			]);
-		Route::get('user/addAccountStep',['middleware' => 'auth',
-				'uses' => 'usercontroller@addAccountStep'
-			]);
-		Route::get('user/{id}/account',['middleware' => 'auth',
-				'uses' => 'usercontroller@getAccountDetails'
-			]);
-		Route::get('user/{id}/sync',['middleware' => 'auth',
-				'uses' => 'usercontroller@sync'
-			]);
-	*/
 
 });

@@ -5,12 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Requests;
 use App\bank_accounts;
 use App\transaction;
+use App\longtailinst;
 use GuzzleHttp\Client;
 use Request;
 use Curl;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Input;
 use Log;
 
 class accountController extends Controller
@@ -95,11 +95,15 @@ class accountController extends Controller
 			//Save each account returned for the given account credentials for a given Bank.
 			$accounts = $array['accounts'];
 			$accessToken = $array['access_token'];
-			$this->setAccount($accounts, $accessToken);
+			foreach($accounts as $account_key => $account_value ){
+				$this->setAccount($account_value, $accessToken);
+			}
 
 			//Save all the transactions from each account of the given Bank.
 			$transactions = $array['transactions'];
-			$this->setTransaction($transactions, $accessToken);
+			foreach($transactions as $transaction_key => $transaction_value){
+				$this->setTransaction($transaction_value, $accessToken);
+			}
 
 			return (redirect::to('user/dashboard'));
 		}
@@ -126,85 +130,166 @@ class accountController extends Controller
 	public function deleteAccount($token){
 
 		$accounts = bank_accounts::all()->where('access_token', $token);
+		$uri = 'https://tartan.plaid.com/connect';
+		$parameters = [
+				'json' => [
+						'client_id' => env('PLAID_CLIENT_ID'),
+						'secret' => env('PLAID_SECRET'),
+						'access_token' => $token
+				]
+		];
+		$client = new Client();
+		$response = $client->delete($uri, $parameters);
+		$array = json_decode($response->getBody(), true);
+
+		Log::info($array);
 
 		$respText = "";
-		foreach ($accounts as $account) {
-			Log::info($account);
-			if($account->delete()){
-				$respText = $respText."<h3>".$account['name']." Account Deleted successfully</h3>";
+		if (strpos($array['message'], 'Success') !== false) {				// If response message contains Success
+			foreach ($accounts as $account) {
+				//Log::info($account);
+				if($account->delete()){
+					$respText = $respText."<h3>".$account['name']." Account Deleted successfully</h3>";
+				}
 			}
 		}
-		$data = '<h3>Delete Operation Successful for ID: '.$token.'</h3>';
+		else {
+			$respText = $array['message'];
+		}
+
 		return ($respText);
+
 	}
 
+	public function hideToggle($id){
+		$account = bank_accounts::find($id);
+		if ($account->hidden_flag == false)
+			$account->update(['hidden_flag' => 1]);
+		else $account->update(['hidden_flag' => 0]);
 
-	public function longtail(){
-		$uri = 'https://tartan.plaid.com/institutions/longtail';
+		return(redirect::to('user/account/getAll'));
+	}
+
+	public function syncAccount($id){
+
+		$account = bank_accounts::find($id);
+		$token = $account ->access_token;
+
+		$uri = 'https://tartan.plaid.com/connect/get';
 		$parameters = [
-			'json' => [
-				'client_id' => 'test_id',
-				'secret' => 'test_secret',
-				'count' => 2000,
-				'offset' => 12000
-			]
+				'json' => [
+						'client_id' => env('PLAID_CLIENT_ID'),
+						'secret' => env('PLAID_SECRET'),
+						'access_token' => $token,
+						'options' => '{"pending":"true"}'
+				]
 		];
 		$client = new Client();
 		$response = $client->post($uri, $parameters);
 		$array = json_decode($response->getBody(), true);
-		Log::info(count($array));
 
+		$accounts = $array['accounts'];
+		$transactions = $array['transactions'];
+
+		foreach($accounts as $account_key => $account_value ){
+			$bank_account = bank_accounts::find($token.$account_value['_id']);
+			if($bank_account){
+				$bank_account ->delete();
+			}
+			$this->setAccount($account_value, $token);
+		}
+
+		foreach($transactions as $transaction_key => $transaction_value){
+			$transaction = transaction::find($token.$transaction_value['_id']);
+			if(!$transaction){
+				$this->setTransaction($transaction_value, $token);
+			}
+		}
+		return(redirect::to('user/account/getAll'));
+	}
+
+	public function longtail(){
+		for($i = 0; $i < 19501; $i = $i+500) {
+			$uri = 'https://tartan.plaid.com/institutions/longtail';
+			$parameters = [
+				'json' => [
+					'client_id' => 'test_id',
+					'secret' => 'test_secret',
+					'count' => 500,
+					'offset' => $i
+				]
+			];
+			$client = new Client();
+			$response = $client->post($uri, $parameters);
+			$array = json_decode($response->getBody(), true);
+			$results = $array['results'];
+
+			foreach ($results as $curResult) {
+				$longtailInst = new longtailinst();
+				try {
+					$longtailInst['type'] = intval($curResult['type']);
+					$longtailInst['url'] = isset($curResult['url']) ? $curResult['url'] : null;
+					$longtailInst['Name'] = $curResult['name'];
+					$longtailInst['has_mfa'] = boolval($curResult['has_mfa']);
+					$longtailInst['mfaArray'] = json_encode($curResult['mfa']);
+					$longtailInst['productsArray'] = json_encode($curResult['products']);
+					$longtailInst['credentialsJSON'] = json_encode($curResult['credentials']);
+					$longtailInst['currencyCode'] = $curResult['currencyCode'];
+
+					$longtailInst->save();
+				} catch (\Exception $ex) {
+					//Log::info($ex);
+					Log::info($longtailInst);
+				}
+			}
+		}
 		return($array);
 	}
-	//Stores given array of accounts to DB
-	private function setAccount($accounts, $accessToken){
-		foreach($accounts as $account_key => $account_value ){
-			$bank_account= new bank_accounts();
-			$bank_account['id']=$accessToken.$account_value['_id'];
-			$bank_account['user_id']=Auth::user()->id;
-			$bank_account['access_token'] = $accessToken;
-			//if(isset($account_value['balance']['current']))
-			$bank_account['current_balance'] = $account_value['balance']['current'];
-			//if(isset($account_value['balance']['available']))
-			$bank_account['available_balance'] = $account_value['balance']['available'];
-			$bank_account['bank_name'] = $account_value['institution_type'];
+	//Stores given single account to DB
+	private function setAccount($account_value, $accessToken){
+		$bank_account= new bank_accounts();
+		$bank_account['id']=$accessToken.$account_value['_id'];
+		$bank_account['user_id']=Auth::user()->id;
+		$bank_account['access_token'] = $accessToken;
+		//if(isset($account_value['balance']['current']))
+		$bank_account['current_balance'] = $account_value['balance']['current'];
+		//if(isset($account_value['balance']['available']))
+		$bank_account['available_balance'] = $account_value['balance']['available'];
+		$bank_account['bank_name'] = $account_value['institution_type'];
 
-			if(isset($account_value['meta']['acc_limit']))
-				$bank_account['acc_limit'] = $account_value['meta']['acc_limit'];
+		if(isset($account_value['meta']['acc_limit']))
+			$bank_account['acc_limit'] = $account_value['meta']['acc_limit'];
 
-			if(isset($account_value['subtype']))
-				$bank_account['account_subtype'] = $account_value['subtype'];
+		if(isset($account_value['subtype']))
+			$bank_account['account_subtype'] = $account_value['subtype'];
 
-			$bank_account['name'] = $account_value['meta']['name'];
-			$bank_account['number'] = $account_value['meta']['number'];
-			$bank_account['account_type'] = $account_value['type'];
-			$bank_account['plaid_core'] = serialize($account_value);
-			$bank_account->save();
-		}
+		$bank_account['name'] = $account_value['meta']['name'];
+		$bank_account['number'] = $account_value['meta']['number'];
+		$bank_account['account_type'] = $account_value['type'];
+		$bank_account['plaid_core'] = serialize($account_value);
+		$bank_account->save();
 	}
 
-	//Stores given array of transactions to DB
-	private function setTransaction($transactions, $accessToken){
-		foreach($transactions as $transaction_key => $transaction_value){
-			$transaction = new transaction();
-			$transaction['id'] = $accessToken.$transaction_value['_id'];
-			$transaction['bank_accounts_id'] = $accessToken.$transaction_value['_account'];
-			$transaction['amount'] = $transaction_value['amount'];
-			$transaction['date'] = $transaction_value['date'];
-			$transaction['name'] = $transaction_value['name'];
-			if(isset($transaction_value['meta']['location']['city']))
-				$transaction['location_city'] = $transaction_value['meta']['location']['city'];
-			if(isset($transaction_value['meta']['location']['state']))
-				$transaction['location_state'] = $transaction_value['meta']['location']['state'];
-			$transaction['pending'] = $transaction_value['pending'];
-			$transaction['type_primary'] = $transaction_value['type']['primary'];
-			if(isset($transaction_value['category']))
-				$transaction['category'] = serialize($transaction_value['category']);
-			if(isset($transaction_value['category_id']))
-				$transaction['category_id'] = $transaction_value['category_id'];
-			$transaction['score'] = serialize($transaction_value['score']);
-			$transaction['plaid_core'] = serialize($transaction_value);
-			$transaction->save();
-		}
+	//Stores given single transaction to DB
+	private function setTransaction($transaction_value, $accessToken){
+		$transaction = new transaction();
+		$transaction['id'] = $accessToken.$transaction_value['_id'];
+		$transaction['bank_accounts_id'] = $accessToken.$transaction_value['_account'];
+		$transaction['amount'] = $transaction_value['amount'];
+		$transaction['date'] = $transaction_value['date'];
+		$transaction['name'] = $transaction_value['name'];
+		if(isset($transaction_value['meta']['location']['city']))
+			$transaction['location_city'] = $transaction_value['meta']['location']['city'];
+		if(isset($transaction_value['meta']['location']['state']))
+			$transaction['location_state'] = $transaction_value['meta']['location']['state'];
+		$transaction['pending'] = $transaction_value['pending'];
+		$transaction['type_primary'] = $transaction_value['type']['primary'];
+		if(isset($transaction_value['category']))
+			$transaction['category'] = serialize($transaction_value['category']);
+		if(isset($transaction_value['category_id']))
+			$transaction['category_id'] = $transaction_value['category_id'];
+		$transaction['score'] = serialize($transaction_value['score']);
+		$transaction['plaid_core'] = serialize($transaction_value);
+		$transaction->save();
 	}
 }

@@ -1,10 +1,14 @@
-@foreach($accounts as $bank_name => $allAccounts)
+@foreach($accounts as $access_token => $allAccounts)
 	<table class="table table-hover">
 		<thead>
 		<tr>
-			<th style="text-align: center;">{{strtoupper($bank_name)}}
-				<a class="accountDelete" href="account/update/{{$bank_name}}"><button class="btn btn-warning" style="margin: 0 10px;">Update</button></a>
-				<a class="accountUpdate" href="account/delete/{{$bank_name}}"><button class="btn btn-danger" style="margin: 0 10px;">Delete</button></a></th>
+			<th style="text-align: center;">{{strtoupper($access_token)}}
+				<a class="accountDelete" href="account/update/{{$access_token}}"><button class="btn btn-warning" style="margin: 0 10px;">Edit Login</button></a>
+
+				<a class="accountUpdate" href="account/delete/{{$access_token}}"><button class="btn btn-danger" style="margin: 0 10px;">Delete</button></a>
+				<span class="right">Last Refreshed: {{$allAccounts[0]->updated_at}}</span>
+			</th>
+
 		</tr>
 
 		</thead>
@@ -16,7 +20,8 @@
 				<td>{{($account->account_subtype == NULL) ? $account->account_type : $account->account_subtype}}</td>
 				<td>{{$account->current_balance}}</td>
 				<td>{{$account->available_balance}}</td>
-				<td><a href="account/hide/{{$account->id}}"><button class="btn btn-primary" style="margin: 0;">Hide</button></a></td>
+				<td><a class="syncAccount" href="account/sync/{{$account->id}}"><button class="btn btn-success" style="margin: 0;">Sync</button></a></td>
+				<td><a class="hide_toggle" href="account/hide_toggle/{{$account->id}}"><button class="btn btn-primary" style="margin: 0;">{{($account->hidden_flag) ? 'UNHIDE' : 'HIDE'}}</button></a></td>
 			</tr>
 		@endforeach
 		</tbody>

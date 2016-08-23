@@ -67,8 +67,8 @@ $(document).ready(function() {
                 $('.response').html(data);
             },
             error: function (data) {
-              console.log(data);
-              $('body').html(data.responseText);    // This  will print error stack message on body
+                console.log(data);
+                $('body').html(data.responseText);    // This  will print error stack message on body
             },
             type: 'POST'
         });
@@ -78,16 +78,47 @@ $(document).ready(function() {
         event.preventDefault();
         console.log($(this).attr('href'));
         $.ajax({
-          url: $(this).attr('href'),
-          success: function (data) {
-              console.log(data);
-              $('.response').html(data);
-          },
-          error: function (data) {
-            console.log(data);
-            $('body').html(data.responseText);    // This  will print error stack message on body
-          },
-          type: 'POST'
+            url: $(this).attr('href'),
+            success: function (data) {
+                console.log(data);
+                $('.response').html(data);
+            },
+            error: function (data) {
+                console.log(data);
+                $('body').html(data.responseText);    // This  will print error stack message on body
+            },
+            type: 'POST'
+        });
+    });
+
+    $('.response').on('click', '.hide_toggle', function (event){
+        event.preventDefault();
+        console.log($(this).attr('href'));
+        $.ajax({
+            url: $(this).attr('href'),
+            success: function (data) {
+                console.log(data);
+                $('.response').html(data);
+            },
+            error: function (data) {
+                console.log(data);
+                $('body').html(data.responseText);    // This  will print error stack message on body
+            },
+            type: 'POST'
+        });
+    });
+
+    $('.response').on('click', '.syncAccount', function (event){
+        event.preventDefault();
+        $.ajax({
+            url: $(this).attr('href'),
+            success: function (data) {
+                $('.response').html(data);
+            },
+            error: function (data) {
+                $('body').html(data.responseText);    // This  will print error stack message on body
+            },
+            type: 'POST'
         });
     });
 });

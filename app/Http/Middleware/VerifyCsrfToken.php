@@ -14,7 +14,9 @@ class VerifyCsrfToken extends BaseVerifier
     protected $except = [
         //
         'user/account/create',
-        'user/account/getbyId/*'
+        'user/account/getbyId/*',
+        'user/account/hide_toggle/*',
+        'user/account/sync/*'
     ];
 
 }
