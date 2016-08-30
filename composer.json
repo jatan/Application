@@ -11,7 +11,8 @@
         "guzzlehttp/guzzle": "^6.0",
         "symfony/psr-http-message-bridge": "0.2",
         "doctrine/dbal": "v2.5.4",
-        "barryvdh/laravel-ide-helper": "^2.2"
+        "barryvdh/laravel-ide-helper": "^2.2",
+        "nesbot/Carbon": "^1.21"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

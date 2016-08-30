@@ -12,6 +12,7 @@ use Curl;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Log;
+use Carbon\Carbon;
 
 class accountController extends Controller
 {
@@ -116,6 +117,22 @@ class accountController extends Controller
 	}
 
 	public function getAccounts(){
+		// $uri = 'https://tartan.plaid.com/info/get';
+		// $parameters = [
+		// 		'json' => [
+		// 				'client_id' => env('PLAID_CLIENT_ID'),
+		// 				'secret' => env('PLAID_SECRET'),
+		// 				'access_token' => 'd33a1149288034e8618bb70e2dec4961de17e2b0e71a05a22ebf55401de77d12d1bb8e29ffb9e99da54a02cde98b48e01e3ed2b63eb56ea2a9976f23b4ad7cd6632f6df7e9421807dd51e9b824802667',
+		//
+		// 		]
+		// ];
+		//
+		// $client = new Client();
+		// $response = $client->post($uri, $parameters);
+		// $array = json_decode($response->getBody(), true);
+		//
+
+
 		$accounts = bank_accounts::all()->groupBy('access_token');
 
 		$resp = view('account.ac_getAll')->with('accounts', $accounts);
@@ -175,28 +192,44 @@ class accountController extends Controller
 		$account = bank_accounts::find($id);
 		$token = $account ->access_token;
 
+		$options = ["pending" => true,
+								"account" => str_replace($token, '', $account->id)];
+
+		// 'options' => '{"pending":"true",
+		// 							 "gte":"2014-05-17",
+		// 							 "lte":"2014-07-01"
+		// 						}'
 		$uri = 'https://tartan.plaid.com/connect/get';
 		$parameters = [
 				'json' => [
 						'client_id' => env('PLAID_CLIENT_ID'),
 						'secret' => env('PLAID_SECRET'),
 						'access_token' => $token,
-						'options' => '{"pending":"true"}'
+						'options' => json_encode($options)
 				]
 		];
+		//Log::info($parameters);
 		$client = new Client();
 		$response = $client->post($uri, $parameters);
 		$array = json_decode($response->getBody(), true);
 
 		$accounts = $array['accounts'];
 		$transactions = $array['transactions'];
-
+		//Log::info($array);
 		foreach($accounts as $account_key => $account_value ){
 			$bank_account = bank_accounts::find($token.$account_value['_id']);
-			if($bank_account){
-				$bank_account ->delete();
+			
+			if(isset($bank_account) && $id == $token.$account_value['_id']){
+				$bank_account['current_balance'] = $account_value['balance']['current'];
+				$bank_account['available_balance'] = $account_value['balance']['available'];
+				if(isset($account_value['meta']['acc_limit'])){
+					$bank_account['acc_limit'] = $account_value['meta']['limit'];
+				}
+					$bank_account['LastSynced_at'] = Carbon::now();
+
+					$bank_account['SyncCount'] = $bank_account['SyncCount']+1;
+				$bank_account ->save();
 			}
-			$this->setAccount($account_value, $token);
 		}
 
 		foreach($transactions as $transaction_key => $transaction_value){
@@ -245,6 +278,7 @@ class accountController extends Controller
 		}
 		return($array);
 	}
+
 	//Stores given single account to DB
 	private function setAccount($account_value, $accessToken){
 		$bank_account= new bank_accounts();
@@ -255,10 +289,23 @@ class accountController extends Controller
 		$bank_account['current_balance'] = $account_value['balance']['current'];
 		//if(isset($account_value['balance']['available']))
 		$bank_account['available_balance'] = $account_value['balance']['available'];
-		$bank_account['bank_name'] = $account_value['institution_type'];
 
-		if(isset($account_value['meta']['acc_limit']))
-			$bank_account['acc_limit'] = $account_value['meta']['acc_limit'];
+		if($account_value['institution_type'] == 'fake_institution'){
+			switch ($accessToken) {
+				case 'test_bofa':
+					$bank_account['bank_name'] = 'Bank Of America';
+					break;
+				case 'test_chase':
+					$bank_account['bank_name'] = 'Chase';
+					break;
+				default:
+					$bank_account['bank_name'] = $account_value['institution_type'];
+					break;
+			}
+		}
+
+		if(isset($account_value['meta']['limit']))
+			$bank_account['acc_limit'] = $account_value['meta']['limit'];
 
 		if(isset($account_value['subtype']))
 			$bank_account['account_subtype'] = $account_value['subtype'];
