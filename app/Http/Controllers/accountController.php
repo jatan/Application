@@ -76,14 +76,14 @@ class accountController extends Controller
 
 				$uri = 'https://tartan.plaid.com/connect';
 				$parameters = [
-						'json' => [
-								'client_id' => env('PLAID_CLIENT_ID'),
-								'secret' => env('PLAID_SECRET'),
-								'username' => $input['username'],	// Bank Username - given by user
-								'password' => $input['password'],	// Bank password - given by user
-								'type' => $input['bank'],			// Bank Name - in type specific to Plaid ex: bofa
-								'options' => '{"list":true}'		// Hardcoded true - This will return MFA if available
-						]
+				'json' => [
+						'client_id' => env('PLAID_CLIENT_ID'),
+						'secret' => env('PLAID_SECRET'),
+						'username' => $input['username'],	// Bank Username - given by user
+						'password' => $input['password'],	// Bank password - given by user
+						'type' => $input['bank'],			// Bank Name - in type specific to Plaid ex: bofa
+						'options' => '{"list":true}'		// Hardcoded true - This will return MFA if available
+				]
 				];
 			}
 
@@ -139,7 +139,11 @@ class accountController extends Controller
 		}
 	}
 
+	/* Not fully implemented
+
+	*/
 	public function getAccount_byId($id){
+
 		$account = bank_accounts::find($id);
 		$data = '<h3>Read Operation Successful for ID: '.$id.' and its Current balance is: '.$account['current_balance'].'</h3>';
 		return ($data);
@@ -149,17 +153,15 @@ class accountController extends Controller
 		/*
 		$uri = 'https://tartan.plaid.com/info/get';
 	    $parameters = [
-	        'json' => ['client_id' => env('PLAID_CLIENT_ID'),
-						'secret' => env('PLAID_SECRET'),
-						'access_token' => '',]
+			        'json' => ['client_id' => env('PLAID_CLIENT_ID'),
+								'secret' => env('PLAID_SECRET'),
+								'access_token' => '',]
 		];
 
 		 $client = new Client();
 		 $response = $client->post($uri, $parameters);
 		 $array = json_decode($response->getBody(), true);
 		*/
-
-
 		$accounts = bank_accounts::all()->groupBy('access_token');
 
 		$resp = view('account.ac_getAll')->with('accounts', $accounts);
@@ -171,6 +173,11 @@ class accountController extends Controller
 		return ($data);
 	}
 
+	/*	Delete All accounts related to given access_token.
+		If there are 3 accounts related to 1 access_token, all will be deleted.
+		Due to cascading set, transactions from those accounts will also be deleted.
+		Tables impacted - bank_accounts , transactions
+	*/
 	public function deleteAccount($token){
 
 		$accounts = bank_accounts::all()->where('access_token', $token);
@@ -182,16 +189,18 @@ class accountController extends Controller
 						'access_token' => $token
 				]
 		];
+
 		$client = new Client();
 		$response = $client->delete($uri, $parameters);
 		$array = json_decode($response->getBody(), true);
-
-		Log::info($array);
+		Log::info("Plaid call to URI: ".$uri." is Successful");
 
 		$respText = "";
-		if (strpos($array['message'], 'Success') !== false) {				// If response message contains Success
+		// Check if plaid response is Success meaning Plaid successfully deleted those accounts.
+		// So now we can delete these from out system.
+		if (strpos($array['message'], 'Success') !== false) {
 			foreach ($accounts as $account) {
-				//Log::info($account);
+				// Delete account from out database.
 				if($account->delete()){
 					$respText = $respText."<h3>".$account['name']." Account Deleted successfully</h3>";
 				}
@@ -200,32 +209,41 @@ class accountController extends Controller
 		else {
 			$respText = $array['message'];
 		}
-
+		// Returning just plain text response. No HTML/CSS
 		return ($respText);
-
 	}
 
+	/* Hide-Unhide toggle for individual accounts
+	*/
 	public function hideToggle($id){
+		// Get the account with the provided ID
 		$account = bank_accounts::find($id);
+
 		if ($account->hidden_flag == false)
 			$account->update(['hidden_flag' => 1]);
 		else $account->update(['hidden_flag' => 0]);
 
+		// Redirect to Get All Accounts view.
 		return(redirect::to('user/account/getAll'));
 	}
 
-	public function syncAccount($id){
+	/* It will sync single account based on its ID.
+	*/
+	public function syncSingleAccount($id){
 
+		// Get the account with the provided ID
 		$account = bank_accounts::find($id);
-		$token = $account ->access_token;
+		$token = $account ->access_token;	// access_token attached to this account.
 
-		$options = ["pending" => true,
-					"account" => str_replace($token, '', $account->id)];
-
-		// 'options' => '{"pending":"true",
-		// 							 "gte":"2014-05-17",
-		// 							 "lte":"2014-07-01"
-		// 						}'
+		$options = ["pending" => true,		// Set to true - to include pending tranxns as well.
+					// str_replace function is temp. Just to handle Plaid specific accounts
+					// which has access_token concatinated with its ID. So below will revert that.
+					"account" => str_replace($token, '', $account->id)];		// account ID to be synced.
+// URI call with below options to specify Start and End dates of Sync.
+// 'options' => '{"pending":"true",
+// 							 "gte":"2014-05-17",
+// 							 "lte":"2014-07-01"
+// 						}'
 		$uri = 'https://tartan.plaid.com/connect/get';
 		$parameters = [
 				'json' => [
@@ -239,35 +257,39 @@ class accountController extends Controller
 		$client = new Client();
 		$response = $client->post($uri, $parameters);
 		$array = json_decode($response->getBody(), true);
+		Log::info("Plaid call to URI: ".$uri." is Successful");
 
 		$accounts = $array['accounts'];
 		$transactions = $array['transactions'];
 
 		foreach($accounts as $account_key => $account_value ){
 			$bank_account = bank_accounts::find($token.$account_value['_id']);
-			
+			// TODO: Can this be just update operation to update those values that have changed
 			if(isset($bank_account) && $id == $token.$account_value['_id']){
 				$bank_account['current_balance'] = $account_value['balance']['current'];
 				$bank_account['available_balance'] = $account_value['balance']['available'];
 				if(isset($account_value['meta']['limit'])){
 					$bank_account['acc_limit'] = $account_value['meta']['limit'];
 				}
-					$bank_account['LastSynced_at'] = Carbon::now();
-
-					$bank_account['SyncCount'] = $bank_account['SyncCount']+1;
+				$bank_account['LastSynced_at'] = Carbon::now();
+				$bank_account['SyncCount'] = $bank_account['SyncCount']+1;
 				$bank_account ->save();
 			}
 		}
 
 		foreach($transactions as $transaction_key => $transaction_value){
 
+			// For each account - check if its of Plaid account or not.
+			// If from Plaid account handle the taken & id concatination.
 			if(str_contains($token,'test')){
 				$transaction = transaction::find($token.$transaction_value['_id']);
 			}
+			// Non Plaid / Live accounts
 			else{
 				$transaction = transaction::find($transaction_value['_id']);
 			}
-
+			// Only insert tranxns that are not found.
+			// TODO: What if somethings changed on existing transxn. Ex: Category / Merchant
 			if(!$transaction){
 				$this->setTransaction($transaction_value, $token);
 			}

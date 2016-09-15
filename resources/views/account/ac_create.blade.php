@@ -27,7 +27,7 @@
 {!! Form::label('username',"Username: ") !!}
 {!! Form::text('username',null) !!}
 <br>
-{!! Form::label('password',"Pin: ") !!}
+{!! Form::label('password',"Password: ") !!}
 {!! Form::password('password',null) !!}
 <br>
 {!! Form::submit('Add Account',['class' => 'btn btn-primary']) !!}

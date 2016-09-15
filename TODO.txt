@@ -1,1 +1,0 @@
-TODO: curl.cainfo ="{filepath}\cacert.pem" add this line to php.ini & cacert.pem file to location

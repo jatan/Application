@@ -1,15 +1,13 @@
 $(document).ready(function() {
 
-    // CSRF protection
-    $.ajaxSetup(
-        {
-            headers:
-            {
-                'X-CSRF-Token': $('input[name="_token"]').val()
-            }
+    // Master Ajax setup for CSRF protection - took from Stackoverflow.
+    $.ajaxSetup({
+        headers:{
+			'X-CSRF-Token': $('input[name="_token"]').val()
         }
-    );
+    });
 
+	// This is called while pressing either - GET ALL / CREATE / REFRESH ALL
     $('.testing a').click(function (event) {
         event.preventDefault();
 
@@ -29,7 +27,8 @@ $(document).ready(function() {
         });
     });
 
-    // Create account STEP-1
+    // This is called during STEP-1 of Create account process (MFA only)
+	// User will provide username/password
     $('.response').on('submit','#register' ,function (event) {
         event.preventDefault();
         var formData = $("#register").serializeArray();
@@ -51,7 +50,9 @@ $(document).ready(function() {
             type: 'POST'
         });
     });
-    // Create account STEP-2
+
+    // This is called during STEP-2 of Create account process (MFA only)
+	// User will provide MFA response.
     $('.response').on('submit','#registerStep' ,function (event) {
         event.preventDefault();
         var formData = $("#registerStep").serializeArray();
@@ -74,6 +75,8 @@ $(document).ready(function() {
         });
     });
 
+	// This is to read individual account details. route - user/account/getbyId/{id}
+	// accessible from GET ALL screen
     $('.response').on('click', '.getAccountDetails a', function (event){
         event.preventDefault();
         console.log($(this).attr('href'));
@@ -91,6 +94,7 @@ $(document).ready(function() {
         });
     });
 
+	// Hide-Unhide toggle - accessible from GET ALL screen
     $('.response').on('click', '.hide_toggle', function (event){
         event.preventDefault();
         console.log($(this).attr('href'));
@@ -108,6 +112,8 @@ $(document).ready(function() {
         });
     });
 
+	// Handle syncAccount request for single accounts. route - user/account/sync/{id}
+	// accessible from GET ALL screen
     $('.response').on('click', '.syncAccount', function (event){
         event.preventDefault();
         $.ajax({
