@@ -5,9 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests;
 use App\bank_accounts;
 use App\transaction;
-use App\longtailinst;
-use GuzzleHttp\Client;
 use Request;
+use GuzzleHttp\Client;
 use Curl;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -133,8 +132,8 @@ class accountController extends Controller
 		//
 
 
-		$accounts = bank_accounts::all()->groupBy('access_token');
 
+		$accounts = Auth::user()->accounts->groupBy('access_token');
 		$resp = view('account.ac_getAll')->with('accounts', $accounts);
 		return ($resp);
 	}
@@ -193,7 +192,7 @@ class accountController extends Controller
 		$token = $account ->access_token;
 
 		$options = ["pending" => true,
-								"account" => str_replace($token, '', $account->id)];
+					"account" => str_replace($token, '', $account->id)];
 
 		// 'options' => '{"pending":"true",
 		// 							 "gte":"2014-05-17",
@@ -208,21 +207,21 @@ class accountController extends Controller
 						'options' => json_encode($options)
 				]
 		];
-		//Log::info($parameters);
+
 		$client = new Client();
 		$response = $client->post($uri, $parameters);
 		$array = json_decode($response->getBody(), true);
 
 		$accounts = $array['accounts'];
 		$transactions = $array['transactions'];
-		//Log::info($array);
+
 		foreach($accounts as $account_key => $account_value ){
 			$bank_account = bank_accounts::find($token.$account_value['_id']);
 			
 			if(isset($bank_account) && $id == $token.$account_value['_id']){
 				$bank_account['current_balance'] = $account_value['balance']['current'];
 				$bank_account['available_balance'] = $account_value['balance']['available'];
-				if(isset($account_value['meta']['acc_limit'])){
+				if(isset($account_value['meta']['limit'])){
 					$bank_account['acc_limit'] = $account_value['meta']['limit'];
 				}
 					$bank_account['LastSynced_at'] = Carbon::now();
@@ -233,7 +232,14 @@ class accountController extends Controller
 		}
 
 		foreach($transactions as $transaction_key => $transaction_value){
-			$transaction = transaction::find($token.$transaction_value['_id']);
+
+			if(str_contains($token,'test')){
+				$transaction = transaction::find($token.$transaction_value['_id']);
+			}
+			else{
+				$transaction = transaction::find($transaction_value['_id']);
+			}
+
 			if(!$transaction){
 				$this->setTransaction($transaction_value, $token);
 			}
@@ -241,48 +247,17 @@ class accountController extends Controller
 		return(redirect::to('user/account/getAll'));
 	}
 
-	public function longtail(){
-		for($i = 0; $i < 19501; $i = $i+500) {
-			$uri = 'https://tartan.plaid.com/institutions/longtail';
-			$parameters = [
-				'json' => [
-					'client_id' => 'test_id',
-					'secret' => 'test_secret',
-					'count' => 500,
-					'offset' => $i
-				]
-			];
-			$client = new Client();
-			$response = $client->post($uri, $parameters);
-			$array = json_decode($response->getBody(), true);
-			$results = $array['results'];
 
-			foreach ($results as $curResult) {
-				$longtailInst = new longtailinst();
-				try {
-					$longtailInst['type'] = intval($curResult['type']);
-					$longtailInst['url'] = isset($curResult['url']) ? $curResult['url'] : null;
-					$longtailInst['Name'] = $curResult['name'];
-					$longtailInst['has_mfa'] = boolval($curResult['has_mfa']);
-					$longtailInst['mfaArray'] = json_encode($curResult['mfa']);
-					$longtailInst['productsArray'] = json_encode($curResult['products']);
-					$longtailInst['credentialsJSON'] = json_encode($curResult['credentials']);
-					$longtailInst['currencyCode'] = $curResult['currencyCode'];
-
-					$longtailInst->save();
-				} catch (\Exception $ex) {
-					//Log::info($ex);
-					Log::info($longtailInst);
-				}
-			}
-		}
-		return($array);
-	}
 
 	//Stores given single account to DB
 	private function setAccount($account_value, $accessToken){
 		$bank_account= new bank_accounts();
-		$bank_account['id']=$accessToken.$account_value['_id'];
+		if(str_contains($accessToken,'test')){
+			$bank_account['id']=$accessToken.$account_value['_id'];
+		}
+		else{
+			$bank_account['id']=$account_value['_id'];
+		}
 		$bank_account['user_id']=Auth::user()->id;
 		$bank_account['access_token'] = $accessToken;
 		//if(isset($account_value['balance']['current']))
@@ -313,6 +288,7 @@ class accountController extends Controller
 		$bank_account['name'] = $account_value['meta']['name'];
 		$bank_account['number'] = $account_value['meta']['number'];
 		$bank_account['account_type'] = $account_value['type'];
+		$bank_account['LastSynced_at'] = Carbon::now();
 		$bank_account['plaid_core'] = serialize($account_value);
 		$bank_account->save();
 	}
@@ -320,8 +296,19 @@ class accountController extends Controller
 	//Stores given single transaction to DB
 	private function setTransaction($transaction_value, $accessToken){
 		$transaction = new transaction();
-		$transaction['id'] = $accessToken.$transaction_value['_id'];
-		$transaction['bank_accounts_id'] = $accessToken.$transaction_value['_account'];
+		if(str_contains($accessToken,'test')){
+			$transaction['id'] = $accessToken.$transaction_value['_id'];
+		}
+		else{
+			$transaction['id'] = $transaction_value['_id'];
+		}
+		if(str_contains($accessToken,'test')){
+			$transaction['bank_accounts_id'] = $accessToken.$transaction_value['_account'];
+		}
+		else{
+			$transaction['bank_accounts_id'] = $transaction_value['_account'];
+		}
+
 		$transaction['amount'] = $transaction_value['amount'];
 		$transaction['date'] = $transaction_value['date'];
 		$transaction['name'] = $transaction_value['name'];

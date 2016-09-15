@@ -66,6 +66,6 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('/categories_reload','categoryController@reloadCategories');
     Route::get('/categories','categoryController@viewCategories');
 
-    Route::get('/longtail', 'accountController@longtail');
+    Route::get('/longtail', 'userController@longtail');
 
 });
