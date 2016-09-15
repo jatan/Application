@@ -15,83 +15,113 @@ use Carbon\Carbon;
 
 class accountController extends Controller
 {
+	/*
+	*	Main Accounts page.
+	*/
 	public function index(){
 		return (view('account.ac_index'));
 	}
 
+	/*
+	*	Load Create Account Form.
+	*/
 	public function createAccount(){
 		$resp = view('account.ac_create')->render();
 		return ($resp);
 	}
 
+	/*
+	*	Process request to Create/Add new financial account
+	*/
 	public function createAccount_process(){
+		// Only process ajax requests.
 		if(Request::ajax()) {
 
 			$input = Request::all();
+			Log::alert($input);			// [This will log un-encrypted username and password]
 
-			Log::info($input);
-
+			// There are 3 checks to identify at which step is the user of account creation process
+			// This will help determine which Plaid URI to call and what should be the parameters
+			// 1st Check -
 			if (isset($input['radio'])) {
-				Log::info("step1");
+				Log::info("Radio Button selected");
 				$uri = 'https://tartan.plaid.com/connect/step';
 				$options = '{"send_method":{"mask":"' . $input["radio"] . '"}}';
 				$parameters = [
-					'json' => [
-						'client_id' => env('PLAID_CLIENT_ID'),
-						'secret' => env('PLAID_SECRET'),
-						'access_token' => $input['access_token'],
-						'options' => $options
-					]
-				];
-			} else if (isset($input['access_token'])) {
-				Log::info("step2");
-				$uri = 'https://tartan.plaid.com/connect/step';
-				$parameters = [
-					'json' => [
-						'client_id' => env('PLAID_CLIENT_ID'),
-						'secret' => env('PLAID_SECRET'),
-						'access_token' => $input['access_token'],
-						'mfa' => $input['ans']
-					]
-				];
-			} else {
-				Log::info("step3");
-				$uri = 'https://tartan.plaid.com/connect';
-				$parameters = [
-					'json' => [
-						'client_id' => env('PLAID_CLIENT_ID'),
-						'secret' => env('PLAID_SECRET'),
-						'username' => $input['username'],
-						'password' => $input['password'],
-						'type' => $input['bank'],
-						'options' => '{"list":true}'
-					]
+						'json' => [
+								'client_id' => env('PLAID_CLIENT_ID'),
+								'secret' => env('PLAID_SECRET'),
+								'access_token' => $input['access_token'],
+								'options' => $options
+						]
 				];
 			}
-			//curl.cainfo ="{filepath}\cacert.pem" add this line to php.ini & cacert.pem file to location
+			// 2nd Check -
+			else if (isset($input['access_token'])) {
+				Log::info("Access tocken is set");
+
+				$uri = 'https://tartan.plaid.com/connect/step';
+				$parameters = [
+						'json' => [
+								'client_id' => env('PLAID_CLIENT_ID'),
+								'secret' => env('PLAID_SECRET'),
+								'access_token' => $input['access_token'],
+								'mfa' => $input['ans']
+						]
+				];
+			}
+			// 3rd Check - First Step
+			else {
+				Log::info("User is at the first step of the process");
+
+				$uri = 'https://tartan.plaid.com/connect';
+				$parameters = [
+						'json' => [
+								'client_id' => env('PLAID_CLIENT_ID'),
+								'secret' => env('PLAID_SECRET'),
+								'username' => $input['username'],	// Bank Username - given by user
+								'password' => $input['password'],	// Bank password - given by user
+								'type' => $input['bank'],			// Bank Name - in type specific to Plaid ex: bofa
+								'options' => '{"list":true}'		// Hardcoded true - This will return MFA if available
+						]
+				];
+			}
+
+			// After deciding which URI to call and its parameters, Request will be sent.
+			// And response is decoded from JSON to array
 			$client = new Client();
 			$response = $client->post($uri, $parameters);
 			$array = json_decode($response->getBody(), true);
-			Log::info("stepCommon");
+			Log::info("Plaid call to URI: ".$uri." is Successful");
+
+			// Now Decide Response.
+			// If Bank is MFA enabled, then only it will return 'type' field.
+			// If bank is not MFA enabled - All bank accounts and transactions will be inserted.
+			// Do multiple checks to decide what should be the response for MFA.
 			if (isset($array['type'])) {
-				Log::info("step4");
-				Log::info("URI Used: ".$uri);
-				//Log::info("Response: ".toArray($parameters['json']));
+
 				if ($array['type'] == "questions") {
-					Log::info("step5");
+					Log::info("Question based MFA");
+
 					$mfa = $array['mfa'][0];
 					$pass = $mfa['question'];
 					return (view('account.ac_create_p')->with('pass', $pass)->with('access_token', $array['access_token']));
 				} else if ($array['type'] == "device") {
+					Log::info("Device based MFA");
+
 					$mfa = $array['mfa'];
 					$pass = $mfa['message'];
 					return (view('account.ac_create_p')->with('pass', $pass)->with('access_token', $array['access_token']));
 				} else if ($array['type'] == "list") {
+					Log::info("Provide MFA list to User to select from");
+
 					$mfa = $array['mfa'][0];
 					$pass = $array['mfa'];
 					return (view('account.ac_create_p')->with('pass', $pass)->with('access_token', $array['access_token']));
 				}
 			}
+
+
 			//Save each account returned for the given account credentials for a given Bank.
 			$accounts = $array['accounts'];
 			$accessToken = $array['access_token'];
@@ -104,7 +134,7 @@ class accountController extends Controller
 			foreach($transactions as $transaction_key => $transaction_value){
 				$this->setTransaction($transaction_value, $accessToken);
 			}
-
+			// TODO: This is not a proper response of ajax call.
 			return (redirect::to('user/dashboard'));
 		}
 	}
@@ -116,24 +146,22 @@ class accountController extends Controller
 	}
 
 	public function getAccounts(){
-		// $uri = 'https://tartan.plaid.com/info/get';
-		// $parameters = [
-		// 		'json' => [
-		// 				'client_id' => env('PLAID_CLIENT_ID'),
-		// 				'secret' => env('PLAID_SECRET'),
-		// 				'access_token' => 'd33a1149288034e8618bb70e2dec4961de17e2b0e71a05a22ebf55401de77d12d1bb8e29ffb9e99da54a02cde98b48e01e3ed2b63eb56ea2a9976f23b4ad7cd6632f6df7e9421807dd51e9b824802667',
-		//
-		// 		]
-		// ];
-		//
-		// $client = new Client();
-		// $response = $client->post($uri, $parameters);
-		// $array = json_decode($response->getBody(), true);
-		//
+		/*
+		$uri = 'https://tartan.plaid.com/info/get';
+	    $parameters = [
+	        'json' => ['client_id' => env('PLAID_CLIENT_ID'),
+						'secret' => env('PLAID_SECRET'),
+						'access_token' => '',]
+		];
+
+		 $client = new Client();
+		 $response = $client->post($uri, $parameters);
+		 $array = json_decode($response->getBody(), true);
+		*/
 
 
+		$accounts = bank_accounts::all()->groupBy('access_token');
 
-		$accounts = Auth::user()->accounts->groupBy('access_token');
 		$resp = view('account.ac_getAll')->with('accounts', $accounts);
 		return ($resp);
 	}
