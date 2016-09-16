@@ -6,15 +6,23 @@ use App\Http\Requests;
 use GuzzleHttp\Client;
 use App\longtailinst;
 use Log;
+use Illuminate\Support\Facades\Auth;
 
 class userController extends Controller
 {
 	public function dashboard(){
-		return (view('user.dashboard'));
+		$accounts = Auth::user()->visible_accounts();
+		return (view('user.dashboard')->with('accounts', $accounts));
 	}
 
+	/*
+	 * This will go through each 19500 institutes of PLAID in the chunk of 500
+	 * and store them in DB.
+	 * @return Complete list of all supported inst. in JSON format
+	 * */
 	public function longtail(){
 		for($i = 0; $i < 19501; $i = $i+500) {
+
 			$uri = 'https://tartan.plaid.com/institutions/longtail';
 			$parameters = [
 					'json' => [
@@ -24,12 +32,16 @@ class userController extends Controller
 							'offset' => $i
 					]
 			];
+
 			$client = new Client();
 			$response = $client->post($uri, $parameters);
 			$array = json_decode($response->getBody(), true);
+			Log::info("Plaid call to URI: ".$uri." is Successful");
+
 			$results = $array['results'];
 
 			foreach ($results as $curResult) {
+				// Initiate new longtail object
 				$longtailInst = new longtailinst();
 				try {
 					$longtailInst['type'] = intval($curResult['type']);
@@ -43,11 +55,14 @@ class userController extends Controller
 
 					$longtailInst->save();
 				} catch (\Exception $ex) {
-					//Log::info($ex);
+					// Log any exceptions and the failed object also.
+					Log::info($ex);
 					Log::info($longtailInst);
+					// After logging failed record, process will continue on to next record.
 				}
 			}
 		}
+		// return Complete list of all supported inst. in JSON format
 		return($array);
 	}
 }

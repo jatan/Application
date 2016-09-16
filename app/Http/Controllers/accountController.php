@@ -121,7 +121,6 @@ class accountController extends Controller
 				}
 			}
 
-
 			//Save each account returned for the given account credentials for a given Bank.
 			$accounts = $array['accounts'];
 			$accessToken = $array['access_token'];
@@ -132,7 +131,7 @@ class accountController extends Controller
 			//Save all the transactions from each account of the given Bank.
 			$transactions = $array['transactions'];
 			foreach($transactions as $transaction_key => $transaction_value){
-				$this->setTransaction($transaction_value, $accessToken);
+				$this->setTransaction($transaction_value);
 			}
 			// TODO: This is not a proper response of ajax call.
 			return (redirect::to('user/dashboard'));
@@ -162,7 +161,7 @@ class accountController extends Controller
 		 $response = $client->post($uri, $parameters);
 		 $array = json_decode($response->getBody(), true);
 		*/
-		$accounts = bank_accounts::all()->groupBy('access_token');
+		$accounts = Auth::user()->accounts->groupBy('access_token');
 
 		$resp = view('account.ac_getAll')->with('accounts', $accounts);
 		return ($resp);
@@ -235,10 +234,8 @@ class accountController extends Controller
 		$account = bank_accounts::find($id);
 		$token = $account ->access_token;	// access_token attached to this account.
 
-		$options = ["pending" => true,		// Set to true - to include pending tranxns as well.
-					// str_replace function is temp. Just to handle Plaid specific accounts
-					// which has access_token concatinated with its ID. So below will revert that.
-					"account" => str_replace($token, '', $account->id)];		// account ID to be synced.
+		$options = ["pending" => true,              // Set to true - to include pending tranxns as well.
+					"account" => $account->id];		// account ID to be synced.
 // URI call with below options to specify Start and End dates of Sync.
 // 'options' => '{"pending":"true",
 // 							 "gte":"2014-05-17",
@@ -259,13 +256,16 @@ class accountController extends Controller
 		$array = json_decode($response->getBody(), true);
 		Log::info("Plaid call to URI: ".$uri." is Successful");
 
-		$accounts = $array['accounts'];
-		$transactions = $array['transactions'];
+		// Even though we call with only single account ID, Plaid will return all accounts associated with the access_token
+		// But tranxns will be only from that particular account.
+		// This is actually helpful because this way we will know if any new accounts are added to the access_token.
+		$accounts = $array['accounts'];         // So this will have all accounts
+		$transactions = $array['transactions']; // This will have all tranxns of requested account.
 
 		foreach($accounts as $account_key => $account_value ){
-			$bank_account = bank_accounts::find($token.$account_value['_id']);
+			$bank_account = bank_accounts::find($account_value['_id']);
 			// TODO: Can this be just update operation to update those values that have changed
-			if(isset($bank_account) && $id == $token.$account_value['_id']){
+			if(isset($bank_account) && $id == $account_value['_id']){
 				$bank_account['current_balance'] = $account_value['balance']['current'];
 				$bank_account['available_balance'] = $account_value['balance']['available'];
 				if(isset($account_value['meta']['limit'])){
@@ -279,19 +279,12 @@ class accountController extends Controller
 
 		foreach($transactions as $transaction_key => $transaction_value){
 
-			// For each account - check if its of Plaid account or not.
-			// If from Plaid account handle the taken & id concatination.
-			if(str_contains($token,'test')){
-				$transaction = transaction::find($token.$transaction_value['_id']);
-			}
-			// Non Plaid / Live accounts
-			else{
-				$transaction = transaction::find($transaction_value['_id']);
-			}
+			$transaction = transaction::find($transaction_value['_id']);
+
 			// Only insert tranxns that are not found.
-			// TODO: What if somethings changed on existing transxn. Ex: Category / Merchant
+			// TODO: What if somethings changed on existing transxn Ex: Category / Merchant
 			if(!$transaction){
-				$this->setTransaction($transaction_value, $token);
+				$this->setTransaction($transaction_value);
 			}
 		}
 		return(redirect::to('user/account/getAll'));
@@ -302,19 +295,17 @@ class accountController extends Controller
 	//Stores given single account to DB
 	private function setAccount($account_value, $accessToken){
 		$bank_account= new bank_accounts();
-		if(str_contains($accessToken,'test')){
-			$bank_account['id']=$accessToken.$account_value['_id'];
-		}
-		else{
-			$bank_account['id']=$account_value['_id'];
-		}
+
+		$bank_account['id']=$account_value['_id'];
 		$bank_account['user_id']=Auth::user()->id;
 		$bank_account['access_token'] = $accessToken;
-		//if(isset($account_value['balance']['current']))
 		$bank_account['current_balance'] = $account_value['balance']['current'];
-		//if(isset($account_value['balance']['available']))
 		$bank_account['available_balance'] = $account_value['balance']['available'];
-
+		$bank_account['name'] = $account_value['meta']['name'];
+		$bank_account['number'] = $account_value['meta']['number'];
+		$bank_account['account_type'] = $account_value['type'];
+		$bank_account['LastSynced_at'] = Carbon::now();
+		$bank_account['plaid_core'] = serialize($account_value);
 		if($account_value['institution_type'] == 'fake_institution'){
 			switch ($accessToken) {
 				case 'test_bofa':
@@ -323,57 +314,53 @@ class accountController extends Controller
 				case 'test_chase':
 					$bank_account['bank_name'] = 'Chase';
 					break;
+				case 'test_citi':
+					$bank_account['bank_name'] = 'Citi Bank';
+					break;
+				case 'test_amex':
+					$bank_account['bank_name'] = 'American Express';
+					break;
+				case 'test_wells':
+					$bank_account['bank_name'] = 'Wells Fargo';
+					break;
 				default:
 					$bank_account['bank_name'] = $account_value['institution_type'];
 					break;
 			}
 		}
-
 		if(isset($account_value['meta']['limit']))
 			$bank_account['acc_limit'] = $account_value['meta']['limit'];
-
 		if(isset($account_value['subtype']))
 			$bank_account['account_subtype'] = $account_value['subtype'];
 
-		$bank_account['name'] = $account_value['meta']['name'];
-		$bank_account['number'] = $account_value['meta']['number'];
-		$bank_account['account_type'] = $account_value['type'];
-		$bank_account['LastSynced_at'] = Carbon::now();
-		$bank_account['plaid_core'] = serialize($account_value);
 		$bank_account->save();
 	}
 
 	//Stores given single transaction to DB
-	private function setTransaction($transaction_value, $accessToken){
+	private function setTransaction($transaction_value){
 		$transaction = new transaction();
-		if(str_contains($accessToken,'test')){
-			$transaction['id'] = $accessToken.$transaction_value['_id'];
-		}
-		else{
-			$transaction['id'] = $transaction_value['_id'];
-		}
-		if(str_contains($accessToken,'test')){
-			$transaction['bank_accounts_id'] = $accessToken.$transaction_value['_account'];
-		}
-		else{
-			$transaction['bank_accounts_id'] = $transaction_value['_account'];
-		}
 
+		$transaction['id'] = $transaction_value['_id'];
+		$transaction['bank_accounts_id'] = $transaction_value['_account'];
 		$transaction['amount'] = $transaction_value['amount'];
 		$transaction['date'] = $transaction_value['date'];
 		$transaction['name'] = $transaction_value['name'];
+		$transaction['pending'] = $transaction_value['pending'];
+		$transaction['type_primary'] = $transaction_value['type']['primary'];
+
 		if(isset($transaction_value['meta']['location']['city']))
 			$transaction['location_city'] = $transaction_value['meta']['location']['city'];
 		if(isset($transaction_value['meta']['location']['state']))
 			$transaction['location_state'] = $transaction_value['meta']['location']['state'];
-		$transaction['pending'] = $transaction_value['pending'];
-		$transaction['type_primary'] = $transaction_value['type']['primary'];
-		if(isset($transaction_value['category']))
-			$transaction['category'] = serialize($transaction_value['category']);
+
 		if(isset($transaction_value['category_id']))
 			$transaction['category_id'] = $transaction_value['category_id'];
+		if(isset($transaction_value['category']))
+			$transaction['category'] = serialize($transaction_value['category']);
+
 		$transaction['score'] = serialize($transaction_value['score']);
 		$transaction['plaid_core'] = serialize($transaction_value);
+
 		$transaction->save();
 	}
 }

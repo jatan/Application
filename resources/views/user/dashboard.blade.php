@@ -1,4 +1,4 @@
-<!DOCTYPE html5>
+<!DOCTYPE html>
 <html>
 
 <head lang="en">
@@ -37,7 +37,7 @@
 
         <h1 class="my-h1">Accounts</h1>
         <div class="accounts-list">
-            @foreach(Auth::user()->visible_accounts() as $account)
+            @foreach($accounts as $account)
                 <div class="well">{{$account->bank_name}}</div>
                 <a href="{{$account->id}}/account"><div class="h4 float__left">{{$account->name}}</div>
                 <?php $color = "Fontred";?>
@@ -72,7 +72,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach(Auth::user()->visible_accounts() as $account)
+                @foreach($accounts as $account)
                     @foreach($account->transaction as $transaction)
                         <tr>
                             <td>{{$transaction -> date}}</td>

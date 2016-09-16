@@ -45,8 +45,8 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('user/account/delete/{token}',['middleware' => 'auth', 'uses' => 'accountController@deleteAccount']);
 	Route::post('user/account/hide_toggle/{id}',['middleware' => 'auth', 'uses' => 'accountController@hideToggle']);
 	Route::post('user/account/sync/{id}',['middleware' => 'auth', 'uses' => 'accountController@syncSingleAccount']);
-	//TODO: Implement route - user/account/syncAll/{{$access_token}}
-	//TODO: Implement route - user/account/syncMaster
+	// TODO: Implement route - user/account/syncAll/{{$access_token}}
+	// TODO: Implement route - user/account/syncMaster
 
 	//Bills
     Route::get('user/bill',['middleware' => 'auth', 'uses' => 'billController@index']);
