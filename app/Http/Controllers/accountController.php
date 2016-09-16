@@ -236,6 +236,7 @@ class accountController extends Controller
 
 		$options = ["pending" => true,              // Set to true - to include pending tranxns as well.
 					"account" => $account->id];		// account ID to be synced.
+
 // URI call with below options to specify Start and End dates of Sync.
 // 'options' => '{"pending":"true",
 // 							 "gte":"2014-05-17",
@@ -265,15 +266,21 @@ class accountController extends Controller
 		foreach($accounts as $account_key => $account_value ){
 			$bank_account = bank_accounts::find($account_value['_id']);
 			// TODO: Can this be just update operation to update those values that have changed
+
 			if(isset($bank_account) && $id == $account_value['_id']){
 				$bank_account['current_balance'] = $account_value['balance']['current'];
 				$bank_account['available_balance'] = $account_value['balance']['available'];
 				if(isset($account_value['meta']['limit'])){
 					$bank_account['acc_limit'] = $account_value['meta']['limit'];
 				}
+				$bank_account['name'] = isset($account_value['meta']['official_name']) ? $account_value['meta']['official_name'] : $account_value['meta']['name'];
 				$bank_account['LastSynced_at'] = Carbon::now();
 				$bank_account['SyncCount'] = $bank_account['SyncCount']+1;
+				$bank_account['bank_name'] = $account_value['institution_type'];
 				$bank_account ->save();
+			}
+			if ($bank_account === NULL) {
+				$this->setAccount($account_value, $array['access_token']);
 			}
 		}
 
@@ -290,7 +297,56 @@ class accountController extends Controller
 		return(redirect::to('user/account/getAll'));
 	}
 
+	public function syncAll($token){
+		Log::info("Sync All");
+		$uri = 'https://tartan.plaid.com/connect/get';
+		$parameters = [
+				'json' => [
+						'client_id' => env('PLAID_CLIENT_ID'),
+						'secret' => env('PLAID_SECRET'),
+						'access_token' => $token
+				]
+		];
 
+		$client = new Client();
+		$response = $client->post($uri, $parameters);
+		$array = json_decode($response->getBody(), true);
+		Log::info("Plaid call to URI: ".$uri." is Successful");
+
+		$accounts = $array['accounts'];         // This will have all accounts
+		$transactions = $array['transactions']; // This will have all tranxns of all accounts.
+		foreach($accounts as $account_key => $account_value ){
+			$bank_account = bank_accounts::find($account_value['_id']);
+			// TODO: Can this be just update operation to update those values that have changed
+
+			if(isset($bank_account)){
+				$bank_account['current_balance'] = $account_value['balance']['current'];
+				$bank_account['available_balance'] = $account_value['balance']['available'];
+				if(isset($account_value['meta']['limit'])){
+					$bank_account['acc_limit'] = $account_value['meta']['limit'];
+				}
+				$bank_account['name'] = isset($account_value['meta']['official_name']) ? $account_value['meta']['official_name'] : $account_value['meta']['name'];
+				$bank_account['LastSynced_at'] = Carbon::now();
+				$bank_account['SyncCount'] = $bank_account['SyncCount']+1;
+				$bank_account['bank_name'] = $account_value['institution_type'];
+				$bank_account ->save();
+			}
+			if ($bank_account === NULL) {
+				$this->setAccount($account_value, $array['access_token']);
+			}
+		}
+
+		foreach($transactions as $transaction_key => $transaction_value){
+
+			$transaction = transaction::find($transaction_value['_id']);
+			// Only insert tranxns that are not found.
+			// TODO: What if somethings changed on existing transxn Ex: Category / Merchant
+			if(!$transaction){
+				$this->setTransaction($transaction_value);
+			}
+		}
+		return(redirect::to('user/account/getAll'));
+	}
 
 	//Stores given single account to DB
 	private function setAccount($account_value, $accessToken){
@@ -301,7 +357,7 @@ class accountController extends Controller
 		$bank_account['access_token'] = $accessToken;
 		$bank_account['current_balance'] = $account_value['balance']['current'];
 		$bank_account['available_balance'] = $account_value['balance']['available'];
-		$bank_account['name'] = $account_value['meta']['name'];
+		$bank_account['name'] = isset($account_value['meta']['official_name']) ? $account_value['meta']['official_name'] : $account_value['meta']['name'];
 		$bank_account['number'] = $account_value['meta']['number'];
 		$bank_account['account_type'] = $account_value['type'];
 		$bank_account['LastSynced_at'] = Carbon::now();

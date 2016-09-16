@@ -127,4 +127,19 @@ $(document).ready(function() {
             type: 'POST'
         });
     });
+
+	// Handle SyncAll request to sync all accounts
+	$('.response').on('click', '.syncAllAccount', function (event){
+        event.preventDefault();
+        $.ajax({
+            url: $(this).attr('href'),
+            success: function (data) {
+                $('.response').html(data);
+            },
+            error: function (data) {
+                $('body').html(data.responseText);    // This  will print error stack message on body
+            },
+            type: 'POST'
+        });
+    });
 });
