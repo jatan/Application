@@ -16,7 +16,7 @@
 		@foreach($allAccounts as $account)
 			<tr>
 				<td class="getAccountDetails"><a href='account/getbyId/{{$account->id}}'>{{$account->name.'  -  '}}{{$account->number}}</a>
-				<br /><span class="disabled">Last Sync was {{\Carbon\Carbon::parse($account->LastSynced_at)->diffForHumans(\Carbon\Carbon::now())}}</span></td>
+				<br /><span class="disabled">Last Sync: {{\Carbon\Carbon::parse($account->LastSynced_at)->diffForHumans(\Carbon\Carbon::now())}}</span></td>
 				<td>{{($account->account_subtype == NULL) ? $account->account_type : $account->account_subtype}}</td>
 				<td>{{$account->current_balance}}</td>
 				<td>{{$account->available_balance}}</td>

@@ -46,8 +46,7 @@ Route::group(['middleware' => ['web']], function () {
 	Route::post('user/account/hide_toggle/{id}',['middleware' => 'auth', 'uses' => 'accountController@hideToggle']);
 	Route::post('user/account/sync/{id}',['middleware' => 'auth', 'uses' => 'accountController@syncSingleAccount']);
 	Route::post('user/account/syncAll/{token}',['middleware' => 'auth', 'uses' => 'accountController@syncAll']);
-
-	// TODO: Implement route - user/account/syncMaster
+	Route::get('user/account/syncMaster', ['middleware' => 'auth', 'uses' => 'accountController@syncMaster']);
 
 	//Bills
     Route::get('user/bill',['middleware' => 'auth', 'uses' => 'billController@index']);

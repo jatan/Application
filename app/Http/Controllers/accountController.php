@@ -237,11 +237,11 @@ class accountController extends Controller
 		$options = ["pending" => true,              // Set to true - to include pending tranxns as well.
 					"account" => $account->id];		// account ID to be synced.
 
-// URI call with below options to specify Start and End dates of Sync.
-// 'options' => '{"pending":"true",
-// 							 "gte":"2014-05-17",
-// 							 "lte":"2014-07-01"
-// 						}'
+		// URI call with below options to specify Start and End dates of Sync.
+		// 'options' => '{"pending":"true",
+		// 							 "gte":"2014-05-17",
+		// 							 "lte":"2014-07-01"
+		// 						}'
 		$uri = 'https://tartan.plaid.com/connect/get';
 		$parameters = [
 				'json' => [
@@ -298,7 +298,7 @@ class accountController extends Controller
 	}
 
 	public function syncAll($token){
-		Log::info("Sync All");
+		Log::info("Sync all accounts for given token: ".$token);
 		$uri = 'https://tartan.plaid.com/connect/get';
 		$parameters = [
 				'json' => [
@@ -348,6 +348,13 @@ class accountController extends Controller
 		return(redirect::to('user/account/getAll'));
 	}
 
+	public function syncMaster(){
+		$accounts = Auth::user()->access_tokens();
+		foreach ($accounts as $currentAccount) {
+			$this->syncAll($currentAccount->access_token);
+		}
+		return(redirect::to('user/account/getAll'));
+	}
 	//Stores given single account to DB
 	private function setAccount($account_value, $accessToken){
 		$bank_account= new bank_accounts();
