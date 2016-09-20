@@ -77,7 +77,7 @@
                         <tr>
                             <td>{{$transaction -> date}}</td>
                             <td>{{$transaction->name}}</td>
-                            <td>{{$transaction -> amount}}</td>
+                            <td class='{{($transaction->amount > 0) ? "amount_green" : "amount_red"}}'>{{$transaction->amount}}</td>
                             <td>{{$transaction -> category_id}}</td>
                             <td>{{$account->name}}</td>
                         </tr>

@@ -265,7 +265,6 @@ class accountController extends Controller
 
 		foreach($accounts as $account_key => $account_value ){
 			$bank_account = bank_accounts::find($account_value['_id']);
-			// TODO: Can this be just update operation to update those values that have changed
 
 			if(isset($bank_account) && $id == $account_value['_id']){
 				$bank_account['current_balance'] = $account_value['balance']['current'];
@@ -291,7 +290,60 @@ class accountController extends Controller
 			// Only insert tranxns that are not found.
 			// TODO: What if somethings changed on existing transxn Ex: Category / Merchant
 			if(!$transaction){
-				$this->setTransaction($transaction_value);
+				Log::info($transaction_key.": Transaction not found");
+				// Check if current transaction was fetched before as pending.
+				// If a previously pending transaction is now cleared,
+				// The cleared transaction will have new _id with _pendingTransaction
+				// attribute set to previous ID value.
+				if (isset($transaction_value['_pendingTransaction'])) {
+					Log::info($transaction_key.": Transaction has a pending attribute");
+					$pendingTransaction = transaction::find($transaction_value['_pendingTransaction']);
+					if(isset($pendingTransaction)){
+						Log::info($transaction_key.": Pending transaction needs to be deleted.");
+						$pendingTransaction->delete();
+						Log::info($transaction_key.": Delete completed.");
+					}
+					else {
+						Log::info($transaction_key.": Pending attribute is there But pending ID is not found.");
+						$this->setTransaction($transaction_value);
+					}
+				}
+				else {
+					$this->setTransaction($transaction_value);
+				}
+			}
+			else {
+				Log::info($transaction_key.": Transaciton Found");
+
+				if (isset($transaction_value['_pendingTransaction'])) {
+					Log::info($transaction_key.": Transaction has a pending attribute");
+					$pendingTransaction = transaction::find($transaction_value['_pendingTransaction']);
+					if(isset($pendingTransaction)){
+						Log::info($transaction_key.": Pending transaction needs to be deleted.");
+						$pendingTransaction->delete();
+						Log::info($transaction_key.": Delete completed.");
+					}
+				}
+				$transaction['amount'] = $transaction_value['amount'];
+				$transaction['date'] = $transaction_value['date'];
+				$transaction['name'] = $transaction_value['name'];
+				$transaction['pending'] = $transaction_value['pending'];
+				$transaction['type_primary'] = $transaction_value['type']['primary'];
+
+				if(isset($transaction_value['meta']['location']['city']))
+					$transaction['location_city'] = $transaction_value['meta']['location']['city'];
+				if(isset($transaction_value['meta']['location']['state']))
+					$transaction['location_state'] = $transaction_value['meta']['location']['state'];
+
+				if(isset($transaction_value['category_id']))
+					$transaction['category_id'] = $transaction_value['category_id'];
+				if(isset($transaction_value['category']))
+					$transaction['category'] = serialize($transaction_value['category']);
+
+				$transaction['score'] = serialize($transaction_value['score']);
+				$transaction['plaid_core'] = serialize($transaction_value);
+
+				$transaction->save();
 			}
 		}
 		return(redirect::to('user/account/getAll'));
@@ -425,5 +477,9 @@ class accountController extends Controller
 		$transaction['plaid_core'] = serialize($transaction_value);
 
 		$transaction->save();
+	}
+
+	public function sign( $number ) {
+    	return ( $number > 0 ) ? 1 : ( ( $number < 0 ) ? -1 : 0 );
 	}
 }
