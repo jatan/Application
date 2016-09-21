@@ -67,7 +67,9 @@
                     <th>Date</th>
                     <th>Merchant</th>
                     <th>Amount</th>
-                    <th>Category</th>
+                    <th>Cat 1</th>
+                    <th>Cat 2</th>
+                    <th>Cat 3</th>
                     <th>Account</th>
                 </tr>
                 </thead>
@@ -75,10 +77,13 @@
                 @foreach($accounts as $account)
                     @foreach($account->transaction as $transaction)
                         <tr>
-                            <td>{{$transaction -> date}}</td>
-                            <td>{{$transaction->name}}</td>
+                            <td style="min-width: 100px;">{{$transaction -> date}}</td>
+                            <td>{{substr($transaction->name,0,60)}}</td>
                             <td class='{{($transaction->amount > 0) ? "amount_green" : "amount_red"}}'>{{$transaction->amount}}</td>
-                            <td>{{$transaction -> category_id}}</td>
+                            <!--{{$cat = App\Categories::find($transaction -> category_id)}}-->
+                            <td>{{$cat['c1']}}</td>
+                            <td>{{$cat['c2']}}</td>
+                            <td>{{$cat['c3']}}</td>
                             <td>{{$account->name}}</td>
                         </tr>
                     @endforeach
