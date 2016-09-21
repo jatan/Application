@@ -38,7 +38,7 @@
         <h1 class="my-h1">Accounts</h1>
         <div class="accounts-list">
             @foreach($accounts as $account)
-                <div class="well">{{$account->bank_name}}</div>
+                <div class="well">{{strtoupper($account->bank_name)}}</div>
                 <a href="{{$account->id}}/account"><div class="h4 float__left">{{$account->name}}</div>
                 <?php $color = "Fontred";?>
                 @if($account->current_balance >= 0)
@@ -69,7 +69,6 @@
                     <th>Amount</th>
                     <th>Cat 1</th>
                     <th>Cat 2</th>
-                    <th>Cat 3</th>
                     <th>Account</th>
                 </tr>
                 </thead>
@@ -79,11 +78,10 @@
                         <tr>
                             <td style="min-width: 100px;">{{$transaction -> date}}</td>
                             <td>{{substr($transaction->name,0,60)}}</td>
-                            <td class='{{($transaction->amount > 0) ? "amount_green" : "amount_red"}}'>{{$transaction->amount}}</td>
+                            <td class='{{($transaction->amount > 0) ? "amount_red" : "amount_green"}}'>{{($transaction->amount > 0) ? (-1.0)*($transaction -> amount) : abs($transaction -> amount)}}</td>
                             <!--{{$cat = App\Categories::find($transaction -> category_id)}}-->
-                            <td>{{$cat['c1']}}</td>
+                            <td>{{isset($cat['c1']) ? $cat['c1'] : $transaction -> category_id}}</td>
                             <td>{{$cat['c2']}}</td>
-                            <td>{{$cat['c3']}}</td>
                             <td>{{$account->name}}</td>
                         </tr>
                     @endforeach

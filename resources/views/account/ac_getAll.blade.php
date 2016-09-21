@@ -9,6 +9,12 @@
 			</th>
 
 		</tr>
+		<tr>
+			<td>Account Name</td>
+			<td>Type</td>
+			<td>Current Balance</td>
+			<td>Available Balance</td>
+		</tr>
 
 		</thead>
 		<tbody>
@@ -18,7 +24,7 @@
 				<td class="getAccountDetails"><a href='account/getbyId/{{$account->id}}'>{{$account->name.'  -  '}}{{$account->number}}</a>
 				<br /><span class="disabled">Last Sync: {{\Carbon\Carbon::parse($account->LastSynced_at)->diffForHumans(\Carbon\Carbon::now())}}</span></td>
 				<td>{{($account->account_subtype == NULL) ? $account->account_type : $account->account_subtype}}</td>
-				<td>{{$account->current_balance}}</td>
+				<td><b>{{$account->current_balance}}</b></td>
 				<td>{{$account->available_balance}}</td>
 				<td><a class="syncAccount" href="account/sync/{{$account->id}}"><button class="btn btn-success" style="margin: 0;">Sync</button></a></td>
 				<td><a class="hide_toggle" href="account/hide_toggle/{{$account->id}}"><button class="btn btn-primary" style="margin: 0;">{{($account->hidden_flag) ? 'UNHIDE' : 'HIDE'}}</button></a></td>
