@@ -73,18 +73,16 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach($accounts as $account)
-                    @foreach($account->transaction as $transaction)
-                        <tr>
-                            <td style="min-width: 100px;">{{$transaction -> date}}</td>
-                            <td>{{substr($transaction->name,0,60)}}</td>
-                            <td class='{{($transaction->amount > 0) ? "amount_red" : "amount_green"}}'>{{($transaction->amount > 0) ? (-1.0)*($transaction -> amount) : abs($transaction -> amount)}}</td>
-                            <!--{{$cat = App\Categories::find($transaction -> category_id)}}-->
-                            <td>{{isset($cat['c1']) ? $cat['c1'] : $transaction -> category_id}}</td>
-                            <td>{{$cat['c2']}}</td>
-                            <td>{{$account->name}}</td>
-                        </tr>
-                    @endforeach
+                @foreach($transactions as $transaction)
+                    <tr>
+                        <td style="min-width: 100px;">{{$transaction -> date}}</td>
+                        <td>{{substr($transaction->name,0,60)}}</td>
+                        <td class='{{($transaction->amount > 0) ? "amount_red" : "amount_green"}}'>{{($transaction->amount > 0) ? (-1.0)*($transaction -> amount) : abs($transaction -> amount)}}</td>
+                        <!--{{$cat = App\Categories::find($transaction -> category_id)}}-->
+                        <td>{{isset($cat['c1']) ? $cat['c1'] : $transaction -> category_id}}</td>
+                        <td>{{$cat['c2']}}</td>
+                        <td>{{$transaction->bank_accounts_id}}</td>
+                    </tr>
                 @endforeach
                 </tbody>
             </table>

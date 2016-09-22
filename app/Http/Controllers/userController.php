@@ -7,12 +7,21 @@ use GuzzleHttp\Client;
 use App\longtailinst;
 use Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class userController extends Controller
 {
 	public function dashboard(){
 		$accounts = Auth::user()->visible_accounts();
-		return (view('user.dashboard')->with('accounts', $accounts));
+		$ids = '';
+		foreach ($accounts as $account) {
+			$ids[] = $account->id;
+		}
+		$transactions = DB::table('transactions')
+		                     ->whereIn('bank_accounts_id', $ids)
+		                     ->orderBy('date', 'desc')
+							 ->get();
+		return (view('user.dashboard')->with(['accounts' => $accounts, 'transactions' => $transactions]));
 	}
 
 	/*
