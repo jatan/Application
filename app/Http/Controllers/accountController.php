@@ -322,11 +322,13 @@ class accountController extends Controller
 	public function syncAll($token){
 		Log::info("Sync all accounts for given token: ".$token);
 		$uri = 'https://tartan.plaid.com/connect/get';
+		$options = ["pending" => true,];              // Set to true - to include pending tranxns as well.
 		$parameters = [
 				'json' => [
 						'client_id' => env('PLAID_CLIENT_ID'),
 						'secret' => env('PLAID_SECRET'),
-						'access_token' => $token
+						'access_token' => $token,
+						'options' => json_encode($options)
 				]
 		];
 
@@ -358,15 +360,40 @@ class accountController extends Controller
 			}
 		}
 
+		$newTransCount = 0;
 		foreach($transactions as $transaction_key => $transaction_value){
 
 			$transaction = transaction::find($transaction_value['_id']);
-			// Only insert tranxns that are not found.
-			// TODO: What if somethings changed on existing transxn Ex: Category / Merchant
+
 			if(!$transaction){
-				$this->setTransaction($transaction_value);
+				Log::info($transaction_key.": Transaction not found");
+				// Check if current transaction was fetched before as pending.
+				// If a previously pending transaction is now cleared,
+				// The cleared transaction will have new _id with _pendingTransaction
+				// attribute set to previous ID value.
+				if (isset($transaction_value['_pendingTransaction'])) {
+					Log::info($transaction_key.": Transaction has a pending attribute");
+					$pendingTransaction = transaction::find($transaction_value['_pendingTransaction']);
+					if(isset($pendingTransaction)){
+						Log::info($transaction_key.": Pending transaction needs to be deleted.");
+						$pendingTransaction->delete();
+						Log::info($transaction_key.": Delete completed.");
+						$this->setTransaction($transaction_value);
+						$newTransCount++;
+					}
+					else {
+						Log::info($transaction_key.": Pending attribute is there But pending ID is not found.");
+						$this->setTransaction($transaction_value);
+						$newTransCount++;
+					}
+				}
+				else {
+					$this->setTransaction($transaction_value);
+					$newTransCount++;
+				}
 			}
 		}
+		Log::info("Total No of Transactions updated are: ".$newTransCount);
 		return(redirect::to('user/account/getAll'));
 	}
 
