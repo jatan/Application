@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Plaid_RQRS_Logs;
 use App\Http\Requests;
 use App\bank_accounts;
 use App\transaction;
@@ -58,7 +59,7 @@ class accountController extends Controller
 			}
 			// 2nd Check -
 			else if (isset($input['access_token'])) {
-				Log::info("Access tocken is set");
+				Log::info("Access token is set");
 
 				$uri = 'https://tartan.plaid.com/connect/step';
 				$parameters = [
@@ -235,12 +236,13 @@ class accountController extends Controller
 		$token = $account ->access_token;	// access_token attached to this account.
 
 		$options = ["pending" => true,              // Set to true - to include pending tranxns as well.
-					"account" => $account->id];		// account ID to be synced.
+					"account" => $account->id,      // account ID to be synced.
+					"gte" => Carbon::now()->subDays(15)->toDateString()];       //15 days prior to current date. in YYYY-MM-DD format
 
 		// URI call with below options to specify Start and End dates of Sync.
-		// 'options' => '{"pending":"true",
-		// 							 "gte":"2014-05-17",
-		// 							 "lte":"2014-07-01"
+		// 'options' => '{  "pending":"true",
+		// 				    "gte":"2014-05-17",
+		// 					"lte":"2014-07-01"
 		// 						}'
 		$uri = 'https://tartan.plaid.com/connect/get';
 		$parameters = [
@@ -255,7 +257,12 @@ class accountController extends Controller
 		$client = new Client();
 		$response = $client->post($uri, $parameters);
 		$array = json_decode($response->getBody(), true);
-		Log::info("Plaid call to URI: ".$uri." is Successful");
+	//	Log::info("Plaid call to URI: ".$uri." is Successful");
+		$DBLog = new Plaid_RQRS_Logs();
+		$DBLog['URL'] = $uri;
+		$DBLog['Request'] = json_encode($parameters['json']);
+		$DBLog['Response'] = $response->getBody();
+		$DBLog->save();
 
 		// Even though we call with only single account ID, Plaid will return all accounts associated with the access_token
 		// But tranxns will be only from that particular account.
@@ -288,7 +295,7 @@ class accountController extends Controller
 			$transaction = transaction::find($transaction_value['_id']);
 
 			if(!$transaction){
-				Log::info($transaction_key.": Transaction not found");
+				// Log::info($transaction_key.": Transaction not found");
 				// Check if current transaction was fetched before as pending.
 				// If a previously pending transaction is now cleared,
 				// The cleared transaction will have new _id with _pendingTransaction
@@ -468,10 +475,10 @@ class accountController extends Controller
 		if(isset($transaction_value['category_id']))
 			$transaction['category_id'] = $transaction_value['category_id'];
 		if(isset($transaction_value['category']))
-			$transaction['category'] = serialize($transaction_value['category']);
+			$transaction['category'] = json_encode($transaction_value['category']);
 
-		$transaction['score'] = serialize($transaction_value['score']);
-		$transaction['plaid_core'] = serialize($transaction_value);
+		$transaction['score'] = json_encode($transaction_value['score']);
+		$transaction['plaid_core'] = json_encode($transaction_value);
 
 		$transaction->save();
 	}
