@@ -135,7 +135,7 @@ class accountController extends Controller
 				$this->setTransaction($transaction_value);
 			}
 			// TODO: This is not a proper response of ajax call.
-			return (redirect::to('user/dashboard'));
+			// return (redirect::to('user/dashboard'));
 		}
 	}
 
@@ -169,8 +169,100 @@ class accountController extends Controller
 	}
 
 	public function updateAccount_byId($id){
-		$data = '<h3>Update Operation Successful for ID: '.$id.'</h3>';
-		return ($data);
+		$resp = view('account.ac_edit')->with('access_token', $id)->render();
+		return ($resp);
+	}
+
+	public function updateAccount_process()
+	{
+		
+		// Only process ajax requests.
+		// if(Request::ajax()) 
+		{
+			$input = Request::all();
+			Log::alert($input);			// [This will log un-encrypted username and password]
+
+			// There are 3 checks to identify at which step is the user of account creation process
+			// This will help determine which Plaid URI to call and what should be the parameters
+			// 1st Check -
+			if (isset($input['radio'])) {
+				Log::info("Radio Button selected");
+				$uri = 'https://tartan.plaid.com/connect/step';
+				$options = '{"send_method":{"mask":"' . $input["radio"] . '"}}';
+				$parameters = [
+						'json' => [
+								'client_id' => env('PLAID_CLIENT_ID'),
+								'secret' => env('PLAID_SECRET'),
+								'access_token' => $input['access_token'],
+								'options' => $options
+						]
+				];
+			}
+			// 3rd Check - First Step
+			else {
+				Log::info("User is at the first step of the process");
+
+				$uri = 'https://tartan.plaid.com/connect';
+				$parameters = [
+				'json' => [
+						'client_id' => env('PLAID_CLIENT_ID'),
+						'secret' => env('PLAID_SECRET'),
+						'username' => $input['username'],	// Bank Username - given by user
+						'password' => $input['password'],	// Bank password - given by user
+						'access_token' => $input['access_token']	// Bank Name - in type specific to Plaid ex: bofa
+					]
+				];
+			}
+
+			// After deciding which URI to call and its parameters, Request will be sent.
+			// And response is decoded from JSON to array
+			$client = new Client();
+			$response = $client->patch($uri, $parameters);
+			$array = json_decode($response->getBody(), true);
+			Log::info("Plaid call to URI: ".$uri." is Successful");
+
+			// Now Decide Response.
+			// If Bank is MFA enabled, then only it will return 'type' field.
+			// If bank is not MFA enabled - All bank accounts and transactions will be inserted.
+			// Do multiple checks to decide what should be the response for MFA.
+			if (isset($array['type'])) {
+
+				if ($array['type'] == "questions") {
+					Log::info("Question based MFA");
+
+					$mfa = $array['mfa'][0];
+					$pass = $mfa['question'];
+					return (view('account.ac_edit_p')->with('pass', $pass)->with('access_token', $array['access_token']));
+				} else if ($array['type'] == "device") {
+					Log::info("Device based MFA");
+
+					$mfa = $array['mfa'];
+					$pass = $mfa['message'];
+					return (view('account.ac_edit_p')->with('pass', $pass)->with('access_token', $array['access_token']));
+				} else if ($array['type'] == "list") {
+					Log::info("Provide MFA list to User to select from");
+
+					$mfa = $array['mfa'][0];
+					$pass = $array['mfa'];
+					return (view('account.ac_edit_p')->with('pass', $pass)->with('access_token', $array['access_token']));
+				}
+			}
+
+			//Save each account returned for the given account credentials for a given Bank.
+			$accounts = $array['accounts'];
+			$accessToken = $array['access_token'];
+			foreach($accounts as $account_key => $account_value ){
+				$this->setAccount($account_value, $accessToken);
+			}
+
+			//Save all the transactions from each account of the given Bank.
+			$transactions = $array['transactions'];
+			foreach($transactions as $transaction_key => $transaction_value){
+				$this->setTransaction($transaction_value);
+			}
+			// TODO: This is not a proper response of ajax call.
+			return (redirect::to('user/dashboard'));
+		}
 	}
 
 	/*	Delete All accounts related to given access_token.

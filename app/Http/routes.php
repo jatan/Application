@@ -42,6 +42,7 @@ Route::group(['middleware' => ['web']], function () {
     Route::get ('user/account/create',['middleware' => 'auth', 'uses' => 'accountController@createAccount']);
     Route::post('user/account/create',['middleware' => 'auth', 'uses' => 'accountController@createAccount_process']);
     Route::get('user/account/update/{id}',['middleware' => 'auth', 'uses' => 'accountController@updateAccount_byId']);
+    Route::post('user/account/update/{id}',['middleware' => 'auth', 'uses' => 'accountController@updateAccount_process']);
     Route::get('user/account/delete/{token}',['middleware' => 'auth', 'uses' => 'accountController@deleteAccount']);
 	Route::post('user/account/hide_toggle/{id}',['middleware' => 'auth', 'uses' => 'accountController@hideToggle']);
 	Route::post('user/account/sync/{id}',['middleware' => 'auth', 'uses' => 'accountController@syncSingleAccount']);
