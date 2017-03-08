@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Budget;
+use Illuminate\Support\Facades\Auth;
 
 use App\Http\Requests;
 
@@ -10,10 +11,22 @@ class budgetController extends Controller
 {
 
     public function index(){
+
+//	    $allBudgets = Budget::all()->where('User_ID', Auth::user()->id)->toArray();
+//	    var_dump($allBudgets[0]['SetValue']);
         return (view('budget.bu_index'));
     }
 
     public function createBudget(){
+
+	    $newBudget = new Budget();
+
+	    $newBudget['User_ID'] = Auth::user()->id;
+	    $newBudget['Name'] = $_POST['category'];
+	    $newBudget['SetValue'] = $_POST['Setamount'];
+	    $newBudget['SpentValue'] = 0;
+
+	    $newBudget->save();
 
 //        $input = [
 //            'category' => $_GET['category'],
@@ -23,8 +36,8 @@ class budgetController extends Controller
 //        ];
 //        return json_encode($input);
 
-        $data = '<h3>Create Operation Successful</h3>';
-        return ($data);
+//        $data = '<h3>Create Operation Successful</h3>';
+//        return ($data);
     }
 
     public function getBudget_byId($id){

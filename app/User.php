@@ -45,4 +45,8 @@ class User extends Authenticatable
 	public function access_tokens(){
 		return $this->accounts()->distinct()->select('access_token')->groupBy('access_token')->get();
 	}
+
+    public function budgets(){
+        return $this->hasMany('App\Budget');
+    }
 }
