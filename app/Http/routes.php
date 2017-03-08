@@ -6,6 +6,8 @@ Route::group(['middleware' => ['web']], function () {
     //Landing Page
     Route::get('/','welcomeController@welcome');
 
+    Route::get('/update', ['middleware' => 'auth', 'uses' => 'budgetController@update']);
+
     //Registration
     Route::get('/register','registerController@register');
     Route::post('/register','registerController@registerProcess');

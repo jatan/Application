@@ -46,13 +46,14 @@
 						<option>Amount: Low to High</option>
 					</select>
 				</div>
+				@foreach($budgetLists as $budget)
 				<div class="progress-container">
 					<div class="card">
 						<div class="card-content black-text">
-							<span class="card-title">Home Rent</span>
+							<span class="card-title">{{$budget['Name']}}</span>
 							<div class="progress test">
 								<div class="progress-bar progress-bar-danger" style="width:90%;">
-									90%
+									{{$budget['SpentValue']}}
 								</div>
 							</div>
 						</div>
@@ -62,6 +63,8 @@
 						</div>
 					</div>
 				</div>
+				@endforeach
+
 				<div id="newBudgetForm" class="modal fade" role="dialog" style="display: none;">
 					<div class="modal-dialog">
 						<div class="modal-content">
@@ -136,9 +139,11 @@
 						</div>
 					</div>
 				</div>
+				@if(count($budgetLists) == 0)
 				<div class="bg-status-display text-center" style="margin-top: 50px;">
 					<h3>You have not set up any budgets yet</h3>
 				</div>
+				@endif
 			</div>
 
 
