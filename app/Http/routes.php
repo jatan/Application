@@ -34,7 +34,7 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('user/budget/getAll',['middleware' => 'auth', 'uses' => 'budgetController@getBudgets']);
     Route::get('user/budget/getbyId/{id}',['middleware' => 'auth', 'uses' => 'budgetController@getBudget_byId']);
     Route::post('user/budget/create',['middleware' => 'auth', 'uses' => 'budgetController@createBudget']);
-    Route::get('user/budget/update/{id}',['middleware' => 'auth', 'uses' => 'budgetController@updateBudget_byId']);
+    Route::post('user/budget/update',['middleware' => 'auth', 'uses' => 'budgetController@updateBudget']);
     Route::get('user/budget/delete/{id}',['middleware' => 'auth', 'uses' => 'budgetController@deleteBudget_byId']);
 
     //Accounts

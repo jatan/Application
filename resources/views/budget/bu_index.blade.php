@@ -39,11 +39,11 @@
 				</div>
 				<div class="right">
 					<label>sort by</label>
-					<select>
-						<option>Status</option>
-						<option>Category</option>
-						<option>Amount: High to Low</option>
-						<option>Amount: Low to High</option>
+					<select id="sortBudget">
+						<option value="Stat">Status</option>
+						<option value="Category">Category</option>
+						<option value="HtoL" selected="selected">Amount: High to Low</option>
+						<option value="LtoH">Amount: Low to High</option>
 					</select>
 				</div>
 				@foreach($budgetLists as $budget)
@@ -51,15 +51,17 @@
 					<div class="card">
 						<div class="card-content black-text">
 							<span class="card-title">{{$budget['Name']}}</span>
+							<div class="">Budgeted Amount: {{$budget['SetValue']}}</div>
 							<div class="progress test">
-								<div class="progress-bar progress-bar-danger" style="width:90%;">
-									{{$budget['SpentValue']}}
+								<div class="progress-bar progress-bar-danger" style="width:{{intval($budget['SpentValue'] * 100 / $budget['SetValue'])}}%;">
+									{{intval($budget['SpentValue'] * 100 / $budget['SetValue'])}} %
 								</div>
 							</div>
+							<div class="">Remaining Amount: {{$budget['SetValue'] - $budget['SpentValue']}}</div>
 						</div>
 						<div class="card-action">
-							<a href="#">EDIT</a>
-							<a class="right" href="#">DELETE</a>
+							<button class="btn btn-success left" data-toggle="modal" data-target="#editBudget">EDIT</button>
+							<button class="btn btn-success right" data-toggle="modal" data-target="#deleteBudget">DELETE</button>
 						</div>
 					</div>
 				</div>
@@ -139,6 +141,82 @@
 						</div>
 					</div>
 				</div>
+
+				<div id="editBudget" class="modal fade" role="dialog" style="display: none;">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<div class="modal-title">
+									<button type="button" class="btn close" data-dismiss="modal">×</button>
+									<h4>Edit Budget</h4>
+								</div>
+							</div>
+							<div class="modal-body">
+								<form class="form-inline" action="budget/update" method="post">
+									<div class="form-group">
+										<label for="cat">Category</label>
+										<select id="cat" class="form-control" name="category">
+											<option>Bank Fees</option>
+											<option>Cash Advance</option>
+											<option>Community</option>
+											<option>Food and Drink</option>
+											<option>Healthcare</option>
+											<option>Interest</option>
+											<option>Payment</option>
+											<option>Recreation</option>
+											<option>Service</option>
+											<option>Shops</option>
+											<option>Tax</option>
+											<option>Transfer</option>
+											<option>Travel</option>
+										</select>
+									</div>
+									<br>
+									<br>
+									<div class="form-group">
+										<h4>When will this happen?</h4>
+										<div class="radio">
+											<label>
+												<input type="radio" name="frequency" id="option1" value="everyMonth" checked>
+												Every Month
+											</label>
+										</div>
+										<div class="radio">
+											<label>
+												<input type="radio" name="frequency" id="option2" value="everyFewMonth">
+												Every Few Months
+											</label>
+										</div>
+										<div class="radio">
+											<label>
+												<input type="radio" name="frequency" id="option3" value="once">
+												Once
+											</label>
+										</div>
+									</div>
+									<br>
+									<br>
+									<div class="checkbox">
+										<label>
+											<input type="checkbox" name="rollOverFlag">Start each new month with the previous month's leftover amount
+										</label>
+									</div>
+									<br>
+									<br>
+									<div class="form-group">
+										<label for="amount">Amount</label>
+										<input type="number" class="form-control" id="amount" name="Setamount" value="">
+									</div>
+									<br>
+									<br>
+									<button type="submit" class="btn btn-success left">SAVE</button>
+									<button type="button" class="btn btn-danger right" data-dismiss="modal">CANCEL</button>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+
 				@if(count($budgetLists) == 0)
 				<div class="bg-status-display text-center" style="margin-top: 50px;">
 					<h3>You have not set up any budgets yet</h3>

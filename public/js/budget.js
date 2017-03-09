@@ -1,18 +1,8 @@
-
-$('.testing a').click(function(event){
-    event.preventDefault();
-
-    $.ajax({
-        url: this.href,
-        data: {
-            format: 'json'
-        },
-        success: function(data){
-            $('.response').html(data);
-        },
-        error: function(){
-            $('.response').text("An Error Occurred");
-        },
-        type:'GET'          // not working with type: POST
+$(document).ready(function() {
+    $("#sortBudget").change(function() {
+        //console.log("Handle for .change method called");
+        var element = $("#sortBudget option:selected");
+        console.log("Selected Element is: " + element.text());      // Gives content inside the tag <option>
+        console.log("Selected Element is: " + element.val());       // Gives value mentioned in value attribute
     });
 });

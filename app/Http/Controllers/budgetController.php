@@ -22,17 +22,19 @@ class budgetController extends Controller
                         ->selectRaw('category, sum(amount) as Total')
                         ->get()
                         ->toArray();
-        var_dump($t);
+    //    var_dump($t);
+        $b = Budget::all();
 
-        $b = Budget::find(1);
-                    //->toArray();
+    //    var_dump($b);
 
-        var_dump($b);
-        echo ($t[0]['Total']);
-        $b->SpentValue = intval($t[0]['Total']);
-        var_dump($b);
-        $b->save();
-
+        foreach ($b as $currentBudget) {
+            foreach ($t as $totalSpending) {
+                if ($currentBudget['Name'] == $totalSpending['category']) {
+                    $currentBudget['SpentValue'] = $totalSpending['Total'];
+                }
+            }
+            $currentBudget->save();
+        }
     }
 
     public function index(){
@@ -53,32 +55,33 @@ class budgetController extends Controller
 
 	    $newBudget->save();
 
-//        $input = [
-//            'category' => $_GET['category'],
-//            'frequency' => $_GET['frequency'],
-//            'rollOverFlag' => $_GET['rollOverFlag'],
-//            'Setamount' => $_GET['Setamount'],
-//        ];
-//        return json_encode($input);
-
-//        $data = '<h3>Create Operation Successful</h3>';
-//        return ($data);
         return (redirect::to('user/budget'));
     }
 
-    public function getBudget_byId($id){
-        $data = '<h3>Read Operation Successful for ID: '.$id.'</h3>';
-        return ($data);
-    }
+    public function updateBudget(){
+        $userID = Auth::user()->id;
 
-    public function getBudgets(){
-        $data = '<h3>Read All Operation Successful</h3>';
-        return ($data);
-    }
+        $findBudget = Budget::where('User_ID', $userID)
+                            ->where('Name', $_POST['category'])
+                            ->first();
+                            //->toArray();
+        if (count($findBudget) > 0) {
 
-    public function updateBudget_byId($id){
-        $data = '<h3>Update Operation Successful for ID: '.$id.'</h3>';
-        return ($data);
+            $findBudget['SetValue'] = $_POST['Setamount'];
+            $findBudget->save();
+        } else {
+
+            $newBudget = new Budget();
+
+            $newBudget['User_ID'] = Auth::user()->id;
+            $newBudget['Name'] = $_POST['category'];
+            $newBudget['SetValue'] = $_POST['Setamount'];
+            $newBudget['SpentValue'] = 0;
+
+            $newBudget->save();
+
+        }
+        return (redirect::to('user/budget'));
     }
 
     public function deleteBudget_byId($id){

@@ -18,7 +18,8 @@ class VerifyCsrfToken extends BaseVerifier
         'user/account/hide_toggle/*',
         'user/account/sync/*',
 		'user/account/syncAll/*',
-        'user/budget/create'
+        'user/budget/create',
+        'user/budget/update'
     ];
 
 }
