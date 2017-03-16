@@ -3,13 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class transactionController extends Controller
 {
-    //
-
     public function index(){
-        return (view('transaction.tr_index'));
+        $accounts = Auth::user()->visible_accounts();
+        $ids = '';				// This is okay for older versions
+		$ids = array();			// This is required for PHP 7.1 or higher
+		foreach ($accounts as $account) {
+			$ids[] = $account->id;
+		}
+		$transactions = DB::table('transactions')
+		                     ->whereIn('bank_accounts_id', $ids)
+		                     ->orderBy('date', 'desc')
+							 ->get();
+		return (view('transaction.tr_Index')->with(['accounts' => $accounts, 'transactions' => $transactions]));
     }
 
     public function createTransaction(){
