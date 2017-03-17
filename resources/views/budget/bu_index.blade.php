@@ -4,9 +4,9 @@
 	<link rel="stylesheet" href="../css/budget.css">
 @stop
 
-@section('titleText')
-    BUDGETS
-@stop
+{{--@section('titleText')--}}
+    {{--BUDGETS--}}
+{{--@stop--}}
 
 @section('content')
 
@@ -30,7 +30,7 @@
 	<div class="tab-content">
 		<div id="jan" class="panel panel-info tab-pane fade active in">
 			<div class="panel-heading">
-				<div class="panel-title">January month's Budget</div>
+				<div class="panel-title"><h2>January month's Budget</h2></div>
 			</div>
 
 			<div class="panel-body">
@@ -60,8 +60,8 @@
 							<div class="">Remaining Amount: {{$budget['SetValue'] - $budget['SpentValue']}}</div>
 						</div>
 						<div class="card-action">
-							<button class="btn btn-success left" data-toggle="modal" data-target="#editBudget">EDIT</button>
-							<button class="btn btn-success right" data-toggle="modal" data-target="#deleteBudget">DELETE</button>
+							<button class="btn btn-success left" data-toggle="modal" data-target="#editBudget" data-whatever="{{$budget['Name']}}">EDIT</button>
+							<button class="btn btn-success right" data-toggle="modal" data-target="#deleteBudget" data-whatever="{{$budget['Name']}}">DELETE</button>
 						</div>
 					</div>
 				</div>
@@ -217,6 +217,29 @@
 					</div>
 				</div>
 
+				<div id="deleteBudget" class="modal fade" role="dialog" style="display: none;">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<div class="modal-title">
+									<button type="button" class="btn close" data-dismiss="modal">×</button>
+									<h4>Delete Budget</h4>
+								</div>
+							</div>
+							<div class="modal-body">
+								<form class="form-inline" action="budget/delete" method="post">
+									<input type="hidden" name="Name" value="" />
+									<h3 class="h3">Are you sure you want to delete this budget?</h3>
+									<br>
+									<br>
+
+									<button type="button" class="btn btn-success left" data-dismiss="modal">NO</button>
+									<button type="submit" class="btn btn-danger right">YES</button>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
 				@if(count($budgetLists) == 0)
 				<div class="bg-status-display text-center" style="margin-top: 50px;">
 					<h3>You have not set up any budgets yet</h3>

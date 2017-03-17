@@ -19,7 +19,8 @@ class VerifyCsrfToken extends BaseVerifier
         'user/account/sync/*',
 		'user/account/syncAll/*',
         'user/budget/create',
-        'user/budget/update'
+        'user/budget/update',
+	    'user/budget/delete'
     ];
 
 }

@@ -46,7 +46,7 @@
 .card{
     background-color: rgba(210, 222, 228, 0.44) !important;
     position: relative;
-    margin: 80px 0 10px 0;
+    margin: 20px 0 10px 0;
     background-color: #fff;
     transition: box-shadow .25s;
     border-radius: 2px;

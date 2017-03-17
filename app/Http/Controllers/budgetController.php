@@ -17,7 +17,8 @@ class budgetController extends Controller
         echo (Auth::user()->email);
 
         $t = transaction::where('pending', 0)
-                        ->where('date', '<=', '03-15-2017')
+                        ->where('date', '>=', '2017-01-01')
+	                    ->where('category', '!=', '')
                         ->groupBy('category')
                         ->selectRaw('category, sum(amount) as Total')
                         ->get()
@@ -35,6 +36,7 @@ class budgetController extends Controller
             }
             $currentBudget->save();
         }
+	    return (redirect::to('user/budget'));
     }
 
     public function index(){
@@ -55,7 +57,7 @@ class budgetController extends Controller
 
 	    $newBudget->save();
 
-        return (redirect::to('user/budget'));
+	    return (redirect::to('/update'));
     }
 
     public function updateBudget(){
@@ -81,11 +83,15 @@ class budgetController extends Controller
             $newBudget->save();
 
         }
-        return (redirect::to('user/budget'));
+        return (redirect::to('/update'));
     }
 
-    public function deleteBudget_byId($id){
-        $data = '<h3>Delete Operation Successful for ID: '.$id.'</h3>';
-        return ($data);
+    public function deleteBudget_byId(){
+	    $userID = Auth::user()->id;
+
+	    $deletedRows = Budget::where('User_ID', $userID)
+		                        ->where('Name', $_POST['Name'])
+		                        ->delete();
+        return (redirect::to('user/budget'));
     }
 }
