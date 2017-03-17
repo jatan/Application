@@ -12,35 +12,39 @@ use App\Http\Controllers\Controller;
 class categoryController extends Controller
 {
 
-    public function pullCategories(){
+    public function reloadCategories(){
 
         $uri = 'https://tartan.plaid.com/categories';
 
         $client = new Client();
         $response = $client->get($uri);
         $categories = json_decode($response->getBody(), true);
-        // var_dump($categories);
-
-
 
 		foreach ($categories as $category_key => $category_value){
 			$category = Categories::find($category_value['id']);
             if(!$category){
                 $category = new Categories();
-                $category['id'] = $category_value['id'];
 
+                $category['id'] = $category_value['id'];
                 $category['type'] = $category_value['type'];
                 isset($category_value['hierarchy'][0]) ? $category['c1'] = $category_value['hierarchy'][0] : $category['c1'] = null;
                 isset($category_value['hierarchy'][1]) ? $category['c2'] = $category_value['hierarchy'][1] : $category['c2'] = null;
                 isset($category_value['hierarchy'][2]) ? $category['c3'] = $category_value['hierarchy'][2] : $category['c3'] = null;
-                // if(isset($category_value['meta']['location']['city']))
-                //     $category['location_city'] = $category_value['meta']['location']['city'];
-                
-                var_dump($category);
+                echo "New Category added with ID: ".$category_value['id'];
                 $category->save();
-                // die;
             }
 		}
-		return (view('categories')->with('data', $category));
+        echo "Processing complete";
+    }
+
+    public function viewCategories(){
+
+        $uri = 'https://tartan.plaid.com/categories';
+
+        $client = new Client();
+        $response = $client->get($uri);
+        $array = json_decode($response->getBody(), true);
+
+        return (view('common.categories')->with('data', $array));
     }
 }

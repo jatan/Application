@@ -1,4 +1,4 @@
-<!DOCTYPE html5>
+<!DOCTYPE html>
 <html>
 
 <head lang="en">
@@ -21,14 +21,12 @@
 <body>
 <div class="nav-container">
     <ul class="flex__container">
-        <li class="flex__item"><a href="">MT</a></li>
-        <li class="flex__item"><a href="">DashBoard</a></li>
-        <li class="flex__item"><a href="">Transactions</a></li>
+        <li class="flex__item"><a href="dashboard">Home</a></li>
+        <li class="flex__item"><a href="transaction">Transactions</a></li>
         <li class="flex__item"><a href="budget">Budgets</a></li>
-        <li class="flex__item"><a href="">Reports</a></li>
-        <li class="flex__item"><a href="">Bills</a></li>
-        <li class="flex__item"><a href="">Goal</a></li>
-        <li class="flex__item"><a href="">User</a></li>
+        <li class="flex__item"><a href="bill">Bills</a></li>
+        <li class="flex__item"><a href="account">Accounts</a></li>
+        <li class="flex__item"><a href="profile">Profile</a></li>
         <li class="flex__item"><a href="logout">Logout</a></li>
     </ul>
 </div>
@@ -39,8 +37,8 @@
 
         <h1 class="my-h1">Accounts</h1>
         <div class="accounts-list">
-            @foreach(Auth::user()->visible_accounts() as $account)
-                <div class="well">{{$account->bank_name}}</div>
+            @foreach($accounts as $account)
+                <div class="well">{{strtoupper($account->bank_name)}}</div>
                 <a href="{{$account->id}}/account"><div class="h4 float__left">{{$account->name}}</div>
                 <?php $color = "Fontred";?>
                 @if($account->current_balance >= 0)
@@ -69,21 +67,23 @@
                     <th>Date</th>
                     <th>Merchant</th>
                     <th>Amount</th>
-                    <th>Category</th>
-                    <th>Account</th>
+                    <th>Cat 1</th>
+                    <th>Cat 2</th>
+                    <!--th>Account</th-->
                 </tr>
                 </thead>
                 <tbody>
-                @foreach(Auth::user()->visible_accounts() as $account)
-                    @foreach($account->transaction as $transaction)
-                        <tr>
-                            <td>{{$transaction -> date}}</td>
-                            <td>{{$transaction->name}}</td>
-                            <td>{{$transaction -> amount}}</td>
-                            <td>{{$transaction -> category_id}}</td>
-                            <td>{{$account->name}}</td>
-                        </tr>
-                    @endforeach
+                @foreach($transactions as $transaction)
+					<tr style='color:{{($transaction->pending == 1) ? "blue" : "black"}}'>
+						<td style="min-width: 100px;">{{$transaction -> date}}</td>
+						<td>{{substr($transaction->name,0,60)}}</td>
+						<td class='{{($transaction->amount > 0) ? "amount_red" : "amount_green"}}'>{{($transaction->amount > 0) ? (-1.0)*($transaction -> amount) : abs($transaction -> amount)}}</td>
+						<!--{{$cat = App\Categories::find($transaction -> category_id)}}-->
+						<td>{{isset($cat['c1']) ? $cat['c1'] : $transaction -> category_id}}</td>
+						<td>{{$cat['c2']}}</td>
+						<!--td>{{$transaction->bank_accounts_id}}</td-->
+					</tr>
+
                 @endforeach
                 </tbody>
             </table>
@@ -99,4 +99,3 @@
 </body>
 
 </html>
-

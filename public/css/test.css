@@ -1,0 +1,11 @@
+.wrapper{
+	background : red;
+	border-bottom-left-radius: 20px;
+	display: block;
+	border-color : #80c0c0;
+	}
+
+body{
+	margin :0;
+	padding :0;
+	}

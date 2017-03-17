@@ -41,4 +41,12 @@ class User extends Authenticatable
     public function visible_accounts(){
         return $this ->accounts()->get()->where('hidden_flag',0);
     }
+
+	public function access_tokens(){
+		return $this->accounts()->distinct()->select('access_token')->groupBy('access_token')->get();
+	}
+
+    public function budgets(){
+        return $this->hasMany('App\Budget');
+    }
 }

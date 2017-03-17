@@ -46,7 +46,7 @@
 .card{
     background-color: rgba(210, 222, 228, 0.44) !important;
     position: relative;
-    margin: 0.5rem 0 1rem 0;
+    margin: 20px 0 10px 0;
     background-color: #fff;
     transition: box-shadow .25s;
     border-radius: 2px;
@@ -112,10 +112,6 @@
         width: 99.8%;
     }
 
-}
-
-.item-border{
-    border-bottom:0.0312em solid gray;
 }
 
 .reset-fontsize{

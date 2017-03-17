@@ -44,7 +44,8 @@
                 <div class="col-md-1 col-sm-1 custom">SEP</div>
                 <div class="col-md-1 col-sm-1 custom">OCT</div>
                 <div class="col-md-1 col-sm-1 custom">NOV</div>
-                <div class="col-md-1 col-sm-1 custom">DEC</div>--}}
+                <div class="col-md-1 col-sm-1 custom">DEC</div>
+--}}
             </div>
         </div>
         <div class="tab-content">
@@ -66,6 +67,22 @@
                             <option>Amount: Low to High</option>
                         </select>
                     </div>
+                    <div class="progress-container">
+                        <div class="card">
+                            <div class="card-content black-text">
+                                <span class="card-title">Home Rent</span>
+                                <div class="progress test">
+                                    <div class="progress-bar progress-bar-danger" style="width:90%;">
+                                        90%
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-action">
+                                <a href="#">EDIT</a>
+                                <a class="right" href="#">DELETE</a>
+                            </div>
+                        </div>
+                    </div>
                     <div id="newBudgetForm" class="modal fade" role="dialog" style="display: none;">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -76,7 +93,7 @@
                                     </div>
                                 </div>
                                 <div class="modal-body">
-                                    <form class="form-inline" action="newBudget" method="get">
+                                    <form class="form-inline" action="/budget/createBudget" method="get">
                                         <div class="form-group">
                                             <label for="cat">Category</label>
                                             <select id="cat" class="form-control" name="category">
