@@ -7,6 +7,21 @@ $(document).ready(function() {
         }
     });
 
+    $('.response').on('change', '#Bank', function (event) {
+        //event.preventDefault();
+
+        if( $(this).val() == "cust" ){
+            //console.log($(this).val());
+            $('#autoSyncBank').hide();
+            $('#custBank').show();
+        }
+        else {
+            //console.log($(this).val());
+            $('#custBank').hide();
+            $('#autoSyncBank').show();
+        }
+    });
+
 	// This is called while pressing either - GET ALL / CREATE / REFRESH ALL
     $('.testing a').click(function (event) {
         event.preventDefault();
@@ -34,17 +49,17 @@ $(document).ready(function() {
         var formData = $("#register").serializeArray();
         formData = JSON.stringify(formData);
         formData = JSON.parse(formData);
-        console.log(formData);
+        //console.log(formData);
 
         $.ajax({
             url: 'account/create',
             data: formData,
             success: function (data) {
-                console.log(data);
+                //console.log(data);
                 $('.response').html(data);
             },
             error: function (data) {
-                console.log(data);
+                //console.log(data);
                 $('body').html(data.responseText);    // This  will print error stack message on body
             },
             type: 'POST'
@@ -142,4 +157,13 @@ $(document).ready(function() {
             type: 'POST'
         });
     });
+
+    $('.response').on('show.bs.modal', '#EditAccountForm', function (event){
+        console.log("Here");
+        var accountName = $('.getAccountDetails a').text();
+        accountName = accountName.substr(0, accountName.indexOf('-')).trim();
+        console.log(accountName);
+        $('#AccountName').val(accountName);
+    });
+
 });

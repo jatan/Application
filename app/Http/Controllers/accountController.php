@@ -40,102 +40,127 @@ class accountController extends Controller
 
 			$input = Request::all();
 			Log::alert($input);			// [This will log un-encrypted username and password]
+			//dd($input);
+			if ($input['Bank'] == 'cust'){
 
-			// There are 3 checks to identify at which step is the user of account creation process
-			// This will help determine which Plaid URI to call and what should be the parameters
-			// 1st Check -
-			if (isset($input['radio'])) {
-				Log::info("Radio Button selected");
-				$uri = 'https://tartan.plaid.com/connect/step';
-				$options = '{"send_method":{"mask":"' . $input["radio"] . '"}}';
-				$parameters = [
-						'json' => [
-								'client_id' => env('PLAID_CLIENT_ID'),
-								'secret' => env('PLAID_SECRET'),
-								'access_token' => $input['access_token'],
-								'options' => $options
-						]
-				];
-			}
-			// 2nd Check -
-			else if (isset($input['access_token'])) {
-				Log::info("Access token is set");
+//				var_dump("custom bank selected");
+				$user_ID = Auth::user()->id;
+				$bank_account = new bank_accounts();
 
-				$uri = 'https://tartan.plaid.com/connect/step';
-				$parameters = [
-						'json' => [
-								'client_id' => env('PLAID_CLIENT_ID'),
-								'secret' => env('PLAID_SECRET'),
-								'access_token' => $input['access_token'],
-								'mfa' => $input['ans']
-						]
-				];
+				$bank_account['id'] = '123456'.$user_ID.Carbon::now()->timestamp;
+				$bank_account['user_id'] = $user_ID;
+				$bank_account['access_token'] = 'accessToken123456'.$user_ID;
+				$bank_account['current_balance'] = $input['currentBalance'];
+				$bank_account['available_balance'] = isset($input['AvailableBalance']) ? $input['AvailableBalance'] : 0;
+				$bank_account['name'] = $input['AccountName'];
+				$bank_account['number'] = $input['AccountNumber'];
+				$bank_account['account_subtype'] = $input['AccountSubType'];
+				$bank_account['account_type'] = $input['AccountSubType'] == "Credit" ? "Credit" : "Depository";
+				$bank_account['LastSynced_at'] = Carbon::now();
+				$bank_account['plaid_core'] = serialize($input);
+				$bank_account['bank_name'] = $input['BankName'];
+				$bank_account['acc_limit'] = $input['CreditLimit'];
+
+				$bank_account->save();
 			}
-			// 3rd Check - First Step
 			else {
-				Log::info("User is at the first step of the process");
-
-				$uri = 'https://tartan.plaid.com/connect';
-				$parameters = [
-				'json' => [
-						'client_id' => env('PLAID_CLIENT_ID'),
-						'secret' => env('PLAID_SECRET'),
-						'username' => $input['username'],	// Bank Username - given by user
-						'password' => $input['password'],	// Bank password - given by user
-						'type' => $input['bank'],			// Bank Name - in type specific to Plaid ex: bofa
-						'options' => '{"list":true}'		// Hardcoded true - This will return MFA if available
-				]
-				];
-			}
-
-			// After deciding which URI to call and its parameters, Request will be sent.
-			// And response is decoded from JSON to array
-			$client = new Client();
-			$response = $client->post($uri, $parameters);
-			$array = json_decode($response->getBody(), true);
-			Log::info("Plaid call to URI: ".$uri." is Successful");
-
-			// Now Decide Response.
-			// If Bank is MFA enabled, then only it will return 'type' field.
-			// If bank is not MFA enabled - All bank accounts and transactions will be inserted.
-			// Do multiple checks to decide what should be the response for MFA.
-			if (isset($array['type'])) {
-
-				if ($array['type'] == "questions") {
-					Log::info("Question based MFA");
-
-					$mfa = $array['mfa'][0];
-					$pass = $mfa['question'];
-					return (view('account.ac_create_p')->with('pass', $pass)->with('access_token', $array['access_token']));
-				} else if ($array['type'] == "device") {
-					Log::info("Device based MFA");
-
-					$mfa = $array['mfa'];
-					$pass = $mfa['message'];
-					return (view('account.ac_create_p')->with('pass', $pass)->with('access_token', $array['access_token']));
-				} else if ($array['type'] == "list") {
-					Log::info("Provide MFA list to User to select from");
-
-					$mfa = $array['mfa'][0];
-					$pass = $array['mfa'];
-					return (view('account.ac_create_p')->with('pass', $pass)->with('access_token', $array['access_token']));
+				// There are 3 checks to identify at which step is the user of account creation process
+				// This will help determine which Plaid URI to call and what should be the parameters
+				// 1st Check -
+				if (isset($input['radio'])) {
+					Log::info("Radio Button selected");
+					$uri = 'https://tartan.plaid.com/connect/step';
+					$options = '{"send_method":{"mask":"' . $input["radio"] . '"}}';
+					$parameters = [
+							'json' => [
+									'client_id' => env('PLAID_CLIENT_ID'),
+									'secret' => env('PLAID_SECRET'),
+									'access_token' => $input['access_token'],
+									'options' => $options
+							]
+					];
 				}
+				// 2nd Check -
+				else if (isset($input['access_token'])) {
+					Log::info("Access token is set");
+
+					$uri = 'https://tartan.plaid.com/connect/step';
+					$parameters = [
+							'json' => [
+									'client_id' => env('PLAID_CLIENT_ID'),
+									'secret' => env('PLAID_SECRET'),
+									'access_token' => $input['access_token'],
+									'mfa' => $input['ans']
+							]
+					];
+				}
+				// 3rd Check - First Step
+				else {
+					Log::info("User is at the first step of the process");
+
+					$uri = 'https://tartan.plaid.com/connect';
+					$parameters = [
+							'json' => [
+									'client_id' => env('PLAID_CLIENT_ID'),
+									'secret' => env('PLAID_SECRET'),
+									'username' => $input['username'],	// Bank Username - given by user
+									'password' => $input['password'],	// Bank password - given by user
+									'type' => $input['bank'],			// Bank Name - in type specific to Plaid ex: bofa
+									'options' => '{"list":true}'		// Hardcoded true - This will return MFA if available
+							]
+					];
+				}
+
+				// After deciding which URI to call and its parameters, Request will be sent.
+				// And response is decoded from JSON to array
+				$client = new Client();
+				$response = $client->post($uri, $parameters);
+				$array = json_decode($response->getBody(), true);
+				Log::info("Plaid call to URI: ".$uri." is Successful");
+
+				// Now Decide Response.
+				// If Bank is MFA enabled, then only it will return 'type' field.
+				// If bank is not MFA enabled - All bank accounts and transactions will be inserted.
+				// Do multiple checks to decide what should be the response for MFA.
+				if (isset($array['type'])) {
+
+					if ($array['type'] == "questions") {
+						Log::info("Question based MFA");
+
+						$mfa = $array['mfa'][0];
+						$pass = $mfa['question'];
+						return (view('account.ac_create_p')->with('pass', $pass)->with('access_token', $array['access_token']));
+					} else if ($array['type'] == "device") {
+						Log::info("Device based MFA");
+
+						$mfa = $array['mfa'];
+						$pass = $mfa['message'];
+						return (view('account.ac_create_p')->with('pass', $pass)->with('access_token', $array['access_token']));
+					} else if ($array['type'] == "list") {
+						Log::info("Provide MFA list to User to select from");
+
+						$mfa = $array['mfa'][0];
+						$pass = $array['mfa'];
+						return (view('account.ac_create_p')->with('pass', $pass)->with('access_token', $array['access_token']));
+					}
+				}
+
+				//Save each account returned for the given account credentials for a given Bank.
+				$accounts = $array['accounts'];
+				$accessToken = $array['access_token'];
+				foreach($accounts as $account_key => $account_value ){
+					$this->setAccount($account_value, $accessToken);
+				}
+
+				//Save all the transactions from each account of the given Bank.
+				$transactions = $array['transactions'];
+				foreach($transactions as $transaction_key => $transaction_value){
+					$this->setTransaction($transaction_value);
+				}
+				// TODO: This is not a proper response of ajax call.
+				// return (redirect::to('user/dashboard'));
 			}
 
-			//Save each account returned for the given account credentials for a given Bank.
-			$accounts = $array['accounts'];
-			$accessToken = $array['access_token'];
-			foreach($accounts as $account_key => $account_value ){
-				$this->setAccount($account_value, $accessToken);
-			}
-
-			//Save all the transactions from each account of the given Bank.
-			$transactions = $array['transactions'];
-			foreach($transactions as $transaction_key => $transaction_value){
-				$this->setTransaction($transaction_value);
-			}
-			// TODO: This is not a proper response of ajax call.
-			// return (redirect::to('user/dashboard'));
 		}
 	}
 
@@ -271,26 +296,40 @@ class accountController extends Controller
 		Tables impacted - bank_accounts , transactions
 	*/
 	public function deleteAccount($token){
+		Log::alert($token);
 
 		$accounts = bank_accounts::all()->where('access_token', $token);
-		$uri = 'https://tartan.plaid.com/connect';
-		$parameters = [
-				'json' => [
-						'client_id' => env('PLAID_CLIENT_ID'),
-						'secret' => env('PLAID_SECRET'),
-						'access_token' => $token
-				]
-		];
-
-		$client = new Client();
-		$response = $client->delete($uri, $parameters);
-		$array = json_decode($response->getBody(), true);
-		Log::info("Plaid call to URI: ".$uri." is Successful");
-
 		$respText = "";
-		// Check if plaid response is Success meaning Plaid successfully deleted those accounts.
-		// So now we can delete these from out system.
-		if (strpos($array['message'], 'Success') !== false) {
+		if (strpos($token, "accessToken") === false){
+			$uri = 'https://tartan.plaid.com/connect';
+			$parameters = [
+					'json' => [
+							'client_id' => env('PLAID_CLIENT_ID'),
+							'secret' => env('PLAID_SECRET'),
+							'access_token' => $token
+					]
+			];
+
+			$client = new Client();
+			$response = $client->delete($uri, $parameters);
+			$array = json_decode($response->getBody(), true);
+			Log::info("Plaid call to URI: ".$uri." is Successful");
+
+			// Check if plaid response is Success meaning Plaid successfully deleted those accounts.
+			// So now we can delete these from out system.
+			if (strpos($array['message'], 'Success') !== false) {
+				foreach ($accounts as $account) {
+					// Delete account from out database.
+					if($account->delete()){
+						$respText = $respText."<h3>".$account['name']." Account Deleted successfully</h3>";
+					}
+				}
+			}
+			else {
+				$respText = $array['message'];
+			}
+		}
+		else {
 			foreach ($accounts as $account) {
 				// Delete account from out database.
 				if($account->delete()){
@@ -298,9 +337,7 @@ class accountController extends Controller
 				}
 			}
 		}
-		else {
-			$respText = $array['message'];
-		}
+
 		// Returning just plain text response. No HTML/CSS
 		return ($respText);
 	}
