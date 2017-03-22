@@ -91,28 +91,15 @@
     -webkit-animation-fill-mode: forwards;
     animation-fill-mode: forwards;
 }
-
-@-webkit-keyframes loadbar {
-
-    0% {
-        width: 0%;
-    }
-
-    100% {
-        width: 75%;
-    }
+    /*loadbar is just a name of the animation and 2s is duration of animation*/
+@-webkit-keyframes loadbar {        /* So when this is applied, width will go from 0 to 75 in 2s */
+    0%      { width: 0%; }
+    100%    { width: 75%; }
 }
-@keyframes loadbar {
-
-    0% {
-        width: 0%;
+@keyframes loadbar {                /* So when this is applied, width will go from 0 to 75 in 2s */
+    0%      { width: 0%; }
+    100%    { width: 75%; }
     }
-
-    100% {
-        width: 99.8%;
-    }
-
-}
 
 .reset-fontsize{
     font-size:14px;

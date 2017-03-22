@@ -6,7 +6,7 @@ use App\Budget;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests;
-
+use Carbon\Carbon;
 use App\transaction;
 
 class budgetController extends Controller
@@ -41,7 +41,12 @@ class budgetController extends Controller
 
     public function index(){
 
-	    $allBudgets = Budget::all()->where('User_ID', Auth::user()->id)->toArray();
+	   // dd(new Carbon('last day of January 2017'));
+
+	    $allBudgets = Budget::all()->where('User_ID', Auth::user()->id)
+      //                              ->where('date', '<=' , new Carbon('last day of January 2017'))
+      //                              ->where('date', '>=' , new Carbon('first day of January 2017'))
+                                    ->toArray();
 //	    var_dump($allBudgets[0]['SetValue']);
         return (view('budget.bu_index')->with('budgetLists', $allBudgets));
     }

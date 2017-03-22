@@ -53,15 +53,15 @@
 							<span class="card-title">{{$budget['Name']}}</span>
 							<div class="">Budgeted Amount: {{$budget['SetValue']}}</div>
 							<div class="progress test">
-								<div class="progress-bar progress-bar-danger" style="width:{{intval($budget['SpentValue'] * 100 / $budget['SetValue'])}}%;">
+								<div class="" style="width:{{ intval($budget['SpentValue'] * 100 / $budget['SetValue']) }}%;">
 									{{intval($budget['SpentValue'] * 100 / $budget['SetValue'])}} %
 								</div>
 							</div>
 							<div class="">Remaining Amount: {{$budget['SetValue'] - $budget['SpentValue']}}</div>
 						</div>
 						<div class="card-action">
-							<button class="btn btn-success left" data-toggle="modal" data-target="#editBudget" data-whatever="{{$budget['Name']}}">EDIT</button>
-							<button class="btn btn-success right" data-toggle="modal" data-target="#deleteBudget" data-whatever="{{$budget['Name']}}">DELETE</button>
+							<button class="btn btn-success left" data-toggle="modal" data-target="#editBudget" data-budgetname="{{$budget['Name']}}" data-setvalue="{{$budget['SetValue']}}">EDIT</button>
+							<button class="btn btn-success right" data-toggle="modal" data-target="#deleteBudget" data-budgetname="{{$budget['Name']}}">DELETE</button>
 						</div>
 					</div>
 				</div>
@@ -156,19 +156,19 @@
 									<div class="form-group">
 										<label for="cat">Category</label>
 										<select id="cat" class="form-control" name="category">
-											<option>Bank Fees</option>
-											<option>Cash Advance</option>
-											<option>Community</option>
-											<option>Food and Drink</option>
-											<option>Healthcare</option>
-											<option>Interest</option>
-											<option>Payment</option>
-											<option>Recreation</option>
-											<option>Service</option>
-											<option>Shops</option>
-											<option>Tax</option>
-											<option>Transfer</option>
-											<option>Travel</option>
+											<option value="Bank Fees">Bank Fees</option>
+											<option value="Cash Advance">Cash Advance</option>
+											<option value="Community">Community</option>
+											<option value="Food and Drink">Food and Drink</option>
+											<option value="HealthCare">Healthcare</option>
+											<option value="Interest">Interest</option>
+											<option value="Payment">Payment</option>
+											<option value="Recreation">Recreation</option>
+											<option value="Service">Service</option>
+											<option value="Shops">Shops</option>
+											<option value="Tax">Tax</option>
+											<option value="Transfer">Transfer</option>
+											<option value="Travel">Travel</option>
 										</select>
 									</div>
 									<br>
@@ -240,6 +240,7 @@
 						</div>
 					</div>
 				</div>
+
 				@if(count($budgetLists) == 0)
 				<div class="bg-status-display text-center" style="margin-top: 50px;">
 					<h3>You have not set up any budgets yet</h3>
