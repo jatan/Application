@@ -35,5 +35,9 @@ $(document).ready(function() {
             $(this).addClass("bg-warning");
         }
     });
-
 });
+function displayData(){
+    console.log("It works");
+    var element = $(this.relatedTarget);
+    console.log(element.val());
+}

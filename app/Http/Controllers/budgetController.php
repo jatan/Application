@@ -23,10 +23,10 @@ class budgetController extends Controller
                         ->selectRaw('category, sum(amount) as Total')
                         ->get()
                         ->toArray();
-    //    var_dump($t);
+        //    var_dump($t);
         $b = Budget::all();
 
-    //    var_dump($b);
+        //    var_dump($b);
 
         foreach ($b as $currentBudget) {
             foreach ($t as $totalSpending) {
@@ -41,14 +41,27 @@ class budgetController extends Controller
 
     public function index(){
 
-	   // dd(new Carbon('last day of January 2017'));
+	   $monthList = [
+           'JAN',
+           'FEB',
+           'MAR',
+           'APR',
+           'MAY',
+           'JUN',
+           'JUL',
+           'AUG',
+           'SEP',
+           'OCT',
+           'NOV',
+           'DEC'
+       ];
 
 	    $allBudgets = Budget::all()->where('User_ID', Auth::user()->id)
       //                              ->where('date', '<=' , new Carbon('last day of January 2017'))
       //                              ->where('date', '>=' , new Carbon('first day of January 2017'))
                                     ->toArray();
-//	    var_dump($allBudgets[0]['SetValue']);
-        return (view('budget.bu_index')->with('budgetLists', $allBudgets));
+        //	    var_dump($allBudgets[0]['SetValue']);
+        return (view('budget.bu_index')->with('budgetLists', $allBudgets)->with('monthList', $monthList));
     }
 
     public function createBudget(){

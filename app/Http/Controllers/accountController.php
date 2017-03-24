@@ -200,9 +200,9 @@ class accountController extends Controller
 
 	public function updateAccount_process()
 	{
-		
+
 		// Only process ajax requests.
-		// if(Request::ajax()) 
+		// if(Request::ajax())
 		{
 			$input = Request::all();
 			Log::alert($input);			// [This will log un-encrypted username and password]

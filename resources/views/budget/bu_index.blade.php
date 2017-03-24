@@ -12,23 +12,13 @@
 
 	<div class="months">
 		<div class="row">
-			<div class="col-md-1 col-sm-1 custom"><a data-toggle="tab" href="#jan" aria-expanded="true">JAN</a></div>
-			<div class="col-md-1 col-sm-1 custom"><a data-toggle="tab" href="#feb" aria-expanded="false">FEB</a></div>
-			{{--            <div class="col-md-1 col-sm-1 custom">MAR</div>
-							<div class="col-md-1 col-sm-1 custom">APR</div>
-							<div class="col-md-1 col-sm-1 custom">MAY</div>
-							<div class="col-md-1 col-sm-1 custom">JUN</div>
-							<div class="col-md-1 col-sm-1 custom">JUL</div>
-							<div class="col-md-1 col-sm-1 custom">AUG</div>
-							<div class="col-md-1 col-sm-1 custom">SEP</div>
-							<div class="col-md-1 col-sm-1 custom">OCT</div>
-							<div class="col-md-1 col-sm-1 custom">NOV</div>
-							<div class="col-md-1 col-sm-1 custom">DEC</div>
-			--}}
+			@foreach($monthList as $month)
+			<div class="col-md-1 col-sm-1 custom"><a href="#{{$month}}" data-toggle="tab" aria-expanded="true">{{$month}} - '17</a></div>
+			@endforeach
 		</div>
 	</div>
 	<div class="tab-content">
-		<div id="jan" class="panel panel-info tab-pane fade active in">
+		<div id="JAN" class="panel panel-info tab-pane fade active in">
 			<div class="panel-heading">
 				<div class="panel-title"><h2>January month's Budget</h2></div>
 			</div>
@@ -249,6 +239,30 @@
 			</div>
 
 
+		</div>
+		<div id="FEB" class="panel panel-info tab-pane fade">
+			<div class="panel-heading">
+				<div class="panel-title"><h2>{{$monthList[1]}} month's Budget</h2></div>
+			</div>
+
+			<div class="panel-body">
+				<div style="float: left;">
+					<button class="btn btn-success" data-toggle="modal" data-target="#newBudgetForm">New Budget</button>
+				</div>
+				<div class="right">
+					<label>sort by</label>
+					<select id="sortBudget">
+						<option value="Stat">Status</option>
+						<option value="Category">Category</option>
+						<option value="HtoL" selected="selected">Amount: High to Low</option>
+						<option value="LtoH">Amount: Low to High</option>
+					</select>
+				</div>
+
+				<div class="bg-status-display text-center" style="margin-top: 50px;">
+					<h3>You have not set up any budgets yet</h3>
+				</div>
+			</div>
 		</div>
 	</div>
 @stop
