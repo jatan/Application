@@ -42,18 +42,18 @@ class budgetController extends Controller
     public function index(){
 
 	   $monthList = [
-           'JAN',
-           'FEB',
-           'MAR',
-           'APR',
-           'MAY',
-           'JUN',
-           'JUL',
-           'AUG',
-           'SEP',
-           'OCT',
-           'NOV',
-           'DEC'
+           'JAN' => 'January',
+           'FEB' => 'February',
+           'MAR' => 'March',
+           'APR' => 'April',
+           'MAY' => 'May',
+           'JUN' => 'June',
+           'JUL' => 'July',
+           'AUG' => 'August',
+           'SEP' => 'September',
+           'OCT' => 'October',
+           'NOV' => 'November',
+           'DEC' => 'December'
        ];
 
 	    $allBudgets = Budget::all()->where('User_ID', Auth::user()->id)

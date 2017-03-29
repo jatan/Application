@@ -12,20 +12,25 @@
 
 	<div class="months">
 		<div class="row">
-			@foreach($monthList as $month)
+			@foreach($monthList as $month => $fullMonthName)
 			<div class="col-md-1 col-sm-1 custom"><a href="#{{$month}}" data-toggle="tab" aria-expanded="true">{{$month}} - '17</a></div>
 			@endforeach
 		</div>
 	</div>
 	<div class="tab-content">
-		<div id="JAN" class="panel panel-info tab-pane fade active in">
+		@foreach($monthList as $month => $fullMonthName)
+			@if($month == 'JAN')
+				<div id="{{$month}}" class="panel panel-info tab-pane fade active in">
+			@else
+				<div id="{{$month}}" class="panel panel-info tab-pane fade">
+			@endif
 			<div class="panel-heading">
-				<div class="panel-title"><h2>January month's Budget</h2></div>
+				<div class="panel-title"><h2>{{$fullMonthName}} month's Budget</h2></div>
 			</div>
 
 			<div class="panel-body">
 				<div style="float: left;">
-					<button class="btn btn-success" data-toggle="modal" data-target="#newBudgetForm">New Budget</button>
+					<button class="btn btn-success" data-toggle="modal" data-target="#newBudgetForm{{$month}}">New Budget</button>
 				</div>
 				<div class="right">
 					<label>sort by</label>
@@ -50,14 +55,14 @@
 							<div class="">Remaining Amount: {{$budget['SetValue'] - $budget['SpentValue']}}</div>
 						</div>
 						<div class="card-action">
-							<button class="btn btn-success left" data-toggle="modal" data-target="#editBudget" data-budgetname="{{$budget['Name']}}" data-setvalue="{{$budget['SetValue']}}">EDIT</button>
-							<button class="btn btn-success right" data-toggle="modal" data-target="#deleteBudget" data-budgetname="{{$budget['Name']}}">DELETE</button>
+							<button class="btn btn-success left" data-toggle="modal" data-target="#editBudget{{$month}}" data-budgetname="{{$budget['Name']}}" data-setvalue="{{$budget['SetValue']}}">EDIT</button>
+							<button class="btn btn-success right" data-toggle="modal" data-target="#deleteBudget{{$month}}" data-budgetname="{{$budget['Name']}}">DELETE</button>
 						</div>
 					</div>
 				</div>
 				@endforeach
 
-				<div id="newBudgetForm" class="modal fade" role="dialog" style="display: none;">
+				<div id="newBudgetForm{{$month}}" class="modal fade" role="dialog" style="display: none;">
 					<div class="modal-dialog">
 						<div class="modal-content">
 							<div class="modal-header">
@@ -132,7 +137,7 @@
 					</div>
 				</div>
 
-				<div id="editBudget" class="modal fade" role="dialog" style="display: none;">
+				<div id="editBudget{{$month}}" class="modal fade" role="dialog" style="display: none;">
 					<div class="modal-dialog">
 						<div class="modal-content">
 							<div class="modal-header">
@@ -207,7 +212,7 @@
 					</div>
 				</div>
 
-				<div id="deleteBudget" class="modal fade" role="dialog" style="display: none;">
+				<div id="deleteBudget{{$month}}" class="modal fade" role="dialog" style="display: none;">
 					<div class="modal-dialog">
 						<div class="modal-content">
 							<div class="modal-header">
@@ -237,33 +242,8 @@
 				</div>
 				@endif
 			</div>
-
-
 		</div>
-		<div id="FEB" class="panel panel-info tab-pane fade">
-			<div class="panel-heading">
-				<div class="panel-title"><h2>{{$monthList[1]}} month's Budget</h2></div>
-			</div>
-
-			<div class="panel-body">
-				<div style="float: left;">
-					<button class="btn btn-success" data-toggle="modal" data-target="#newBudgetForm">New Budget</button>
-				</div>
-				<div class="right">
-					<label>sort by</label>
-					<select id="sortBudget">
-						<option value="Stat">Status</option>
-						<option value="Category">Category</option>
-						<option value="HtoL" selected="selected">Amount: High to Low</option>
-						<option value="LtoH">Amount: Low to High</option>
-					</select>
-				</div>
-
-				<div class="bg-status-display text-center" style="margin-top: 50px;">
-					<h3>You have not set up any budgets yet</h3>
-				</div>
-			</div>
-		</div>
+		@endforeach
 	</div>
 @stop
 
