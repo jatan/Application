@@ -56,11 +56,18 @@ class budgetController extends Controller
            'DEC' => 'December'
        ];
 
-	    $allBudgets = Budget::all()->where('User_ID', Auth::user()->id)
-      //                              ->where('date', '<=' , new Carbon('last day of January 2017'))
-      //                              ->where('date', '>=' , new Carbon('first day of January 2017'))
-                                    ->toArray();
-        //	    var_dump($allBudgets[0]['SetValue']);
+	    $now = Carbon::now();
+//		            ->addMonths(2);
+	    $year = $now->year;
+	    $month = $now->month;
+
+	    $allBudgets = Budget::select('Name', 'SetValue', 'SpentValue', 'Month', 'Year')
+	                        ->where('User_ID', Auth::user()->id)
+		                    ->where([['Month', '>' , $month], ['Year', '=', $year-1]])
+		                    ->orWhere([['Month', '<=' , $month], ['Year', '=', $year]])
+		                    ->get()
+	                        ->toArray();
+	    //dd($allBudgets);
         return (view('budget.bu_index')->with('budgetLists', $allBudgets)->with('monthList', $monthList));
     }
 
