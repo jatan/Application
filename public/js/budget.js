@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    $('#deleteBudget').on('show.bs.modal', function (event) {
+    $('[id^=deleteBudget]').on('show.bs.modal', function (event) {
         var modal = $(this);
         var button = $(event.relatedTarget); // Button that triggered the modal
         var BudgetName = button.data('budgetname') ;// Extract info from data-* attributes
@@ -10,7 +10,7 @@ $(document).ready(function() {
         modal.find('.modal-body input').val(BudgetName);
     });
 
-    $('#editBudget').on('show.bs.modal', function (event) {
+    $('[id^=editBudget]').on('show.bs.modal', function (event) {
         var modal = $(this);
         var button = $(event.relatedTarget); // Button that triggered the modal
         var BudgetName = button.data('budgetname');// Extract info from data-* attributes

@@ -41,7 +41,7 @@ class budgetController extends Controller
 
     public function index(){
 
-	   $monthList = [
+	   $monthShortName = [
 		   1 => 'Jan',
 		   2 => 'Feb',
 		   3 => 'Mar',
@@ -55,7 +55,7 @@ class budgetController extends Controller
 		   11 => 'Nov',
 		   12 => 'Dec'
        ];
-	    $fullMonth = [
+	    $monthFullName = [
 		    1 => 'January',
 		    2 => 'February',
 		    3 => 'March',
@@ -70,11 +70,22 @@ class budgetController extends Controller
 		    12 => 'December'
 	    ];
 
-	    $now = Carbon::now();
-//		            ->addMonths(2);
+	    $now = Carbon::now()
+		            ->addMonths(0);
 	    $year = $now->year;
 	    $month = $now->month;
 
+	    $sortMonthShortName = [];
+	    $sortMonthFullName = [];
+	    for ($i = $month+12; $i > $month; $i--){
+	    	$i > 12 ? $sortMonthShortName[$i-12] = $monthShortName[$i-12] : $sortMonthShortName[$i] = $monthShortName[$i];
+	    	$i > 12 ? $sortMonthFullName[$i-12] = $monthFullName[$i-12] : $sortMonthFullName[$i] = $monthFullName[$i];
+	    }
+
+	    $reversed = array_reverse($sortMonthShortName, true);
+	    $reversedFull = array_reverse($sortMonthFullName, true);
+//	    var_dump($sortMonthShortName);
+//	    var_dump($reversed);
 	    $allBudgets = Budget::select('Name', 'SetValue', 'SpentValue', 'Month', 'Year')
 	                        ->where('User_ID', Auth::user()->id)
 		                    ->where([['Month', '>' , $month], ['Year', '=', $year-1]])
@@ -85,13 +96,13 @@ class budgetController extends Controller
 	    foreach ($allBudgets as $budget){
 	    	$masterList[$budget['Month']][] = $budget;
 	    }
-	   // dd($masterList);
+//	    dd($masterList);
         return (view('budget.bu_index')->with([
         	                                    'CurrentYear' => $year,
 	                                            'CurrentMonth' => $month,
-        	                                    'budgetLists' => $allBudgets,
-	                                            'fullMonthList' => $fullMonth,
-	                                            'monthList' => $monthList]));
+        	                                    'budgetLists' => $masterList,
+	                                            'monthFullName' => $reversedFull,
+	                                            'monthShortName' => $reversed]));
     }
 
     public function createBudget(){
@@ -102,6 +113,8 @@ class budgetController extends Controller
 	    $newBudget['Name'] = $_POST['category'];
 	    $newBudget['SetValue'] = $_POST['Setamount'];
 	    $newBudget['SpentValue'] = 0;
+	    $newBudget['Month'] = $_POST['budgetForMonth'];
+	    $newBudget['Year'] = $_POST['budgetForYear'];
 
 	    $newBudget->save();
 
@@ -113,6 +126,8 @@ class budgetController extends Controller
 
         $findBudget = Budget::where('User_ID', $userID)
                             ->where('Name', $_POST['category'])
+	                        ->where('Month', $_POST['budgetForMonth'])
+                            ->where('Year', $_POST['budgetForYear'])
                             ->first();
                             //->toArray();
         if (count($findBudget) > 0) {
@@ -127,6 +142,8 @@ class budgetController extends Controller
             $newBudget['Name'] = $_POST['category'];
             $newBudget['SetValue'] = $_POST['Setamount'];
             $newBudget['SpentValue'] = 0;
+	        $newBudget['Month'] = $_POST['budgetForMonth'];
+	        $newBudget['Year'] = $_POST['budgetForYear'];
 
             $newBudget->save();
 
