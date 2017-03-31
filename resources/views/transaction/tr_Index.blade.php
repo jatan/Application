@@ -9,8 +9,12 @@
         <div class="transactions-main">
             <h1 class="my-h1">TRANSACTIONS</h1>
             <div class="utility-buttons">
-                <a href="addAccount" style="float:left; margin-left:10px;" class="btn-floating btn-large waves-effect waves-light teal" data-toggle="modal" data-target="#AddTransaction"><i class="material-icons">add</i></a>
-                <a style="float:right; margin-right:10px;" class="btn-floating btn-large waves-effect waves-light teal"><i class="material-icons">import_export</i></a>
+                <a href="#" style="float:left; margin-left:10px;" class="btn-floating btn-large waves-effect waves-light teal" data-toggle="modal" data-target="#AddTransaction">
+                    <i class="material-icons">+</i>
+                </a>
+                <a href="#" style="float:right; margin-right:10px;" class="btn-floating btn-large waves-effect waves-light teal">
+                    <i class="material-icons">I/O</i>
+                </a>
             </div>
             <div id="table-container">
                 <table id="maintable" class="table table-hover table-responsive">
@@ -19,21 +23,23 @@
                         <th>Date</th>
                         <th>Merchant</th>
                         <th>Amount</th>
-                        <th>Cat 1</th>
-                        <th>Cat 2</th>
-                        <!--th>Account</th-->
+                        <th>Category</th>
+                        <th>Account</th>
                     </tr>
                     </thead>
                     <tbody>
                     @foreach($transactions as $transaction)
-                        <tr style='color:{{($transaction->pending == 1) ? "blue" : "black"}}'>
-                            <td style="min-width: 100px;" contenteditable="true" onclick="$(this).css('color', 'red');">{{$transaction -> date}}</td>
+                        <tr style='color:{{($transaction->pending == 1) ? "blue;" : "black;"}}'>
+                            <td style="min-width: 100px;">{{$transaction -> date}}</td>
                             <td>{{substr($transaction->name,0,60)}}</td>
                             <td class='{{($transaction->amount > 0) ? "amount_red" : "amount_green"}}'>{{($transaction->amount > 0) ? (-1.0)*($transaction -> amount) : abs($transaction -> amount)}}</td>
                             <!--{{$cat = App\Categories::find($transaction -> category_id)}}-->
-                            <td>{{isset($cat['c1']) ? $cat['c1'] : $transaction -> category_id}}</td>
-                            <td>{{$cat['c2']}}</td>
-                            <!--td>{{$transaction->bank_accounts_id}}</td-->
+                            <td>{{$transaction -> category}}</td>
+                            <?php $key = array_search($transaction->bank_accounts_id, array_column($accounts, 'id')) ?>
+                            <td>{{$accounts[$key]['bank_name']}} - {{$accounts[$key]['name']}}
+                                <button class="btn btn-danger" style="float: right; margin-left: 5px;">DEL</button>
+                                <button class="btn btn-success" style="float: right;">EDIT</button>
+                            </td>
                         </tr>
 
                     @endforeach
@@ -52,7 +58,7 @@
 				        </div>
 			        </div>
 			        <div class="modal-body">
-				        {!! Form::open(array('id' => "register", 'method' => "post")) !!}
+				        {!! Form::open(array('id' => "register", 'method' => "post", 'url' => 'user/transaction/create')) !!}
 				        {{ csrf_field() }}
 				        <div id="">
 
@@ -63,12 +69,29 @@
 						        <input id="Merchant" name="Merchant" class="form-control" type="text" style="margin-right: 10px;">
 						        <label for="Category" style="margin-right: 20px;">CATEGORY</label>
 						        <select id="Category" name="Category" class="form-control" style="margin-right: 10px;">
-							        <option value="Shop" selected>Shopping</option>
-							        <option value="FoodnDrink">Food & Drinks</option>
-							        <option value="AutoFuel">Gan & Fuel</option>
+							        <option value="Shops" selected>Shopping</option>
+							        <option value="Food and Drink">Food & Drinks</option>
+							        <option value="Gan and Fuel">Gan & Fuel</option>
+                                    <option value="Bank Fees">Bank Fees</option>
+                                    <option value="Cash Advance">Cash Advance</option>
+                                    <option value="Community">Community</option>
+                                    <option value="Healthcare">Healthcare</option>
+                                    <option value="Interest">Interest</option>
+                                    <option value="Payment">Payment</option>
+                                    <option value="Recreation">Recreation</option>
+                                    <option value="Service">Service</option>
+                                    <option value="Tax">Tax</option>
+                                    <option value="Transfer">Transfer</option>
+                                    <option value="Travel">Travel</option>
 						        </select>
-						        <label for="TransTag" style="margin-right: 20px;">TAG</label>
-						        <input id="TransTag" name="TransTag" class="form-control" type="text" style="margin-right: 10px;">
+						        <label for="amount" style="margin-right: 20px;">Amount</label>
+						        <input id="amount" name="amount" class="form-control" type="text" style="margin-right: 10px;">
+                                <label for="bankAccount" style="margin-right: 20px;">BANK ACCT</label>
+						        <select id="bankAccount" name="accountID" class="form-control" style="margin-right: 10px;">
+							        @foreach($accounts as $bank_account)
+                                        <option value="{{$bank_account['id']}}" selected>{{$bank_account['bank_name']}} - {{$bank_account['name']}}</option>
+                                    @endforeach
+						        </select>
 					        </div>
 					        <br>
 

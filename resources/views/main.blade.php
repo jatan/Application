@@ -19,9 +19,9 @@
                 <li class="flex__item"><a href="dashboard">Home</a></li>
                 <li class="flex__item"><a href="transaction">Transactions</a></li>
                 <li class="flex__item"><a href="budget">Budgets</a></li>
-                <li class="flex__item"><a href="bill">Bills</a></li>
+                <!-- <li class="flex__item"><a href="bill">Bills</a></li> -->
                 <li class="flex__item"><a href="account">Accounts</a></li>
-                <li class="flex__item"><a href="profile">Profile</a></li>
+                <!-- <li class="flex__item"><a href="profile">Profile</a></li> -->
                 <li class="flex__item"><a href="logout">Logout</a></li>
             </ul>
         </div>

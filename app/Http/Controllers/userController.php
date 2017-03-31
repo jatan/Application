@@ -13,7 +13,8 @@ class userController extends Controller
 {
 	public function dashboard(){
 		$accounts = Auth::user()->visible_accounts();
-		$ids = '';
+        $ids = '';				// This is okay for older versions
+		$ids = array();			// This is required for PHP 7.1 or higher
 		foreach ($accounts as $account) {
 			$ids[] = $account->id;
 		}

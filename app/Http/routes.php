@@ -25,7 +25,7 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('user/transaction',['middleware' => 'auth', 'uses' => 'transactionController@index']);
     Route::get('user/transaction/getAll',['middleware' => 'auth', 'uses' => 'transactionController@getTransactions']);
     Route::get('user/transaction/getbyId/{id}',['middleware' => 'auth', 'uses' => 'transactionController@getTransaction_byId']);
-    Route::get('user/transaction/create',['middleware' => 'auth', 'uses' => 'transactionController@createTransaction']);
+    Route::post('user/transaction/create',['middleware' => 'auth', 'uses' => 'transactionController@createTransaction']);
     Route::get('user/transaction/update/{id}',['middleware' => 'auth', 'uses' => 'transactionController@updateTransaction_byId']);
     Route::get('user/transaction/delete/{id}',['middleware' => 'auth', 'uses' => 'transactionController@deleteTransaction_byId']);
 
@@ -70,6 +70,7 @@ Route::group(['middleware' => ['web']], function () {
     //Categories
     Route::get('/categories_reload','categoryController@reloadCategories');
     Route::get('/categories','categoryController@viewCategories');
+    Route::get('/run', 'categoryController@processTransactions');
 
     Route::get('/longtail', 'userController@longtail');
 
