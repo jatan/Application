@@ -7,7 +7,6 @@
 @section('content')
 
         <div class="transactions-main">
-            <h1 class="my-h1">TRANSACTIONS</h1>
             <div class="utility-buttons">
                 <a href="#" style="float:left; margin-left:10px;" class="btn-floating btn-large waves-effect waves-light teal" data-toggle="modal" data-target="#AddTransaction">
                     <i class="material-icons">+</i>
@@ -20,23 +19,32 @@
                 <table id="maintable" class="table table-hover table-responsive">
                     <thead class="table__header-bg-color">
                     <tr>
-                        <th>Date</th>
                         <th>Merchant</th>
                         <th>Amount</th>
                         <th>Category</th>
                         <th>Account</th>
+                        <th>Options</th>
                     </tr>
                     </thead>
                     <tbody>
+                        <?php $date = ''; ?>
                     @foreach($transactions as $transaction)
+
+                        @if($date == '')
+                        <?php $date = \Carbon\Carbon::parse($transaction -> date) ?>
+
+                        <td style="float: left; margin-left: -40px; border: none; background-color: #e6e6e6;">{{($date -> diffInDays(\Carbon\Carbon::now()) < 1) ? "Today" : $date -> toDateString()}}</td>
+                        @elseif($date != \Carbon\Carbon::parse($transaction -> date))
+                        <td style="float: left; margin-left: -40px; border: none; background-color: #e6e6e6;">{{($date -> diffInDays(\Carbon\Carbon::now()) < 1) ? "Today" : $date -> toDateString()}}</td>
+                        <?php $date = \Carbon\Carbon::parse($transaction -> date) ?>
+                        @endif
                         <tr style='color:{{($transaction->pending == 1) ? "blue;" : "black;"}}'>
-                            <td style="min-width: 100px;">{{$transaction -> date}}</td>
                             <td>{{substr($transaction->name,0,60)}}</td>
                             <td class='{{($transaction->amount > 0) ? "amount_red" : "amount_green"}}'>{{($transaction->amount > 0) ? (-1.0)*($transaction -> amount) : abs($transaction -> amount)}}</td>
-                            <!--{{$cat = App\Categories::find($transaction -> category_id)}}-->
                             <td>{{$transaction -> category}}</td>
                             <?php $key = array_search($transaction->bank_accounts_id, array_column($accounts, 'id')) ?>
-                            <td>{{$accounts[$key]['bank_name']}} - {{$accounts[$key]['name']}}
+                            <td>{{$accounts[$key]['bank_name']}} - {{$accounts[$key]['name']}}</td>
+                            <td>
                                 <button class="btn btn-danger" style="float: right; margin-left: 5px;">DEL</button>
                                 <button class="btn btn-success" style="float: right;">EDIT</button>
                             </td>
