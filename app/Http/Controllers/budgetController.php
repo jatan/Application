@@ -14,19 +14,21 @@ class budgetController extends Controller
 
     public function update(){
         echo "Processing update for User: ";
-        echo (Auth::user()->email);
+	    $bank_accounts = Auth::user()->visible_accounts()->toArray();
+		$bank_accounts_ids = array();
+		foreach ($bank_accounts as $singleAccount){
+			$bank_accounts_ids[] = $singleAccount['id'];
+		}
 
         $t = transaction::where('pending', 0)
                         ->where('date', '>=', '2017-01-01')
+	                    ->whereIn('bank_accounts_id', $bank_accounts_ids)
 	                    ->where('category', '!=', '')
                         ->groupBy('category')
                         ->selectRaw('category, sum(amount) as Total')
                         ->get()
                         ->toArray();
-        //    var_dump($t);
         $b = Budget::all();
-
-        //    var_dump($b);
 
         foreach ($b as $currentBudget) {
             foreach ($t as $totalSpending) {

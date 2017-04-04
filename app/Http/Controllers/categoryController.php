@@ -54,28 +54,27 @@ class categoryController extends Controller
     public function processTransactions(){
 
         require "rawdata.php";
-
+        $ListofCategories = ['Bank Fees','Cash Advance','Community','Food and Drink','Healthcare',
+	                        'Interest','Payment','Recreation','Service','Shops','Tax','Transfer', 'Travel'];
+		$AllCategories = Categories::select('id', 'c1', 'c2')->get()->toArray();
         $accounts = Auth::user()->visible_accounts()->toArray();
-        $newTransaction = new transaction();
 
-        $newTransaction['bank_accounts_id'] = '1';
-        $newTransaction['date'] = Carbon::now()->toDateString();        //  '2017-03-31'
-        $newTransaction['amount'] = 300;
+        $newTransaction = new transaction();
+		$newTransaction['id'] = '123456121490143318'.rand(154151451,5424241414);
+        $newTransaction['bank_accounts_id'] = $accounts[rand(0,count($accounts)-1)]['id'];                     //123456121490143318
+        $newTransaction['date'] = Carbon::now()->toDateString();                        //  '2017-03-31'
+        $newTransaction['amount'] = number_format(rand(1,2500)/5.0, 2, '.','');
         $newTransaction['name'] = $data[rand(1,500)];
         // $newTransaction['location_city'] = 'Hillsborough';
         // $newTransaction['location_state'] = 'New Jersey';
         $newTransaction['pending'] = false;
-        $newTransaction['type_expense'] = 'expense';
-        $newTransaction['category'] = 'Shops';
-        $newTransaction['category_id'] = '';
-        $newTransaction['score'] = '';
-        $newTransaction['plaid_core'] = '';
-
-        var_dump(count($data));
-        var_dump($data[rand(1,500)]);
-        var_dump(Carbon::now()->toDateString());
-
-        // var_dump($accounts);
-        // var_dump($newTransaction->toArray());
+        $newTransaction['type_primary'] = 'expense';
+        $newTransaction['category'] = $ListofCategories[rand(0,count($ListofCategories)-1)];
+        $newTransaction['category_id'] = $AllCategories[rand(0,500)]['id'];
+        $newTransaction['score'] = '1';
+        $newTransaction['plaid_core'] = \GuzzleHttp\json_encode($newTransaction);
+		$newTransaction->save();
+		var_dump("All went well");
+         dd($newTransaction->toArray());
     }
 }
