@@ -29,14 +29,14 @@
                     <tbody>
                         <?php $date = ''; ?>
                     @foreach($transactions as $transaction)
-
+	                    <?php $Carbondate = \Carbon\Carbon::parse($transaction -> date) ?>
+	                    <?php $now = \Carbon\Carbon::now() ?>
                         @if($date == '')
-                        <?php $date = \Carbon\Carbon::parse($transaction -> date) ?>
-
-                        <td style="float: left; margin-left: -40px; border: none; background-color: #e6e6e6;">{{($date -> diffInDays(\Carbon\Carbon::now()) < 1) ? "Today" : $date -> toDateString()}}</td>
-                        @elseif($date != \Carbon\Carbon::parse($transaction -> date))
-                        <td style="float: left; margin-left: -40px; border: none; background-color: #e6e6e6;">{{($date -> diffInDays(\Carbon\Carbon::now()) < 1) ? "Today" : $date -> toDateString()}}</td>
-                        <?php $date = \Carbon\Carbon::parse($transaction -> date) ?>
+	                        <?php $date = $Carbondate ?>
+	                        <td style="float: left; margin-left: -40px; border: none; background-color: #e6e6e6;">{{($date->diffInDays($now)<1) ? "Today" : $date->toDateString()}}</td>
+                        @elseif($date != $Carbondate)
+	                        <td style="float: left; margin-left: -40px; border: none; background-color: #e6e6e6;">{{($Carbondate->diffInDays($now)<1) ? "Today" : $Carbondate->toDateString()}}</td>
+	                        <?php $date = $Carbondate ?>
                         @endif
                         <tr style='color:{{($transaction->pending == 1) ? "blue;" : "black;"}}'>
                             <td>{{substr($transaction->name,0,60)}}</td>
@@ -49,7 +49,6 @@
                                 <button class="btn btn-success" style="float: right;">EDIT</button>
                             </td>
                         </tr>
-
                     @endforeach
                     </tbody>
                 </table>
