@@ -1,0 +1,35 @@
+MINT.COM - DEFAULT
+Auto & Transport        >   Auto Insurance, Auto Payment, Gas & Fuel, Parking, Public Transportation, Service & Parts
+Bills & Utilities       >   Home Phone, Internet, Mobile Phone, Television, Utilities
+Business Services       >   Advertizing, Legal, Office Supplies, Printing, Shipping
+Education               >   Books & Supplied, Student Loan, Tuition
+Entertainment           >   Amusment, Art, Movies, Music, Newspapers & Magazines
+Fees & Charges          >   ATM Fee, Bank Fee, Finance Charge, Late Fee, Service Fee, Trade Commissions
+Financial               >   Financial Advisor, Life Insurance
+Food & Dinning          >   Alcohol & Bars, Coffee Shops, Fast Food, Groceries, Restaurants
+Gifts & Donations       >   Charity, Gift
+Health & Fitness        >   Dentist, Doctor, Eyecare, Gym, Health Insurance, Pharmacy, Sports
+Home                    >   Furnishing, Home Improvement, Insurance, Services, Supplies, Lawn & Garden, Mortgage & Rent
+Income                  >   Bonus, Interest Income, Paycheck, Reimbersment, Rental Income, Returned Purchase
+Investments             >
+Kids                    >   Allowance, Baby Supplies, Babysitter & Daycare, Child Support, Kids Activities, Toys
+Misc Expenses           >
+Presonal Care           >   Hair, Laundry, Spa & Massage
+Pets                    >   Pet Food & Supplies, Pet Grooming, Vaterinary
+Shopping                >   Books, Clothing, Electronics & Software, Hobbies, Sporting Goods
+Taxes                   >   Federal, Local, Property, Sales, State
+Transfer                >   Credit Card Payment, Transfer For Cash Spending
+Travel                  >   Air Travel, Hotel, Rental Car & Taxi, Vacation
+Uncategorized           >   Cash & ATM, Check
+
+BUXFER.COM is Tag based only. No Categories.
+Auto        >   Fuel, Maintenance, Public Transport
+
+LERNVEST.COM
+
+Income          >       Paychecks, Other Income
+Fixed Costs     >       Rent/Mortgages, Transportation, Utilities, Insurance, Subscriptions
+Flex Spending   >       Groceries, ATM/Cash, Entertainment, Health, Personal Care, Restaurants & Bars, Service Charges, Shopping, Gifts, Home, Travel
+
+
+Online Subscription
