@@ -21,7 +21,8 @@ class transactionController extends Controller
 		$transactions = DB::table('transactions')
 		                     ->whereIn('bank_accounts_id', $ids)
 		                     ->orderBy('date', 'desc')
-							 ->get();
+//							 ->get();
+	                         ->paginate(10);
         // var_dump(array_search('1', array_column($accounts, 'id')));
         // die();
 		return (view('transaction.tr_Index')->with([

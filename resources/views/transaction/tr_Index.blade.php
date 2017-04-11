@@ -54,6 +54,7 @@
                 </table>
                 <div id="bottom_anchor"></div>
             </div>
+	        {{ $transactio->links() }}
         </div>
         <div id="AddTransaction" class="modal fade" role="dialog" style="display: none;">
 	        <div class="modal-dialog">
