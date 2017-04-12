@@ -12,19 +12,18 @@ use App\Http\Controllers\budgetController as BudgetController;
 class transactionController extends Controller
 {
     public function index(){
+
         $accounts = Auth::user()->visible_accounts()->toArray();
         $ids = '';				// This is okay for older versions
 		$ids = array();			// This is required for PHP 7.1 or higher
 		foreach ($accounts as $account) {
 			$ids[] = $account['id'];
 		}
-		$transactions = DB::table('transactions')
+        $transactions = DB::table('transactions')
 		                     ->whereIn('bank_accounts_id', $ids)
 		                     ->orderBy('date', 'desc')
-//							 ->get();
 	                         ->paginate(10);
-        // var_dump(array_search('1', array_column($accounts, 'id')));
-        // die();
+
 		return (view('transaction.tr_Index')->with([
                                                     'accounts' => $accounts,
                                                     'transactions' => $transactions]));

@@ -63,7 +63,7 @@ class categoryController extends Controller
         var_dump($newTransaction->toArray());
 		$newTransaction['id'] = 1234561+rand(15415,542424);
         $newTransaction['bank_accounts_id'] = $accounts[rand(0,count($accounts)-1)]['id'];                     //123456121490143318
-        $newTransaction['date'] = Carbon::now()->subDays(7)->toDateString();                        //  '2017-03-31'
+        $newTransaction['date'] = Carbon::now()->subDays(5)->toDateString();                        //  '2017-03-31'
         $newTransaction['amount'] = number_format(rand(1,2500)/5.0, 2, '.','');
         $newTransaction['name'] = $data[rand(1,500)];
         // $newTransaction['location_city'] = 'Hillsborough';
@@ -76,6 +76,7 @@ class categoryController extends Controller
         $newTransaction['plaid_core'] = \GuzzleHttp\json_encode($newTransaction);
 		$newTransaction->save();
 		var_dump("All went well");
-         var_dump($newTransaction->toArray());
+        var_dump($newTransaction->toArray());
+        var_dump('<a href="/user/transaction">AUTO</a>');
     }
 }

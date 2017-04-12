@@ -11,6 +11,7 @@
                 <a href="#" style="float:left; margin-left:10px;" class="btn-floating btn-large waves-effect waves-light teal" data-toggle="modal" data-target="#AddTransaction">
                     <i class="material-icons">+</i>
                 </a>
+                <a href="/run">AUTO</a>
                 <a href="#" style="float:right; margin-right:10px;" class="btn-floating btn-large waves-effect waves-light teal">
                     <i class="material-icons">I/O</i>
                 </a>
@@ -54,7 +55,7 @@
                 </table>
                 <div id="bottom_anchor"></div>
             </div>
-	        {{ $transactio->links() }}
+	        {{ $transactions->links() }}
         </div>
         <div id="AddTransaction" class="modal fade" role="dialog" style="display: none;">
 	        <div class="modal-dialog">
