@@ -9,7 +9,7 @@
 {{--@stop--}}
 
 @section('content')
-	<div><button class="btn btn-default"><a href="/update">UPDATE</a></button></div>
+	<div><button class="btn btn-primary" onclick="location.href='/update';">UPDATE</button></div>
 	<div class="months">
 		<div class="row">
 			@foreach($monthShortName as $key => $monthCode)

@@ -53,6 +53,7 @@ class categoryController extends Controller
 
     public function processTransactions(){
 
+        $subDays = isset($_GET['days']) ? $_GET['days'] : 0;
         require "rawdata.php";
         $ListofCategories = ['Bank Fees','Cash Advance','Community','Food and Drink','Healthcare',
 	                        'Interest','Payment','Recreation','Service','Shops','Tax','Transfer', 'Travel'];
@@ -63,7 +64,7 @@ class categoryController extends Controller
         var_dump($newTransaction->toArray());
 		$newTransaction['id'] = 1234561+rand(15415,542424);
         $newTransaction['bank_accounts_id'] = $accounts[rand(0,count($accounts)-1)]['id'];                     //123456121490143318
-        $newTransaction['date'] = Carbon::now()->subDays(5)->toDateString();                        //  '2017-03-31'
+        $newTransaction['date'] = Carbon::now()->subDays($subDays)->toDateString();                        //  '2017-03-31'
         $newTransaction['amount'] = number_format(rand(1,2500)/5.0, 2, '.','');
         $newTransaction['name'] = $data[rand(1,500)];
         // $newTransaction['location_city'] = 'Hillsborough';
@@ -77,6 +78,6 @@ class categoryController extends Controller
 		$newTransaction->save();
 		var_dump("All went well");
         var_dump($newTransaction->toArray());
-        var_dump('<a href="/user/transaction">AUTO</a>');
+        echo('<a href="/user/transaction">TRANSACTIONS</a>');
     }
 }

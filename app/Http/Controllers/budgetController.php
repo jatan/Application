@@ -23,6 +23,23 @@ class budgetController extends Controller
 			$bank_accounts_ids[] = $current_visibleBankAccount['id'];
 		}
 
+        //Get Months and Years array based on if transaction occured for that month of the year
+        $inScopeTransactions = transaction::where('pending', 0)
+                                          ->whereIn('bank_accounts_id', $bank_accounts_ids)
+                                          ->where('category', '!=', '')
+                                          ->select('date')
+                                          ->get()
+                                          ->toArray();
+        var_dump($inScopeTransactions);
+        exit();
+        $budgetUpdateScope = array();
+        $transactionCountCheck = '';
+        for ($i=0; $i < 12; $i++) {
+            # code...
+        }
+        $budgetUpdateScope = ['2017-3', '2017-4', '2016-12'];
+        // Then for each of those combinations, run below code.
+
         //This will give below format table
         //------------ sourceTransactions --------
         //    category      |      Total
@@ -37,7 +54,8 @@ class budgetController extends Controller
         // pending = 0
         // GROUP BY category;
         $sourceTransactions = transaction::where('pending', 0)
-                                        ->where('date', '>=', '2017-01-01')
+                                        ->where('date', '>=', '2017-03-01')
+                                        ->where('date', '<=', '2017-03-31')
                 	                    ->whereIn('bank_accounts_id', $bank_accounts_ids)
                 	                    ->where('category', '!=', '')
                                         ->groupBy('category')
@@ -45,7 +63,9 @@ class budgetController extends Controller
                                         ->get()             // Returns collection object
                                         ->toArray();        // Converts collection into Array
 
-        $allBudgetsOfUser = Budget::all()->where('User_ID', $loggedinUserID);
+        $allBudgetsOfUser = Budget::all()->where('User_ID', $loggedinUserID)
+                                        ->where('Month', 3)
+                                        ->where('Year', 2017);
 
         foreach ($allBudgetsOfUser as $current_allBudgetsOfUser) {
             foreach ($sourceTransactions as $current_sourceTransactions) {

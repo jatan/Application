@@ -11,7 +11,10 @@
                 <a href="#" style="float:left; margin-left:10px;" class="btn-floating btn-large waves-effect waves-light teal" data-toggle="modal" data-target="#AddTransaction">
                     <i class="material-icons">+</i>
                 </a>
-                <a href="/run">AUTO</a>
+                <form class="form-inline" action="/run" method="get">
+                    <input type="text" name="days" value="0">
+                    <button type="submit" class="btn btn-success">RUN</button>
+                </form>
                 <a href="#" style="float:right; margin-right:10px;" class="btn-floating btn-large waves-effect waves-light teal">
                     <i class="material-icons">I/O</i>
                 </a>
