@@ -12,7 +12,7 @@ use App\Http\Controllers\budgetController as BudgetController;
 class transactionController extends Controller
 {
     public function index(){
-
+        
         $accounts = Auth::user()->visible_accounts()->toArray();
         $ids = '';				// This is okay for older versions
 		$ids = array();			// This is required for PHP 7.1 or higher

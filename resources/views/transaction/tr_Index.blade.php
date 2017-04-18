@@ -15,9 +15,6 @@
                     <input type="text" name="days" value="0">
                     <button type="submit" class="btn btn-success">RUN</button>
                 </form>
-                <a href="#" style="float:right; margin-right:10px;" class="btn-floating btn-large waves-effect waves-light teal">
-                    <i class="material-icons">I/O</i>
-                </a>
             </div>
             <div id="table-container">
                 <table id="maintable" class="table table-hover table-responsive">
