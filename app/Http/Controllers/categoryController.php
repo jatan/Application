@@ -11,6 +11,7 @@ use App\Http\Requests;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Redirect;
 
 class categoryController extends Controller
 {
@@ -61,7 +62,6 @@ class categoryController extends Controller
         $accounts = Auth::user()->visible_accounts()->toArray();
 
         $newTransaction = new transaction();
-        var_dump($newTransaction->toArray());
 		$newTransaction['id'] = 1234561+rand(15415,542424);
         $newTransaction['bank_accounts_id'] = $accounts[rand(0,count($accounts)-1)]['id'];                     //123456121490143318
         $newTransaction['date'] = Carbon::now()->subDays($subDays)->toDateString();                        //  '2017-03-31'
@@ -76,8 +76,8 @@ class categoryController extends Controller
         $newTransaction['score'] = '1';
         $newTransaction['plaid_core'] = \GuzzleHttp\json_encode($newTransaction);
 		$newTransaction->save();
-		var_dump("All went well");
-        var_dump($newTransaction->toArray());
-        echo('<a href="/user/transaction">TRANSACTIONS</a>');
+        // dd($newTransaction->toArray());
+
+        return (redirect::to('user/transaction'));
     }
 }

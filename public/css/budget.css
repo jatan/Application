@@ -104,3 +104,8 @@
 .reset-fontsize{
     font-size:14px;
 }
+
+
+th, td {
+    text-align: center;
+}

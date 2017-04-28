@@ -6,8 +6,6 @@ Route::group(['middleware' => ['web']], function () {
     //Landing Page
     Route::get('/','welcomeController@welcome');
 
-    Route::get('/update', ['middleware' => 'auth', 'uses' => 'budgetController@update']);
-
     //Registration
     Route::get('/register','registerController@register');
     Route::post('/register','registerController@registerProcess');
@@ -29,6 +27,8 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('user/transaction/update/{id}',['middleware' => 'auth', 'uses' => 'transactionController@updateTransaction_byId']);
     Route::get('user/transaction/delete/{id}',['middleware' => 'auth', 'uses' => 'transactionController@deleteTransaction_byId']);
 
+    Route::get('user/transaction/fetch', ['middleware' => 'auth', 'uses' => 'transactionController@fetch']);
+
     //Budgets
     Route::get('user/budget',['middleware' => 'auth', 'uses' => 'budgetController@index']);
     Route::get('user/budget/getAll',['middleware' => 'auth', 'uses' => 'budgetController@getBudgets']);
@@ -36,7 +36,7 @@ Route::group(['middleware' => ['web']], function () {
     Route::post('user/budget/create',['middleware' => 'auth', 'uses' => 'budgetController@createBudget']);
     Route::post('user/budget/update',['middleware' => 'auth', 'uses' => 'budgetController@updateBudget']);
     Route::post('user/budget/delete',['middleware' => 'auth', 'uses' => 'budgetController@deleteBudget_byId']);
-
+    Route::get('/update', ['middleware' => 'auth', 'uses' => 'budgetController@update']);
     //Accounts
     Route::get('user/account',['middleware' => 'auth', 'uses' => 'accountController@index']);
     Route::get ('user/account/getAll',['middleware' => 'auth', 'uses' => 'accountController@getAccounts']);

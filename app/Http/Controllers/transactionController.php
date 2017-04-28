@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\transaction;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Controllers\budgetController as BudgetController;
+use App\Http\Requests;
+use Request;
 
 class transactionController extends Controller
 {
     public function index(){
-        
+
         $accounts = Auth::user()->visible_accounts()->toArray();
         $ids = '';				// This is okay for older versions
 		$ids = array();			// This is required for PHP 7.1 or higher
@@ -65,5 +66,20 @@ class transactionController extends Controller
     public function deleteTransaction_byId($id){
         $data = '<h3>Delete Operation Successful with ID: '.$id.'</h3>';
         return ($data);
+    }
+
+    public function fetch(){
+        $input = Request::all();
+        $userID = Auth::user()->id;
+        // dd($input['year']);
+        $requestedTransactions = transaction::where('date', '<=', $input['year'].'-0'.$input['month'].'-31')
+                                            ->where('date', '>=', $input['year'].'-0'.$input['month'].'-01')
+                                            ->where('category', $input['budgetName'])
+                                            ->selectRaw('date, name, amount, category')
+                                            ->get()
+                                            ->toArray();
+
+        // dd($requestedTransactions);
+        return ($requestedTransactions);
     }
 }

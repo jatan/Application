@@ -68,9 +68,9 @@ class budgetController extends Controller
         // GROUP BY category;
 
         foreach ($budgetUpdateScope as $year => $months) {
-            
+            // var_dump($year);
             foreach ($months as $c_month) {
-
+                // var_dump($c_month);
                 $sourceTransactions = transaction::where('pending', 0)
                                                 ->where('date', '>=', $year.'-'.$c_month.'-01')
                                                 ->where('date', '<=', $year.'-'.$c_month.'-30')
@@ -80,10 +80,11 @@ class budgetController extends Controller
                                                 ->selectRaw('category, sum(amount) as Total')
                                                 ->get()             // Returns collection object
                                                 ->toArray();        // Converts collection into Array
-                // die();
+
                 $allBudgetsOfUser = Budget::all()->where('User_ID', $loggedinUserID)
-                                                ->where('Month', $c_month)
+                                                ->where('Month', intval($c_month))
                                                 ->where('Year', $year);
+                // var_dump($allBudgetsOfUser);
 
                 foreach ($allBudgetsOfUser as $current_allBudgetsOfUser) {
                     foreach ($sourceTransactions as $current_sourceTransactions) {
@@ -96,6 +97,7 @@ class budgetController extends Controller
 
             }
         }
+
 	    return (redirect::to('user/budget'));
     }
 
@@ -144,7 +146,6 @@ class budgetController extends Controller
 	    $reversed = array_reverse($sortMonthShortName, true);
 	    $reversedFull = array_reverse($sortMonthFullName, true);
 	    $allBudgets = Budget::select('User_ID', 'Name', 'SetValue', 'SpentValue', 'Month', 'Year')
-	                        // ->where('User_ID', Auth::user()->id)
 		                    ->where([['Month', '>' , $month],
                                     ['Year', '=', $year-1],
                                     ['User_ID', Auth::user()->id]])
