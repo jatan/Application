@@ -41,6 +41,7 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('user/account',['middleware' => 'auth', 'uses' => 'accountController@index']);
     Route::get ('user/account/getAll',['middleware' => 'auth', 'uses' => 'accountController@getAccounts']);
     Route::post('user/account/getbyId/{id}',['middleware' => 'auth', 'uses' => 'accountController@getAccount_byId']);
+    Route::get('user/account/getbyId/{id}',['middleware' => 'auth', 'uses' => 'accountController@getAccount_byId']);
     Route::get ('user/account/create',['middleware' => 'auth', 'uses' => 'accountController@createAccount']);
     Route::post('user/account/create',['middleware' => 'auth', 'uses' => 'accountController@createAccount_process']);
     Route::get('user/account/update/{id}',['middleware' => 'auth', 'uses' => 'accountController@updateAccount_byId']);

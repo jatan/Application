@@ -78,6 +78,12 @@ class categoryController extends Controller
 		$newTransaction->save();
         // dd($newTransaction->toArray());
 
+        $bc = new BudgetController();
+        $bc->update();
+
+        $ac = new AccountController();
+        $ac->updateTotals($newTransaction['bank_accounts_id'], $newTransaction['amount']);
+
         return (redirect::to('user/transaction'));
     }
 }

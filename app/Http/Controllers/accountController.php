@@ -42,8 +42,6 @@ class accountController extends Controller
 			Log::alert($input);			// [This will log un-encrypted username and password]
 			//dd($input);
 			if ($input['Bank'] == 'cust'){
-
-//				var_dump("custom bank selected");
 				$user_ID = Auth::user()->id;
 				$bank_account = new bank_accounts();
 
@@ -614,5 +612,17 @@ class accountController extends Controller
 
 	public function sign( $number ) {
     	return ( $number > 0 ) ? 1 : ( ( $number < 0 ) ? -1 : 0 );
+	}
+
+	public function updateTotals($account_id, $amount, $type = 'OUT'){
+		$account = bank_accounts::find($account_id);
+
+		if ($type === 'OUT'){
+			$account['current_balance'] = $account->current_balance - $amount;
+		}
+		if ($type === 'IN'){
+			$account->current_balance = $account->current_balance + $amount;
+		}
+		$account->save();
 	}
 }

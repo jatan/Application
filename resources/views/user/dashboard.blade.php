@@ -39,7 +39,7 @@
         <div class="accounts-list">
             @foreach($accounts as $account)
                 <div class="well">{{strtoupper($account->bank_name)}}</div>
-                <a href="{{$account->id}}/account"><div class="h4 float__left">{{$account->name}}</div>
+                <a href="account/getbyId/{{$account->id}}"><div class="h4 float__left">{{$account->name}}</div>
                 <?php $color = "Fontred";?>
                 @if($account->current_balance >= 0)
                     <?php $color = "Fontgreen"; ?>

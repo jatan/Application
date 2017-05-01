@@ -35,6 +35,7 @@ class transactionController extends Controller
         var_dump($data);
 
         $newTransaction = new transaction();
+        $newTransaction['id'] = 1234561+rand(15415,542424);
         $newTransaction['name'] = $_POST['Merchant'];
         $newTransaction['category'] = $_POST['Category'];
         $newTransaction['date'] = $_POST['TransDate'];
@@ -43,8 +44,13 @@ class transactionController extends Controller
 
         var_dump($newTransaction->toArray());
         $newTransaction->save();
+
         $bc = new BudgetController();
         $bc->update();
+
+        $ac = new AccountController();
+        $ac->updateTotals($_POST['accountID'], $_POST['amount']);
+
         return (redirect::to('/user/transaction'));
     }
 
@@ -64,8 +70,16 @@ class transactionController extends Controller
     }
 
     public function deleteTransaction_byId($id){
-        $data = '<h3>Delete Operation Successful with ID: '.$id.'</h3>';
-        return ($data);
+        $trans = transaction::find($id);
+        $trans->delete();
+
+        $bc = new BudgetController();
+        $bc->update();
+
+        $ac = new AccountController();
+        $ac->updateTotals($trans->bank_accounts_id, $trans->amount, 'IN');
+
+        return (redirect::to('/user/transaction'));
     }
 
     public function fetch(){

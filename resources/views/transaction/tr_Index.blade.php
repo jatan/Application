@@ -46,8 +46,12 @@
                             <?php $key = array_search($transaction->bank_accounts_id, array_column($accounts, 'id')) ?>
                             <td>{{$accounts[$key]['bank_name']}} - {{$accounts[$key]['name']}}</td>
                             <td>
-                                <button class="btn btn-danger" style="float: right; margin-left: 5px;">DEL</button>
-                                <button class="btn btn-success" style="float: right;">EDIT</button>
+                                <form class="" action="transaction/delete/{{$transaction->id}}" method="get">
+                                    <button class="btn btn-danger" style="float: right; margin-left: 5px;">DEL</button>
+                                </form>
+                                <form class="" action="transaction/edit/{{$transaction->id}}" method="post">
+                                    <button class="btn btn-success" style="float: right;">EDIT</button>
+                                </form>
                             </td>
                         </tr>
                     @endforeach
