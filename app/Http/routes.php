@@ -26,7 +26,7 @@ Route::group(['middleware' => ['web']], function () {
     Route::post('user/transaction/create',['middleware' => 'auth', 'uses' => 'transactionController@createTransaction']);
     Route::get('user/transaction/update/{id}',['middleware' => 'auth', 'uses' => 'transactionController@updateTransaction_byId']);
     Route::get('user/transaction/delete/{id}',['middleware' => 'auth', 'uses' => 'transactionController@deleteTransaction_byId']);
-
+    Route::get('user/transaction/edit/{id}',['middleware' => 'auth', 'uses' => 'transactionController@editTransaction_byId']);
     Route::get('user/transaction/fetch', ['middleware' => 'auth', 'uses' => 'transactionController@fetch']);
 
     //Budgets

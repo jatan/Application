@@ -49,9 +49,7 @@
                                 <form class="" action="transaction/delete/{{$transaction->id}}" method="get">
                                     <button class="btn btn-danger" style="float: right; margin-left: 5px;">DEL</button>
                                 </form>
-                                <form class="" action="transaction/edit/{{$transaction->id}}" method="post">
-                                    <button class="btn btn-success" style="float: right;">EDIT</button>
-                                </form>
+                                    <button class="btn btn-success editJSOperation" data-transID="{{$transaction->id}}" style="float: right;">EDIT</button>
                             </td>
                         </tr>
                     @endforeach

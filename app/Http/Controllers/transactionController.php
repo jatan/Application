@@ -82,6 +82,13 @@ class transactionController extends Controller
         return (redirect::to('/user/transaction'));
     }
 
+    public function editTransaction_byId($id){
+        $trans = transaction::find($id);
+        $input = Request::all();
+        var_dump($input);
+        return($trans);
+    }
+
     public function fetch(){
         $input = Request::all();
         $userID = Auth::user()->id;
