@@ -20,6 +20,7 @@ class accountController extends Controller
 	*	Main Accounts page.
 	*/
 	public function index(){
+
 		return (view('account.ac_index'));
 	}
 

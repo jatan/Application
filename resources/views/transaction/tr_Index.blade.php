@@ -8,13 +8,15 @@
 
         <div class="transactions-main">
             <div class="utility-buttons">
-                <a href="#" style="float:left; margin-left:10px;" class="btn-floating btn-large waves-effect waves-light teal" data-toggle="modal" data-target="#AddTransaction">
-                    <i class="material-icons">+</i>
-                </a>
+
                 <form class="form-inline" action="/run" method="get">
-                    <input type="text" name="days" value="0">
+                    <button style="float:left; margin:10px;" type="button" class="btn btn-default" data-toggle="modal" data-target="#AddTransaction"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
+                    <input type="text" class="form-control" name="days" value="0" style="margin: 10px;">
                     <button type="submit" class="btn btn-success">RUN</button>
+                    <input type="text" class="form-control" id="search" name="search" placeholder="Search Transactions..." style="margin: 10px; margin-left: 250px;">
+                    <button style="float:right; margin:10px;" type="button" class="btn btn-default" data-toggle="modal" data-target="#AddTransaction"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>
                 </form>
+
             </div>
             <div id="table-container">
                 <table id="maintable" class="table table-hover table-responsive">
@@ -34,9 +36,11 @@
 	                    <?php $now = \Carbon\Carbon::now() ?>
                         @if($date == '')
 	                        <?php $date = $Carbondate ?>
-	                        <td style="float: left; margin-left: -40px; border: none; background-color: #e6e6e6;">{{($date->diffInDays($now)<1) ? "Today" : $date->toDateString()}}</td>
+	                        <tr><td colspan="5" style="text-align: left; margin-left: 0px; border: none; background-color: #e6e6e6;">{{($date->diffInDays($now)<1) ? "Today" : $date->toDateString()}}</td>
+                            </tr>
                         @elseif($date != $Carbondate)
-	                        <td style="float: left; margin-left: -40px; border: none; background-color: #e6e6e6;">{{($Carbondate->diffInDays($now)<1) ? "Today" : $Carbondate->toDateString()}}</td>
+	                        <tr><td colspan="5" style="text-align: left; margin-left: 0px; border: none; background-color: #e6e6e6;">{{($Carbondate->diffInDays($now)<1) ? "Today" : $Carbondate->toDateString()}}</td>
+                            </tr>
 	                        <?php $date = $Carbondate ?>
                         @endif
                         <tr style='color:{{($transaction->pending == 1) ? "blue;" : "black;"}}'>
@@ -47,9 +51,9 @@
                             <td>{{$accounts[$key]['bank_name']}} - {{$accounts[$key]['name']}}</td>
                             <td>
                                 <form class="" action="transaction/delete/{{$transaction->id}}" method="get">
-                                    <button class="btn btn-danger" style="float: right; margin-left: 5px;">DEL</button>
+                                    <button class="btn btn-danger" style="float: right; margin-left: 5px;"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button>
                                 </form>
-                                    <button class="btn btn-success editJSOperation" data-transID="{{$transaction->id}}" style="float: right;">EDIT</button>
+                                    <button class="btn btn-success editJSOperation" data-transID="{{$transaction->id}}" style="float: right;"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></button>
                             </td>
                         </tr>
                     @endforeach

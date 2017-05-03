@@ -53,7 +53,7 @@ $('tbody').on('click','button.editJSOperation', function (event) {
                             <option value="'+BankAccount+'" selected>'+BankAccount+'</option>\
                     </select>\
                 </td>\
-                <td><button type="submit" data-transID="'+transID+'" class="btn btn-success right save-transaction" form="editTransaction'+transID+'">SAVE</button></td>';
+                <td><button type="submit" data-transID="'+transID+'" class="btn btn-success right save-transaction" form="editTransaction'+transID+'"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></button></td>';
     tr.html(resp);
 
 });
@@ -78,9 +78,9 @@ $('tbody').on('click','button.save-transaction', function (event) {
                         <td>Piggy Bank - Daily Checking</td>\
                         <td>\
                             <form class="" action="transaction/delete/'+transID+'" method="get">\
-                                <button class="btn btn-danger" style="float: right; margin-left: 5px;">DEL</button>\
+                                <button class="btn btn-danger" style="float: right; margin-left: 5px;"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button>\
                             </form>\
-                                <button class="btn btn-success editJSOperation" data-transid="'+transID+'" style="float: right;">EDIT</button>\
+                                <button class="btn btn-success editJSOperation" data-transid="'+transID+'" style="float: right;"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></button>\
                         </td>';
           object.parent().parent().html(resp);
         },
@@ -89,4 +89,18 @@ $('tbody').on('click','button.save-transaction', function (event) {
         },
         type:'GET'          // not working with type: POST
     });
+});
+
+var $rows = $('#maintable tr');
+
+$('#search').keyup(function() {
+    console.log("search triggered");
+    var val = '^(?=.*\\b' + $.trim($(this).val()).split(/\s+/).join('\\b)(?=.*\\b') + ').*$',
+        reg = RegExp(val, 'i'),
+        text;
+
+    $rows.show().filter(function() {
+        text = $(this).text().replace(/\s+/g, ' ');
+        return !reg.test(text);
+    }).hide();
 });
