@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Redirect;
 use App\Http\Controllers\budgetController as BudgetController;
 use App\Http\Requests;
 use Request;
+use Log;
 
 class transactionController extends Controller
 {
@@ -83,9 +84,13 @@ class transactionController extends Controller
     }
 
     public function editTransaction_byId($id){
-        $trans = transaction::find($id);
-        $input = Request::all();
-        var_dump($input);
+	    $input = Request::all();
+	    Log::alert($input);
+	    $trans = transaction::find($id);
+		$trans['name'] = $input['Merchant'];
+		$trans['amount'] = ($input['Amount'] < 0) ? abs($input['Amount']) : $input['Amount'];
+		$trans['category'] = $input['Category'];
+		$trans->save();
         return($trans);
     }
 
