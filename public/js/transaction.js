@@ -18,7 +18,7 @@ $('.testing a').click(function(event){
 });
 
 $('tbody').on('click','button.editJSOperation', function (event) {
-    console.log("Edit Clicked");
+
     var object = $(this);
     var transID = object.data('transid');
     var tr = $(this).parent().parent();
@@ -27,35 +27,57 @@ $('tbody').on('click','button.editJSOperation', function (event) {
     var Amount = alltds.next().html();
     var Category = alltds.next().next().html();
     var BankAccount = alltds.next().next().next().html();
+
+    var obj = {                         //      declare key: value pair analysis
+        'Shops': "Shopping",
+        'Food and Drink': "Food & Drinks",
+        'Gas and Fuel': "Gas & Fuel",
+        'Bank Fees': "Bank Fees",
+        'Cash Advance': "Cash Advance",
+        'Community': "Community",
+        'Healthcare': "Healthcare",
+        'Interest': "Interest",
+        'Payment': "Payment",
+        'Recreation': "Recreation",
+        'Service': "Service",
+        'Tax': "Tax",
+        'Transfer': "Transfer",
+        'Travel': "Travel"
+    }
+    var final = [];
+    var selectStart = '<select name="Category" form="editTransaction'+transID+'">';
+    var selectEnd = '</select>';
+    for (var key in obj) {          // Loop though JSON object
+        if (obj.hasOwnProperty(key)) {
+            var val = obj[key];
+            if (key == Category){
+                final.push('<option value="'+key+'" selected>'+val+'</option>');
+            }
+            else {
+                final.push('<option value="'+key+'">'+val+'</option>');
+            }
+        }
+    }
+    var accountSelectStart = '<select name="accountID" form="editTransaction'+transID+'">';
+    var banks = [];
+    $.each(user, function(i, val){
+        var curVal = val.bank_name+' - '+val.name;
+        if (curVal == BankAccount){
+            banks.push('<option value="'+'" selected>'+val.name+' - '+val.bank_name+'</option>');
+        }
+        else {
+            banks.push('<option value="'+'">'+val.name+' - '+val.bank_name+'</option>');
+        }
+    });
+
     var resp =  '<form id="editTransaction'+transID+'" method="post"></form>\
                 <td><input type="text" name="Merchant" value="'+Merchant+'" form="editTransaction'+transID+'"></td>\
                 <td><input type="text" name="Amount" value="'+Amount+'" form="editTransaction'+transID+'"></td>\
-                <td>\
-                    <select name="Category" form="editTransaction'+transID+'">\
-                        <option value="Shops" selected>Shopping</option>\
-                        <option value="Food and Drink">Food & Drinks</option>\
-                        <option value="Gan and Fuel">Gan & Fuel</option>\
-                        <option value="Bank Fees">Bank Fees</option>\
-                        <option value="Cash Advance">Cash Advance</option>\
-                        <option value="Community">Community</option>\
-                        <option value="Healthcare">Healthcare</option>\
-                        <option value="Interest">Interest</option>\
-                        <option value="Payment">Payment</option>\
-                        <option value="Recreation">Recreation</option>\
-                        <option value="Service">Service</option>\
-                        <option value="Tax">Tax</option>\
-                        <option value="Transfer">Transfer</option>\
-                        <option value="Travel">Travel</option>\
-                    </select>\
-                </td>\
-                <td>\
-                    <select name="accountID" form="editTransaction'+transID+'">\
-                            <option value="'+BankAccount+'" selected>'+BankAccount+'</option>\
-                    </select>\
-                </td>\
+                <td>'+selectStart+final.join("")+selectEnd+'</td>\
+                <td>'+accountSelectStart+banks.join("")+selectEnd+'</td>\
                 <td><button type="submit" data-transID="'+transID+'" class="btn btn-success right save-transaction" form="editTransaction'+transID+'"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></button></td>';
-    tr.html(resp);
 
+    tr.html(resp);
 });
 
 $('tbody').on('click','button.save-transaction', function (event) {
@@ -104,3 +126,19 @@ $('#search').keyup(function() {
         return !reg.test(text);
     }).hide();
 });
+
+/**   Sleep functionality
+    function wait(ms){
+      var start = new Date().getTime();
+      var end = start;
+      while(end < start + ms) {
+       end = new Date().getTime();
+      }
+    }
+
+    $(window).load(function() {
+        console.log('before');
+        wait(7000);  //7 seconds in milliseconds
+        console.log('after');
+    });
+**/

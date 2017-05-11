@@ -56,7 +56,7 @@ class categoryController extends Controller
 
         $subDays = isset($_GET['days']) ? $_GET['days'] : 0;
         require "rawdata.php";
-        $ListofCategories = ['Bank Fees','Cash Advance','Community','Food and Drink','Healthcare',
+        $ListofCategories = ['Bank Fees','Cash Advance', 'Gas and Fuel', 'Community','Food and Drink','Healthcare',
 	                        'Interest','Payment','Recreation','Service','Shops','Tax','Transfer', 'Travel'];
 		$AllCategories = Categories::select('id', 'c1', 'c2')->get()->toArray();
         $accounts = Auth::user()->visible_accounts()->toArray();

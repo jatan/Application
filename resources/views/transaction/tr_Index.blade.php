@@ -86,7 +86,7 @@
 						        <select id="Category" name="Category" class="form-control" style="margin-right: 10px;">
 							        <option value="Shops" selected>Shopping</option>
 							        <option value="Food and Drink">Food & Drinks</option>
-							        <option value="Gan and Fuel">Gan & Fuel</option>
+							        <option value="Gas and Fuel">Gas & Fuel</option>
                                     <option value="Bank Fees">Bank Fees</option>
                                     <option value="Cash Advance">Cash Advance</option>
                                     <option value="Community">Community</option>
