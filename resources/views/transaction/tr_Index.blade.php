@@ -8,15 +8,17 @@
 
         <div class="transactions-main">
             <div class="utility-buttons">
-
                 <form class="form-inline" action="/run" method="get">
+                    <!-- Add Transaction Button -->
                     <button style="float:left; margin:10px;" type="button" class="btn btn-default" data-toggle="modal" data-target="#AddTransaction"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
+                    <!-- Automatic Add random transaction -->
                     <input type="text" class="form-control" name="days" value="0" style="margin: 10px;">
                     <button type="submit" class="btn btn-success">RUN</button>
-                    <input type="text" class="form-control" id="search" name="search" placeholder="Search Transactions..." style="margin: 10px; margin-left: 250px;">
-                    <button style="float:right; margin:10px;" type="button" class="btn btn-default" data-toggle="modal" data-target="#AddTransaction"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>
+                    <!-- Search transaction table -->
+                    <input type="text" class="form-control" id="search" name="search" placeholder="Search Transactions..." style="margin: 10px; margin-left: 25px;">
+                    <!-- Import transaction button -->
+                    <button style="float:right; margin:10px;" type="button" class="btn btn-default" data-toggle="modal" data-target="#UploadFileModal"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>
                 </form>
-
             </div>
             <div id="table-container">
                 <table id="maintable" class="table table-hover table-responsive">
@@ -117,6 +119,26 @@
 			        </div>
 		        </div>
 	        </div>
+        </div>
+
+        <div id="UploadFileModal" class="modal fade" role="dialog" style="display: none;">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="modal-title">
+                            <button type="button" class="btn close" data-dismiss="modal">×</button>
+                            <h4>Import Mint Transactions</h4>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <form id="uploadFile" class="form-inline" enctype="multipart/form-data" method="post" action="transaction/import">
+                            {{ csrf_field() }}
+                            <input id="file" type="file" name="file" style="display: inline;"/>
+                            <input type="submit" value="Upload" name="submit" style="display: inline; margin:10px;" class="btn btn-default uploadbutton" />
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
 @stop
 

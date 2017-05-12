@@ -127,18 +127,43 @@ $('#search').keyup(function() {
     }).hide();
 });
 
-/**   Sleep functionality
-    function wait(ms){
-      var start = new Date().getTime();
-      var end = start;
-      while(end < start + ms) {
-       end = new Date().getTime();
-      }
-    }
+$(':file').on('change', function() {
+    var file = this.files[0];
 
-    $(window).load(function() {
-        console.log('before');
-        wait(7000);  //7 seconds in milliseconds
-        console.log('after');
+    console.log(this.value);
+    if (file.size > 1048576) {
+        alert('max upload size is 1MB');
+        this.value = "";                // Do not attach the file.
+    }
+    if (file.name.substr(file.name.indexOf('.')) !== '.csv') {
+        alert('Only CSV files are accepted');
+        this.value = "";                // Do not attach the file.
+    }
+    // Also see .name, .type
+});
+
+$('.uploadbutton').on('click', function (event) {
+    event.preventDefault();
+
+    var obj = $("#file").prop('files')[0];
+    console.log(obj);
+    var form_data = new FormData(obj);
+    // form_data.append('file', obj);
+    console.log(form_data);
+
+    $.ajax({
+        url: 'transaction/import',
+        dataType: 'text',  // what to expect back from the PHP script, if anything
+        cache: false,
+        contentType: false,
+        processData: false,
+        data: form_data,
+        success: function(data){
+            console.log("Success");
+        },
+        error: function(){
+            $('.response').text("An Error Occurred");
+        },
+        type:'POST'          // not working with type: POST
     });
-**/
+});
