@@ -118,7 +118,16 @@ class transactionController extends Controller
         move_uploaded_file($_FILES["file"]["tmp_name"], $target_file);
 
         $parseResponse = $this->csv_to_array($target_file);     // This will return an array of array
-        // var_dump($parseResponse);
+
+        $distinctCategories = array();
+        foreach ($parseResponse as $key => $value) {
+            if (!in_array($value['Account Name'], $distinctCategories, true)){
+                $distinctCategories[] = $value['Account Name'];
+            }
+        }
+        sort($distinctCategories, SORT_STRING);     // Alphabetical sorting
+        // dd($distinctCategories);
+        return (json_encode($distinctCategories));
     }
 
     /**

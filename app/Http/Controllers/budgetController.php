@@ -32,8 +32,7 @@ class budgetController extends Controller
                                           ->get()
                                           ->toArray();
 
-        // var_dump($inScopeTransactionDates);
-        // exit();
+        // dd($inScopeTransactionDates);
         $budgetUpdateScope = array();
         foreach ($inScopeTransactionDates as $current_Date) {
             $checkYear = substr($current_Date['date'], 0, 4);
@@ -49,23 +48,6 @@ class budgetController extends Controller
            }
 
        }
-        // var_dump($budgetUpdateScope);
-        // die();
-        // Then for each of those combinations, run below code.
-
-        //This will give below format table
-        //------------ sourceTransactions --------
-        //    category      |      Total
-        //      Food        |        400
-        //      shop        |        200
-        //----------------------------------------
-        // SELECT category, sum(amount) as Total
-        // FROM transactions
-        // WHERE bank_accounts_id IN (SELECT id FROM bank_accounts WHERE user_id IN (SELECT id FROM users WHERE email = 'a@b.c')) AND
-        // date >= '2017-01-01' AND
-        // category != '' AND
-        // pending = 0
-        // GROUP BY category;
 
         foreach ($budgetUpdateScope as $year => $months) {
             // var_dump($year);
@@ -81,15 +63,26 @@ class budgetController extends Controller
                                                 ->get()             // Returns collection object
                                                 ->toArray();        // Converts collection into Array
 
+                dump($sourceTransactions);
                 $allBudgetsOfUser = Budget::all()->where('User_ID', $loggedinUserID)
                                                 ->where('Month', intval($c_month))
                                                 ->where('Year', $year);
-                // var_dump($allBudgetsOfUser);
+                dump($allBudgetsOfUser);
 
-                foreach ($allBudgetsOfUser as $current_allBudgetsOfUser) {
-                    foreach ($sourceTransactions as $current_sourceTransactions) {
+                foreach ($sourceTransactions as $current_sourceTransactions) {
+                    foreach ($allBudgetsOfUser as $current_allBudgetsOfUser) {
                         if ($current_allBudgetsOfUser['Name'] == $current_sourceTransactions['category']) {
                             $current_allBudgetsOfUser['SpentValue'] = $current_sourceTransactions['Total'];
+                        }
+                        else {
+                            $current_allBudgetsOfUser = new Budget();
+
+                            $current_allBudgetsOfUser['User_ID'] = Auth::user()->id;
+                            $current_allBudgetsOfUser['Name'] = 'UnBudgeted';
+                            $current_allBudgetsOfUser['SetValue'] = 1000;
+                            $current_allBudgetsOfUser['SpentValue'] = 0;
+                            $current_allBudgetsOfUser['Month'] = $c_month;
+                            $current_allBudgetsOfUser['Year'] = $year;
                         }
                     }
                     $current_allBudgetsOfUser->save();
@@ -97,7 +90,7 @@ class budgetController extends Controller
 
             }
         }
-
+        // exit();
 	    return (redirect::to('user/budget'));
     }
 

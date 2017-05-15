@@ -126,7 +126,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <div class="modal-title">
-                            <button type="button" class="btn close" data-dismiss="modal">×</button>
+                            <button type="button" class="btn close" data-dismiss="modal">X</button>
                             <h4>Import Mint Transactions</h4>
                         </div>
                     </div>
@@ -136,6 +136,18 @@
                             <input id="file" type="file" name="file" style="display: inline;"/>
                             <input type="submit" value="Upload" name="submit" style="display: inline; margin:10px;" class="btn btn-default uploadbutton" />
                         </form>
+                        <div class="result" style="display: none">
+                            <label for="MintAccounts" style="margin-right: 20px;">MINT ACCOUNTS</label>
+                            <select name="MintAccounts" class="" style="margin-right: 10px;">
+                            </select>
+                            <br />
+                            <label for="ExistingAccounts" style="margin-right: 20px;">CURRENT ACCOUNTS</label>
+                            <select name="ExistingAccounts" class="" style="margin-right: 10px;">
+                                @foreach($accounts as $account)
+                                <option value="{{$account['bank_name']}} - {{$account['name']}}">{{$account['bank_name']}} - {{$account['name']}}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
