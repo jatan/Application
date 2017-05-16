@@ -109,9 +109,18 @@ $(document).ready(function() {
             $(this).addClass("bg-warning");
         }
     });
+
+    $('div.custom a').on('click', function (e) {
+        $('.bg-green').addClass('bg-lightgreen');
+        $('.bg-green').removeClass('bg-green');
+
+        var clickedTab = $(e.target).parent();   // newly activated tab
+        clickedTab.removeClass('bg-lightgreen');
+        clickedTab.addClass('bg-green');
+    });
 });
-function displayData(){
-    console.log("It works");
-    var element = $(this.relatedTarget);
-    console.log(element.val());
-}
+    function displayData(){
+        console.log("It works");
+        var element = $(this.relatedTarget);
+        console.log(element.val().css('background-color'));
+    }

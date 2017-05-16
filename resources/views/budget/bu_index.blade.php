@@ -9,7 +9,7 @@
 	<div class="months">
 		<div class="row">
 			@foreach($monthShortName as $key => $monthCode)
-			<div class="col-md-1 col-sm-1 custom" style="{{$key == $CurrentMonth ? 'background-color:green;' : ''}}">
+			<div class="col-md-1 col-sm-1 custom {{$key == $CurrentMonth ? 'bg-green' : 'bg-lightgreen'}}">
 				<a href="#{{$monthCode}}" data-toggle="tab" aria-expanded="true">
 					{{$monthCode}} - '{{$key <= $CurrentMonth ? substr($CurrentYear,2) : substr($CurrentYear-1,2)}}
 				</a>

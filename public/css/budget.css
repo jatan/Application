@@ -18,7 +18,7 @@
 .custom {
     color: #ffffff;
     padding: 0;
-    background-color: #4aa6c3;
+    /*background-color: #4aa6c3;*/
     line-height: 50px;
     text-align: center;
     border-color: rgba(0, 0, 0, .25);
@@ -29,6 +29,14 @@
 .custom a{
     color: #fff;;
 }
+
+.bg-green{
+    background-color: green;
+}
+.bg-lightgreen{
+    background-color: lightgreen;
+}
+
 .progress-container{
     width: 80%;
     margin: auto;
