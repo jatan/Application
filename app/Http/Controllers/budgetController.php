@@ -25,12 +25,12 @@ class budgetController extends Controller
 
         //Get Months and Years array based on if transaction occured for that month of the year
         $inScopeTransactionDates = transaction::where('pending', 0)
-                                          ->whereIn('bank_accounts_id', $bank_accounts_ids)
-                                          ->where('category', '!=', '')
-                                          ->select('date')
-                                          ->distinct()
-                                          ->get()
-                                          ->toArray();
+	                                          ->whereIn('bank_accounts_id', $bank_accounts_ids)
+	                                          ->where('category', '!=', '')
+	                                          ->select('date')
+	                                          ->distinct()
+	                                          ->get()
+	                                          ->toArray();
 
         // dd($inScopeTransactionDates);
         $budgetUpdateScope = array();
@@ -50,46 +50,61 @@ class budgetController extends Controller
        }
 
         foreach ($budgetUpdateScope as $year => $months) {
-            // var_dump($year);
             foreach ($months as $c_month) {
-                // var_dump($c_month);
+	            $UnbudgetedAmountSum = 0;
+            	// This will consider all transactions of given year and month.
                 $sourceTransactions = transaction::where('pending', 0)
                                                 ->where('date', '>=', $year.'-'.$c_month.'-01')
-                                                ->where('date', '<=', $year.'-'.$c_month.'-30')
+                                                ->where('date', '<=', $year.'-'.$c_month.'-31')
                         	                    ->whereIn('bank_accounts_id', $bank_accounts_ids)
                         	                    ->where('category', '!=', '')
                                                 ->groupBy('category')
                                                 ->selectRaw('category, sum(amount) as Total')
                                                 ->get()             // Returns collection object
                                                 ->toArray();        // Converts collection into Array
-
                 dump($sourceTransactions);
                 $allBudgetsOfUser = Budget::all()->where('User_ID', $loggedinUserID)
                                                 ->where('Month', intval($c_month))
                                                 ->where('Year', $year);
                 dump($allBudgetsOfUser);
-
                 foreach ($sourceTransactions as $current_sourceTransactions) {
-                    foreach ($allBudgetsOfUser as $current_allBudgetsOfUser) {
-                        if ($current_allBudgetsOfUser['Name'] == $current_sourceTransactions['category']) {
-                            $current_allBudgetsOfUser['SpentValue'] = $current_sourceTransactions['Total'];
-                        }
-                        else {
-                            $current_allBudgetsOfUser = new Budget();
-
-                            $current_allBudgetsOfUser['User_ID'] = Auth::user()->id;
-                            $current_allBudgetsOfUser['Name'] = 'UnBudgeted';
-                            $current_allBudgetsOfUser['SetValue'] = 1000;
-                            $current_allBudgetsOfUser['SpentValue'] = 0;
-                            $current_allBudgetsOfUser['Month'] = $c_month;
-                            $current_allBudgetsOfUser['Year'] = $year;
-                        }
-                    }
-                    $current_allBudgetsOfUser->save();
+	                $budgetFound = false;
+	                foreach ($allBudgetsOfUser as $current_allBudgetsOfUser) {
+		                if (!$budgetFound && $current_allBudgetsOfUser['Name'] == $current_sourceTransactions['category']) {
+			                $budgetFound = true;
+			                $current_allBudgetsOfUser['SpentValue'] = $current_sourceTransactions['Total'];
+			                $current_allBudgetsOfUser->save();
+		                }
+	                }
+	                if (!$budgetFound) {
+		                // Budget is not created for current category
+		                $UnbudgetedAmountSum = $UnbudgetedAmountSum + $current_sourceTransactions['Total'];
+	                }
                 }
 
-            }
-        }
+                $findUnBudgeted = Budget::all()->where('User_ID', $loggedinUserID)
+								                ->where('Month', intval($c_month))
+								                ->where('Year', $year)
+								                ->where('Name', "UnBudgeted")
+								                ->first();
+
+                if (isset($findUnBudgeted)){    // Un-Budgeted category is already created - just update Total
+	                $findUnBudgeted['SetValue'] = $UnbudgetedAmountSum;
+	                $findUnBudgeted->save();
+                }
+                else{   // Create Un-Budgeted category
+	                $newBudget = new Budget();
+
+	                $newBudget['User_ID'] = Auth::user()->id;
+	                $newBudget['Name'] = 'UnBudgeted';
+	                $newBudget['SetValue'] = $UnbudgetedAmountSum;
+	                $newBudget['SpentValue'] = 0;
+	                $newBudget['Month'] = $c_month;
+	                $newBudget['Year'] = $year;
+	                $newBudget->save();
+                }
+            }   //-- Complete Month iteration
+        }   //-- Complete Year iteration
         // exit();
 	    return (redirect::to('user/budget'));
     }

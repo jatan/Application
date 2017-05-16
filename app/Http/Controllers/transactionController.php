@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Budget;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\transaction;
@@ -96,17 +97,37 @@ class transactionController extends Controller
 
     public function fetch(){
         $input = Request::all();
-        $userID = Auth::user()->id;
-        // dd($input['year']);
-        $requestedTransactions = transaction::where('date', '<=', $input['year'].'-0'.$input['month'].'-31')
-                                            ->where('date', '>=', $input['year'].'-0'.$input['month'].'-01')
-                                            ->where('category', $input['budgetName'])
-                                            ->selectRaw('date, name, amount, category')
-                                            ->get()
-                                            ->toArray();
 
-        // dd($requestedTransactions);
-        return ($requestedTransactions);
+	    $visibleBankAccounts = Auth::user()->visible_accounts()->toArray();
+	    $bank_accounts_ids = array();
+	    foreach ($visibleBankAccounts as $current_visibleBankAccount){
+		    $bank_accounts_ids[] = $current_visibleBankAccount['id'];
+	    }
+        // dd($input['year']);
+	    if ($input['budgetName'] !== "UnBudgeted"){
+		    $requestedTransactions = transaction::where('date', '<=', $input['year'].'-0'.$input['month'].'-31')
+											    ->where('date', '>=', $input['year'].'-0'.$input['month'].'-01')
+											    ->where('category', $input['budgetName'])
+											    ->selectRaw('date, name, amount, category')
+											    ->get()
+											    ->toArray();
+
+		    // dd($requestedTransactions);
+		    return ($requestedTransactions);
+	    }
+	    else {
+	    	$unBudgetedCategories = transaction::where('pending', 0)
+											    ->where('date', '>=', $input['year'].'-0'.$input['month'].'-01')
+											    ->where('date', '<=', $input['year'].'-0'.$input['month'].'-31')
+											    ->whereIn('bank_accounts_id', $bank_accounts_ids)
+											    ->where('category', '!=', '')
+											    ->groupBy('category')
+											    ->selectRaw('category, sum(amount) as Total')
+											    ->get()             // Returns collection object
+											    ->toArray();        // Converts collection into Array
+			return ($unBudgetedCategories);
+	    }
+
     }
 
 

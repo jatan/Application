@@ -7,6 +7,12 @@ $(document).ready(function() {
         }
     });
 
+    $('[id^=listTrans]').on('click', '.modalbutton', function (event) {
+        console.log(this);
+        $('.modal-backdrop').hide();
+        $('.switchModal').hide();
+    });
+
     $('[id^=deleteBudget]').on('show.bs.modal', function (event) {
         var modal = $(this);
         var button = $(event.relatedTarget); // Button that triggered the modal
@@ -32,6 +38,7 @@ $(document).ready(function() {
 
     $('[id^=listTrans]').on('show.bs.modal', function (event) {
         var modal = $(this);
+        var MonthName = modal.attr('id').substring("listTrans".length);
         var button = $(event.relatedTarget); // Button that triggered the modal
         var BudgetName = button.data('budgetname');// Extract info from data-* attributes
         var Month = button.data('month');// Extract info from data-* attributes
@@ -39,7 +46,7 @@ $(document).ready(function() {
         var Year = Month <= Currentmonth ? 2017 : 2016;
         // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
         // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
-
+        console.log(MonthName);
         console.log(Month);
         console.log(Year);
         console.log(BudgetName);
@@ -52,15 +59,32 @@ $(document).ready(function() {
                 'budgetName': BudgetName
             },
             success: function (data) {
-                for (var variable in data) {
-                    if (data.hasOwnProperty(variable)) {
-                        var rowData = "";
-                        var rowData = rowData + '<td>'+ data[variable].date +'</td>';
-                        var rowData = rowData + '<td>'+ data[variable].name +'</td>';
-                        var rowData = rowData + '<td>'+ data[variable].category +'</td>';
-                        var rowData = rowData + '<td>'+ data[variable].amount +'</td>';
+                modal.find('tbody').html("");
+                modal.find('thead').html("");
+                if(BudgetName !== "UnBudgeted") {
+                    for (var variable in data) {
+                        if (data.hasOwnProperty(variable)) {
+                            var rowData = "";
+                            rowData = rowData + '<td>' + data[variable].date + '</td>';
+                            rowData = rowData + '<td>' + data[variable].name + '</td>';
+                            rowData = rowData + '<td>' + data[variable].category + '</td>';
+                            rowData = rowData + '<td>' + data[variable].amount + '</td>';
+                        }
+                        modal.find('tbody').append($("<tr></tr>").html(rowData));
                     }
-                    modal.find('tbody').append($("<tr></tr>").html(rowData));
+                    modal.find('thead').append($("<tr></tr>").html("<th>Date</th><th>Merchant</th><th>Category</th><th>Account</th>"));
+                }
+                else{
+                    for (var v in data) {
+                        if (data.hasOwnProperty(v)) {
+                            var rowData2 = "";
+                            rowData2 = rowData2 + '<td>' + data[v].category + '</td>';
+                            rowData2 = rowData2 + '<td>' + data[v].Total + '</td>';
+                            rowData2 = rowData2 + '<td><button class="btn btn-success modalbutton" data-toggle="modal" data-target="#newBudgetForm'+MonthName+'">Create Budget</button></td>';
+                        }
+                        modal.find('tbody').append($("<tr></tr>").html(rowData2));
+                    }
+                    modal.find('thead').append($("<tr></tr>").html("<th>Category</th><th>Total</th>"));
                 }
             },
             error: function (data) {

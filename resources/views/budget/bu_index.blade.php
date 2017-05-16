@@ -4,10 +4,6 @@
 	<link rel="stylesheet" href="../css/budget.css">
 @stop
 
-{{--@section('titleText')--}}
-    {{--BUDGETS--}}
-{{--@stop--}}
-
 @section('content')
 	<div><button class="btn btn-primary" onclick="location.href='/update';">UPDATE</button></div>
 	<div class="months">
@@ -41,7 +37,7 @@
 						<div class="modal-content">
 							<div class="modal-header">
 								<div class="modal-title">
-									<button type="button" class="btn close" data-dismiss="modal">×</button>
+									<button type="button" class="btn close" data-dismiss="modal">X</button>
 									<h4>Create New Budget</h4>
 								</div>
 							</div>
@@ -55,6 +51,7 @@
 											<option>Bank Fees</option>
 											<option>Cash Advance</option>
 											<option>Community</option>
+											<option>Gas and Fuel</option>
 											<option>Food and Drink</option>
 											<option>Healthcare</option>
 											<option>Interest</option>
@@ -125,24 +122,6 @@
 					<div class="bg-status-display text-center" style="margin-top: 50px;">
 						<h3>You have not set up any budgets yet</h3>
 					</div>
-					<div class="progress-container">
-						<div class="card">
-							<div class="card-content black-text">
-								<span class="card-title">Un-Budgeted Amount</span>
-								<div class="">Budgeted Amount: xxx</div>
-								<div class="progress test">
-									<div class="" style="width:auto;">
-										xxx %
-									</div>
-								</div>
-								<div class="">Remaining Amount: yyy</div>
-							</div>
-							<div class="card-action">
-								<button class="btn btn-success left" data-toggle="modal" data-target="#editBudget" data-budgetname="" data-month="{{$key}}">EDIT</button>
-								<button class="btn btn-success right" data-toggle="modal" data-target="#deleteBudget" data-budgetname="">DELETE</button>
-							</div>
-						</div>
-					</div>
 				@else
 					@foreach($budgetLists[$key] as $budget)
 					<div class="progress-container">
@@ -159,19 +138,17 @@
 							</div>
 							<div class="card-action">
 								<button class="btn btn-success left" data-toggle="modal" data-target="#listTrans{{$monthShortName[$key]}}" data-budgetname="{{$budget['Name']}}" data-month="{{$key}}">Transactions</button>
-								<button class="btn btn-success left" data-toggle="modal" data-target="#editBudget{{$monthShortName[$key]}}" data-budgetname="{{$budget['Name']}}" data-setvalue="{{$budget['SetValue']}}">EDIT</button>
-								<button class="btn btn-success right" data-toggle="modal" data-target="#deleteBudget{{$monthShortName[$key]}}" data-budgetname="{{$budget['Name']}}">DELETE</button>
+								<button class="btn btn-warning left" data-toggle="modal" data-target="#editBudget{{$monthShortName[$key]}}" data-budgetname="{{$budget['Name']}}" data-setvalue="{{$budget['SetValue']}}">EDIT</button>
+								<button class="btn btn-danger right" data-toggle="modal" data-target="#deleteBudget{{$monthShortName[$key]}}" data-budgetname="{{$budget['Name']}}">DELETE</button>
 							</div>
 						</div>
 					</div>
-
-
 					<div id="editBudget{{$monthShortName[$key]}}" class="modal fade" role="dialog" style="display: none;">
 						<div class="modal-dialog">
 							<div class="modal-content">
 								<div class="modal-header">
 									<div class="modal-title">
-										<button type="button" class="btn close" data-dismiss="modal">×</button>
+										<button type="button" class="btn close" data-dismiss="modal">X</button>
 										<h4>Edit Budget</h4>
 									</div>
 								</div>
@@ -248,7 +225,7 @@
 							<div class="modal-content">
 								<div class="modal-header">
 									<div class="modal-title">
-										<button type="button" class="btn close" data-dismiss="modal">×</button>
+										<button type="button" class="btn close" data-dismiss="modal">X</button>
 										<h4>Delete Budget</h4>
 									</div>
 								</div>
@@ -267,7 +244,7 @@
 						</div>
 					</div>
 
-					<div id="listTrans{{$monthShortName[$key]}}" class="modal fade" role="dialog" style="display: none;">
+					<div id="listTrans{{$monthShortName[$key]}}" class="modal fade switchModal" role="dialog" style="display: none;">
 						<div class="modal-dialog">
 							<div class="modal-content">
 								<div class="modal-header">
@@ -280,12 +257,6 @@
 									<div id="table-container">
 						                <table id="maintable" class="table table-hover table-responsive">
 						                    <thead class="table__header-bg-color">
-						                    <tr>
-						                        <th>Date</th>
-						                        <th>Merchant</th>
-						                        <th>Category</th>
-						                        <th>Account</th>
-						                    </tr>
 						                    </thead>
 						                    <tbody>
 						                    </tbody>
@@ -297,28 +268,7 @@
 						</div>
 					</div>
 					@endforeach
-					<div class="progress-container">
-						<div class="card">
-							<div class="card-content black-text">
-								<span class="card-title">Un-Budgeted Amount</span>
-								<div class="">Budgeted Amount: xxx</div>
-								<div class="progress test">
-									<div class="" style="width:auto;">
-										xxx %
-									</div>
-								</div>
-								<div class="">Remaining Amount: yyy</div>
-							</div>
-							<div class="card-action">
-								<button class="btn btn-success left" data-toggle="modal" data-target="#editBudget" data-budgetname="" data-setvalue="">EDIT</button>
-								<button class="btn btn-success right" data-toggle="modal" data-target="#deleteBudget" data-budgetname="">DELETE</button>
-							</div>
-						</div>
-					</div>
-
 				@endif
-
-
 			</div>
 		</div>
 		@endforeach
