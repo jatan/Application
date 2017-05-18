@@ -21,8 +21,9 @@
                 <li class="flex__item"><a href="budget">Budgets</a></li>
                 <!-- <li class="flex__item"><a href="bill">Bills</a></li> -->
                 <li class="flex__item"><a href="account">Accounts</a></li>
-                <!-- <li class="flex__item"><a href="profile">Profile</a></li> -->
+                {{--<li class="flex__item"><a href="profile">Profile</a></li>--}}
                 <li class="flex__item"><a href="logout">Logout</a></li>
+                <li class="flex__item"><a href="profile" class="user" style='background-image: url({{Auth::user()->ProfileImage}})'></a></li>
             </ul>
         </div>
     </nav>

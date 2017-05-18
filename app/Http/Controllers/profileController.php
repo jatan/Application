@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
-use App\Http\Requests;
+use Illuminate\Support\Facades\Auth;
 
 class profileController extends Controller
 {
     public function index(){
-        return (view('profile.pr_index'));
+
+    	$user = Auth::user();
+    	$finalResponse = array();
+    	$finalResponse['Fname'] = $user['FirstName'];
+    	$finalResponse['Lname'] = $user['LastName'];
+
+        return (view('profile.pr_index')->with('finalResponse', $finalResponse));
     }
 
     public function createProfile(){
